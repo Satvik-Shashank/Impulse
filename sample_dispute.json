@@ -1,0 +1,20 @@
+{
+  "dispute_id": "DSP-2026-00142",
+  "reason_code_label": "Other Fraud - Card Absent Environment",
+  "card_network": "Visa",
+  "dispute_amount": 12499.00,
+  "currency": "INR",
+  "transaction_date": "2026-06-15",
+  "days_to_dispute": 35,
+  "product_category": "electronics",
+  "shipping_method": "express",
+  "delivery_confirmed": true,
+  "has_delivery_proof": true,
+  "ip_geolocation_match": true,
+  "avs_cvv_match": "both_match",
+  "customer_account_age_days": 45,
+  "customer_prior_disputes": 0,
+  "customer_prior_orders": 3,
+  "has_customer_correspondence": false,
+  "has_3ds_authentication": true
+}

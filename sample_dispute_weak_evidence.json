@@ -1,0 +1,20 @@
+{
+  "dispute_id": "DSP-2026-00987",
+  "reason_code_label": "Fraud - Card Absent",
+  "card_network": "Visa",
+  "dispute_amount": 8999.00,
+  "currency": "INR",
+  "transaction_date": "2026-07-01",
+  "days_to_dispute": 8,
+  "product_category": "electronics",
+  "shipping_method": "standard",
+  "delivery_confirmed": false,
+  "has_delivery_proof": false,
+  "ip_geolocation_match": false,
+  "avs_cvv_match": "neither",
+  "customer_account_age_days": 3,
+  "customer_prior_disputes": 1,
+  "customer_prior_orders": 0,
+  "has_customer_correspondence": false,
+  "has_3ds_authentication": false
+}

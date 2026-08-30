@@ -1,0 +1,38 @@
+REPRESENTMENT RESPONSE — DISPUTE {{ dispute_id }}
+═══════════════════════════════════════════════════
+Dispute Reason: {{ reason_code }} — {{ reason_label }}
+Card Network: {{ card_network }}
+Disputed Amount: {{ currency }} {{ "%.2f"|format(amount) }}
+Generated: {{ generated_at }}
+System Confidence: {{ "%.1f%%"|format(confidence * 100) }}
+Evidence Strength: {{ "%.1f%%"|format(evidence_strength * 100) }}
+
+─── COMPELLING EVIDENCE ───────────────────────────
+{% for item in evidence.compelling %}
+✅ {{ item.field | replace("_", " ") | title }}: {{ item.value }}
+{% endfor %}
+{% if not evidence.compelling %}
+(none available)
+{% endif %}
+
+─── SUPPORTING EVIDENCE ───────────────────────────
+{% for item in evidence.supporting %}
+📎 {{ item.field | replace("_", " ") | title }}: {{ item.value }}
+{% endfor %}
+{% if not evidence.supporting %}
+(none available)
+{% endif %}
+
+{% if evidence.missing %}
+─── MISSING EVIDENCE (flagged for human review) ───
+{% for field in evidence.missing %}
+⚠️  {{ field | replace("_", " ") | title }}: NOT AVAILABLE
+{% endfor %}
+{% endif %}
+
+─── MERCHANT STATEMENT ────────────────────────────
+{% block merchant_statement %}
+Based on the evidence on file, we respectfully request that this dispute be
+resolved in the merchant's favor.
+{% endblock %}
+═══════════════════════════════════════════════════

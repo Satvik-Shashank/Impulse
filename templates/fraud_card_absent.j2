@@ -1,0 +1,8 @@
+{% extends "base.j2" %}
+{% block merchant_statement %}
+The cardholder's claim of an unauthorized card-absent transaction is
+contradicted by matching AVS/CVV authentication, successful 3D-Secure
+verification, and IP geolocation consistent with the cardholder's registered
+location. We respectfully request this dispute be resolved in the merchant's
+favor.
+{% endblock %}

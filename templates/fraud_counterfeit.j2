@@ -1,0 +1,7 @@
+{% extends "base.j2" %}
+{% block merchant_statement %}
+The transaction was authenticated via 3D-Secure with matching AVS/CVV,
+consistent with a legitimate cardholder-present or verified card-not-present
+transaction rather than the use of a counterfeit card. We respectfully
+request this dispute be resolved in the merchant's favor.
+{% endblock %}
