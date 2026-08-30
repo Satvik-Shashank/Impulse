@@ -5,9 +5,4 @@ __pycache__/
 .venv/
 venv/
 env/
-data/*.csv
-models/*.pkl
-results/*.png
-results/*.json
-results/*.csv
 .DS_Store

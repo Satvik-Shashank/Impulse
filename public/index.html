@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chargeback Evidence Auto-Responder | Razorpay AI Risk Manager</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div>
+        <div class="badge">Razorpay AI Buildathon — Track 02: AI Risk Manager</div>
+        <h1>Chargeback Evidence Auto-Responder</h1>
+        <p>Defense-only representment pipeline with cost-sensitive calibrated confidence</p>
+      </div>
+      <div class="status-indicator">
+        <span class="status-dot"></span>
+        <span id="api-status">API Online</span>
+      </div>
+    </header>
+
+    <!-- Hero Cost Comparison Section -->
+    <section class="hero-grid">
+      <div class="glass-card metric-card red">
+        <div class="card-title">Fight Everything (Naive)</div>
+        <div class="value" id="val-fight-everything">₹0</div>
+        <p style="font-size: 0.85rem; color: var(--text-secondary);">Fights 100% of disputes blindly</p>
+      </div>
+
+      <div class="glass-card metric-card gray">
+        <div class="card-title">Fight Nothing (Concede All)</div>
+        <div class="value" id="val-fight-nothing">₹0</div>
+        <p style="font-size: 0.85rem; color: var(--text-secondary);">Forfeits 100% of disputable funds</p>
+      </div>
+
+      <div class="glass-card metric-card green">
+        <div class="card-title">This System (Cost-Optimal)</div>
+        <div class="value" id="val-system-best">₹0</div>
+        <div class="delta-tag" id="val-delta">+₹0 vs naive</div>
+      </div>
+    </section>
+
+    <!-- Scale Extrapolation Banner -->
+    <div class="scale-banner" id="scale-banner-text">
+      ⚠️ <strong>Scale Extrapolation:</strong> Loading metrics...
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="tabs">
+      <button class="tab-btn active" onclick="switchTab('metrics')">📊 Classifier Metrics</button>
+      <button class="tab-btn" onclick="switchTab('cost')">💰 Cost Analysis</button>
+      <button class="tab-btn" onclick="switchTab('demo')">⚡ Live AI Demo</button>
+      <button class="tab-btn" onclick="switchTab('cases')">🔍 Case Explorer</button>
+      <button class="tab-btn" onclick="switchTab('failures')">⚠️ Failure Modes</button>
+      <button class="tab-btn" onclick="switchTab('guardrails')">🛡️ Defense Guardrails</button>
+    </nav>
+
+    <!-- Tab 1: Classifier Metrics -->
+    <div id="tab-metrics" class="tab-panel active glass-card">
+      <h2 class="section-title">Classification Performance (Held-Out Test Set)</h2>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="label">Reason-Code Accuracy</div>
+          <div class="number" id="stat-acc">--</div>
+        </div>
+        <div class="stat-box">
+          <div class="label">Macro Precision</div>
+          <div class="number" id="stat-prec">--</div>
+        </div>
+        <div class="stat-box">
+          <div class="label">Macro Recall</div>
+          <div class="number" id="stat-rec">--</div>
+        </div>
+        <div class="stat-box">
+          <div class="label">Win-Prediction AUC</div>
+          <div class="number" id="stat-auc">--</div>
+        </div>
+      </div>
+
+      <h3 style="font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.75rem;">Per-Class Performance</h3>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Reason Code</th>
+              <th>Precision</th>
+              <th>Recall</th>
+              <th>F1-Score</th>
+              <th>Support</th>
+            </tr>
+          </thead>
+          <tbody id="per-class-tbody">
+            <tr><td colspan="5" style="text-align: center;">Loading evaluation data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tab 2: Cost Analysis -->
+    <div id="tab-cost" class="tab-panel glass-card">
+      <h2 class="section-title">Cost-Sensitive Operating Point Selection</h2>
+      <div class="controls-grid" style="margin-bottom: 1.5rem;">
+        <div>
+          <div class="form-group">
+            <label for="threshold-slider">Confidence Threshold Gate (<span id="threshold-val">0.70</span>)</label>
+            <input type="range" id="threshold-slider" class="slider-input" min="0.50" max="0.95" step="0.05" value="0.70" oninput="updateCostPoint(this.value)">
+          </div>
+        </div>
+        <div class="stats-grid" style="margin-bottom: 0;">
+          <div class="stat-box">
+            <div class="label">Auto-Respond %</div>
+            <div class="number" id="cost-auto-pct">--</div>
+          </div>
+          <div class="stat-box">
+            <div class="label">Win Rate @ Gate</div>
+            <div class="number" id="cost-win-rate">--</div>
+          </div>
+          <div class="stat-box">
+            <div class="label">Net ₹ / Dispute</div>
+            <div class="number" id="cost-net-dispute">--</div>
+          </div>
+        </div>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-secondary);">
+        Note: Cost figures (COST_FP = ₹1,000, COST_FN = ₹350, SAVINGS_TP = ₹2,250) are working modeling assumptions used for decision optimization.
+      </p>
+    </div>
+
+    <!-- Tab 3: Live AI Demo -->
+    <div id="tab-demo" class="tab-panel glass-card">
+      <h2 class="section-title">Live Dispute Auto-Responder</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+        Test the pipeline in real-time. Choose a sample preset or paste an incoming dispute payload.
+      </p>
+      
+      <div class="btn-group">
+        <button class="btn" onclick="loadPreset('strong')">Load Strong Evidence Preset (AUTO_SUBMIT)</button>
+        <button class="btn btn-secondary" onclick="loadPreset('weak')">Load Weak Evidence Preset (HUMAN_REVIEW)</button>
+      </div>
+
+      <div class="controls-grid">
+        <div>
+          <div class="form-group">
+            <label for="dispute-json-input">Dispute JSON Payload</label>
+            <textarea id="dispute-json-input" style="width:100%; height: 260px; background:#050811; color:#38bdf8; border:1px solid var(--border-card); border-radius:var(--radius-md); padding:1rem; font-family:monospace;" spellcheck="false"></textarea>
+          </div>
+          <button class="btn" onclick="processCustomDispute()">⚡ Run AI Pipeline</button>
+        </div>
+
+        <div>
+          <div style="margin-bottom: 0.5rem; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size: 0.9rem; font-weight:600; color:var(--text-secondary);">Pipeline Decision Output</span>
+            <span id="action-badge-container"></span>
+          </div>
+          <pre class="code-block" id="demo-result-output">// Click 'Run AI Pipeline' to see prediction & Jinja2 output</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 4: Case Explorer -->
+    <div id="tab-cases" class="tab-panel glass-card">
+      <h2 class="section-title">Held-Out Test Set Case Inspector</h2>
+      <div class="form-group" style="max-width: 300px;">
+        <label for="case-select">Select Dispute ID</label>
+        <select id="case-select" onchange="inspectCase(this.value)" style="width:100%; padding:8px 12px; background:#050811; color:white; border:1px solid var(--border-card); border-radius:var(--radius-md);">
+          <option value="">Loading cases...</option>
+        </select>
+      </div>
+      <pre class="code-block" id="case-json-display">Select a dispute ID above to inspect predictions.</pre>
+    </div>
+
+    <!-- Tab 5: Failure Modes -->
+    <div id="tab-failures" class="tab-panel glass-card">
+      <h2 class="section-title">Documented Failure Modes & Edge Cases</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+        The system is deliberately tested against cases it is expected to handle poorly, and its behavior in each case is documented rather than hidden.
+      </p>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Failure Mode</th>
+              <th>System Behavior</th>
+              <th>Architectural Rationale</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Weak / Absent Evidence</strong></td>
+              <td>Routed to <code>HUMAN_REVIEW</code>, never auto-submitted</td>
+              <td>Auto-submit requires both confidence threshold &amp; minimum evidence strength gate.</td>
+            </tr>
+            <tr>
+              <td><strong>Ambiguous Mixed-Signal Dispute</strong></td>
+              <td>Platt calibration keeps confidence low $\rightarrow$ routes to review</td>
+              <td>Platt scaling ensures confidence represents true probability rather than arbitrary guess.</td>
+            </tr>
+            <tr>
+              <td><strong>Unknown / Malformed Reason Code</strong></td>
+              <td>Falls back to <code>generic.j2</code> template with <code>auto_respond_eligible = False</code></td>
+              <td>System fails closed, not open, on unrecognized inputs.</td>
+            </tr>
+            <tr>
+              <td><strong>High-Value Dispute + Strong Evidence</strong></td>
+              <td>Subject to standard threshold logic (no special-casing)</td>
+              <td>Prevents arbitrary human overrides when stakes are highest.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tab 6: Guardrails -->
+    <div id="tab-guardrails" class="tab-panel glass-card">
+      <h2 class="section-title">Defense-Only Guardrails</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Guardrail</th>
+              <th>Implementation Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>No Dispute Generation</strong></td><td>System only responds to incoming dispute webhooks/payloads.</td></tr>
+            <tr><td><strong>No PII Exposure</strong></td><td>100% synthetic data generated via Faker (Indian BFSI context).</td></tr>
+            <tr><td><strong>No Raw Card Data</strong></td><td>Card numbers masked/tokenized; only match/no-match booleans evaluated.</td></tr>
+            <tr><td><strong>Auditable Evidence Rules</strong></td><td>Reason-code-to-evidence checklist is deterministic rule-table (card network spec compliant).</td></tr>
+            <tr><td><strong>Kill Switch</strong></td><td>Set <code>AUTO_RESPOND_CONFIDENCE = 1.0</code> in <code>response_generator.py</code> to force 100% human review.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
