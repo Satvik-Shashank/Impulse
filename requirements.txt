@@ -1,14 +1,15 @@
-# Core data
+# Core data & Database
 pandas>=2.0.0
 numpy>=1.24.0
 Faker>=24.0.0
+SQLAlchemy>=2.0.0
 
-# ML
+# ML & Calibration
 scikit-learn>=1.3.0
 lightgbm>=4.1.0
 optuna>=3.5.0
 
-# Templates
+# Templates & Formatting
 Jinja2>=3.1.0
 
 # Evaluation / viz
@@ -16,12 +17,10 @@ matplotlib>=3.7.0
 seaborn>=0.12.0
 plotly>=5.18.0
 
-# Web API / Serverless (Vercel)
+# Web API / Serverless (FastAPI)
 fastapi>=0.100.0
 uvicorn>=0.20.0
-
-# Dashboard
-streamlit>=1.30.0
+python-multipart>=0.0.6
 
 # Testing / data validation
 pytest>=7.4.0

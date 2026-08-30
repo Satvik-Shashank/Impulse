@@ -1,80 +1,56 @@
-# Chargeback Evidence Auto-Responder
+# Enterprise Chargeback Evidence Auto-Responder
 
-Defense-only ML pipeline for the **Razorpay AI Buildathon — Track 02: AI Risk Manager**.
-
-## The bottom line
-
-On the held-out test set, this system's cost-optimal decision policy recovers
-more net value than either naive strategy — fighting every dispute or
-conceding every dispute. See `results/three_way_comparison.png` and
-`results/metrics.json` → `baselines_inr` after running the evaluation step
-below; the exact numbers depend on your generated dataset seed and are
-reported honestly, not asserted in advance here.
+Defense-only ML pipeline & Full-Stack Dispute Management Platform for the **Razorpay AI Buildathon — Track 02: AI Risk Manager**.
 
 ## What it does
 
-Given an incoming chargeback dispute, the system:
+This enterprise web application provides a defense-only chargeback representment auto-responder backed by an SQLite database (`data/chargebacks.db`), a LightGBM multi-class reason code classifier with Platt calibration, rule-based evidence scoring, Jinja2 template rendering, and quantitative cost optimization.
 
-1. **Classifies** the dispute reason code (LightGBM, multi-class, Platt-calibrated,
-   trained on features that are genuinely predictive of reason code — see
-   `src/data/generate_disputes.py` for how the synthetic data is constructed
-   to make this a real learnable problem rather than a guess).
+### Key Capabilities
 
-2. **Retrieves & scores** the evidence required by that reason code, using an
-   explicit, auditable rule table derived from published card-network
-   representment specifications — deliberately not a learned/black-box step,
-   because a financial decision system should be inspectable at this layer.
+1. **Persistent SQLite Database (`src/db/`)**:
+   - Stores incoming disputes, merchant evidence document attachments (`EvidenceAttachmentModel`), decision audit logs (`DecisionAuditLogModel`), and merchant approvals.
+2. **Interactive Dispute Submission**:
+   - Merchants can manually submit custom transaction payloads, upload evidence documents (receipts, delivery proofs, 3DS logs), and re-evaluate evidence strength in real-time.
+3. **Calibrated ML Reason-Code Classifier**:
+   - Predicts dispute reason code (LightGBM, feature-conditioned prior) and returns Platt-calibrated confidence probabilities.
+4. **Rule-Based Evidence Retriever**:
+   - Scores available evidence against public Visa & Mastercard representment specifications (auditable by design).
+5. **Network-Compliant Jinja2 Template Generator**:
+   - Automatically drafts formal representment responses.
+6. **Quantitative Cost Optimization**:
+   - Computes rupee-denominated FP/FN/TP cost accounting, optimal confidence gates, and baseline comparisons (Fight Everything vs Fight Nothing vs System).
 
-3. **Drafts** a network-compliant representment response (Jinja2 templates).
+## Architecture
 
-4. Decides **AUTO_SUBMIT vs HUMAN_REVIEW** using a calibrated confidence
-   threshold combined with a minimum evidence-strength gate.
+- **Backend**: FastAPI (`api/index.py`), SQLAlchemy ORM (`src/db/models.py`), LightGBM (`src/models/classifier.py`), Jinja2 (`src/pipeline/response_generator.py`).
+- **Database**: SQLite (`data/chargebacks.db`).
+- **Frontend**: Vanilla HTML5, CSS3 (Obsidian Glassmorphic Theme), JavaScript (Fetch API, zero framework bloat).
+- **Deployment**: Vercel Serverless Function (`@vercel/python` + `@vercel/static`).
 
-It ships with an honest, **cost-sensitive evaluation** (rupee-denominated
-FP/FN/TP accounting, a threshold-vs-value curve, and a three-way baseline
-comparison), plus a **documented set of failure modes** — ambiguous
-mixed-signal disputes, malformed reason codes, missing fields, and high-value
-disputes are all explicitly tested and their behavior is described, not
-hidden.
+## Setup & Local Execution
 
-## Guardrails (defense-only)
-
-- Can only **respond** to disputes, never initiate them.
-- **100% synthetic data** (Faker) — no PII, no real card numbers.
-- Every response carries a full reasoning chain for audit.
-- **Kill switch**: set `AUTO_RESPOND_CONFIDENCE = 1.0` in
-  `src/pipeline/response_generator.py` to disable all auto-responses.
-
-## Setup
-
-    python -m venv .venv && source .venv/bin/activate
+    python -m venv .venv && source .venv/bin/activate    # Windows: .venv\Scripts\activate
     pip install -r requirements.txt
-    # macOS + Apple Silicon: brew install libomp   (LightGBM OpenMP runtime)
 
-## Run the full flow
+### 1. Run Data Generation, Training & Evaluation
 
     python -m src.data.generate_disputes
     python -m src.train
     python -m src.evaluate --test-set data/disputes_test.csv --output results/
-    python -m src.pipeline.run sample_dispute.json
-    python -m src.pipeline.run sample_dispute_weak_evidence.json   # HUMAN_REVIEW path
-    streamlit run app.py
 
-## Tests
+### 2. Launch Local Enterprise Web Application & API
+
+    python -m uvicorn api.index:app --reload --port 8000
+
+Open your browser at: **`http://localhost:8000/public/index.html`** (or `http://localhost:8000/index.html` when deployed on Vercel).
+
+## Test Suite
 
     pytest -q
 
-`tests/test_classifier.py::test_classifier_beats_random_baseline` is a
-regression guard: it fails loudly if the synthetic data generator is ever
-changed in a way that decouples `reason_code` from the transaction features
-again, which would silently make the accuracy numbers meaningless.
+Runs all unit tests, classifier regression guards, and executable failure-mode documentation tests.
 
-## A note on the numbers
+## Cost Assumptions & Disclaimer
 
-All ₹ cost/savings figures (`COST_FP`, `COST_FN`, `SAVINGS_TP` in
-`src/evaluate.py`) are working modeling assumptions used to illustrate the
-cost-sensitive decision framework, not cited industry statistics. State this
-explicitly whenever these figures are shown. The same applies to the
-"illustrative scale extrapolation" block in `metrics.json` — it extrapolates
-this system's own measured per-dispute value across hypothetical volumes and
-is not a Razorpay-reported figure.
+All ₹ cost figures (`COST_FP = ₹1,000`, `COST_FN = ₹350`, `SAVINGS_TP = ₹2,250`) are working modeling assumptions used for decision policy optimization, not cited industry statistics.
