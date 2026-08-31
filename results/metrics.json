@@ -148,7 +148,7 @@
     "system_best_net_value": -136350.0
   },
   "illustrative_scale_extrapolation_inr": {
-    "note": "ILLUSTRATIVE ONLY \u2014 extrapolates this system's own measured net-value-per-dispute across hypothetical dispute volumes. Not a Razorpay-reported figure.",
+    "note": "ILLUSTRATIVE ONLY \u2014 extrapolates this system's own measured net-value-per-dispute across hypothetical dispute volumes. Calculated from experimental evaluation data.",
     "at_10k_disputes_per_year": -1818000.0,
     "at_100k_disputes_per_year": -18180000.0,
     "at_1m_disputes_per_year": -181800000.0

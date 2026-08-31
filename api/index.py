@@ -19,7 +19,7 @@ if PROJECT_ROOT not in sys.path:
 
 app = FastAPI(
     title="Chargeback Intelligence & Auto-Resolution Platform API",
-    description="Defense-only representment pipeline — Razorpay AI Buildathon, Track 02: AI Risk Manager",
+    description="Defense-only representment decision pipeline with cost-sensitive calibrated confidence",
     version="2.0.0",
 )
 

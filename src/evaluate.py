@@ -276,13 +276,12 @@ def main(test_path="data/disputes_test.csv", model_path="models/classifier.pkl",
     plot_baseline_comparison(fight_everything, fight_nothing, best_row["net_value"],
                               os.path.join(out_dir, "three_way_comparison.png"))
 
-    # ── Illustrative scale extrapolation (NOT a Razorpay-verified figure —
-    #    label this explicitly every time it's shown) ──
+    # ── Illustrative scale extrapolation ──
     net_value_per_dispute_best = best_row["net_value_per_dispute"]
     illustrative_scale_examples = {
         "note": "ILLUSTRATIVE ONLY — extrapolates this system's own measured "
                 "net-value-per-dispute across hypothetical dispute volumes. "
-                "Not a Razorpay-reported figure.",
+                "Calculated from experimental evaluation data.",
         "at_10k_disputes_per_year": round(net_value_per_dispute_best * 10_000, 0),
         "at_100k_disputes_per_year": round(net_value_per_dispute_best * 100_000, 0),
         "at_1m_disputes_per_year": round(net_value_per_dispute_best * 1_000_000, 0),

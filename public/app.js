@@ -1,13 +1,13 @@
 // ════════════════════════════════════════════════════════════════════
 // Chargeback Intelligence Platform — Client Controller
-// Razorpay Theme: Unified Page, Real-time Interaction, Smooth Scroll
+// Professional Fintech UI, Tab Navigation, Zero Emojis, Term Explainers
 // ════════════════════════════════════════════════════════════════════
 
 let globalMetrics = null;
 let globalPredictions = [];
 let chartInstances = {};
 
-// ── Chart.js — Razorpay Style Defaults ────────────────────────────
+// ── Chart.js Defaults ─────────────────────────────────────────────
 Chart.defaults.color = '#475569';
 Chart.defaults.borderColor = '#E2E8F0';
 Chart.defaults.font.family = "'Inter', -apple-system, sans-serif";
@@ -18,7 +18,7 @@ Chart.defaults.plugins.tooltip.bodyColor = '#CBD5E1';
 Chart.defaults.plugins.tooltip.padding = 10;
 Chart.defaults.plugins.tooltip.cornerRadius = 6;
 
-// ── Presets ──────────────────────────────────────────────────────
+// ── Preset Dispute Scenarios ─────────────────────────────────────
 const PRESET_STRONG = {
   dispute_id: "DSP-2026-00142",
   reason_code_label: "Other Fraud - Card Absent Environment",
@@ -65,45 +65,41 @@ const PRESET_WEAK = {
 document.addEventListener('DOMContentLoaded', () => {
   fetchMetrics();
   fetchPredictions();
-  fetchMonitoringDrift();
   loadPreset('strong');
   checkApiHealth();
   setInterval(checkApiHealth, 30000);
-  initScrollSpy();
 });
 
-// ── Navigation Link Active State ─────────────────────────────────
-function setActiveNav(btn) {
-  document.querySelectorAll('.nav-link-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+// ── Tab Switching ────────────────────────────────────────────────
+function switchTab(tabId, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+
+  if (btn) btn.classList.add('active');
+  const panel = document.getElementById(`tab-${tabId}`);
+  if (panel) {
+    panel.classList.add('active');
+  }
+
+  // Trigger chart re-render on active tab
+  if (tabId === 'performance') {
+    setTimeout(renderPerformanceCharts, 50);
+  } else if (tabId === 'monitoring') {
+    setTimeout(fetchMonitoringDrift, 50);
+  }
 }
 
-function initScrollSpy() {
-  const sections = document.querySelectorAll('.content-section');
-  const navLinks = document.querySelectorAll('.nav-link-btn');
-
-  window.addEventListener('scroll', () => {
-    let current = '';
-    const scrollPos = window.pageYOffset + 120;
-
-    sections.forEach(section => {
-      if (scrollPos >= section.offsetTop) {
-        current = section.getAttribute('id');
-      }
-    });
-
-    navLinks.forEach(link => {
-      link.classList.remove('active');
-      if (link.getAttribute('href') === `#${current}`) {
-        link.classList.add('active');
-      }
-    });
-  });
+// ── Financial Explainer Toggle ───────────────────────────────────
+function toggleExplainer() {
+  const details = document.getElementById('explainer-details');
+  if (details) {
+    details.style.display = details.style.display === 'none' ? 'block' : 'none';
+  }
 }
 
-// ── Mode Toggle (Form vs JSON) ──────────────────────────────────
+// ── Mode Toggle (Structured Form vs Raw JSON) ────────────────────
 function setAnalyzerMode(mode, btn) {
-  const toggleBtns = document.querySelectorAll('.mode-toggle button');
+  const toggleBtns = document.querySelectorAll('.mode-segmented-btn');
   toggleBtns.forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   document.getElementById('form-mode').style.display = mode === 'form' ? 'block' : 'none';
@@ -120,7 +116,7 @@ async function checkApiHealth() {
   }
 }
 
-// ── Fetch Metrics ───────────────────────────────────────────────
+// ── Fetch Evaluation Metrics ─────────────────────────────────────
 async function fetchMetrics() {
   try {
     const res = await fetch('/api/metrics');
@@ -128,10 +124,10 @@ async function fetchMetrics() {
     globalMetrics = await res.json();
     renderHeroMetrics();
     renderKPIs();
-    renderPerformanceSection();
+    renderPerformanceCharts();
     updateCostPoint(0.70);
   } catch (e) {
-    console.warn('Metrics fetch:', e);
+    console.warn('Metrics fetch error:', e);
   }
 }
 
@@ -143,7 +139,7 @@ async function fetchPredictions() {
     globalPredictions = await res.json();
     populateCaseDropdown();
   } catch (e) {
-    console.warn('Predictions fetch:', e);
+    console.warn('Predictions fetch error:', e);
   }
 }
 
@@ -154,23 +150,22 @@ function renderHeroMetrics() {
   const fe = b.fight_everything_net_value || 0;
   const fn = b.fight_nothing_net_value || 0;
   const sb = b.system_best_net_value || 0;
-  
+
   animateValue('val-fight-everything', fe, '₹');
   animateValue('val-fight-nothing', fn, '₹');
   animateValue('val-system-best', sb, '₹');
-  
+
   const delta = sb - fe;
   const el = document.getElementById('val-delta');
   if (el) {
-    el.textContent = `${delta >= 0 ? '+' : ''}₹${delta.toLocaleString('en-IN')} vs naive`;
-    el.className = 'delta-chip ' + (delta >= 0 ? 'success' : 'danger');
+    el.textContent = `${delta >= 0 ? '+' : ''}₹${delta.toLocaleString('en-IN')} vs naive baseline`;
   }
 
   const scale = globalMetrics.illustrative_scale_extrapolation_inr || {};
   const banner = document.getElementById('scale-banner-text');
   if (banner && scale.note) {
     const val100k = (scale.at_100k_disputes_per_year || 0).toLocaleString('en-IN');
-    banner.innerHTML = `<span class="banner-chip">Scale Extrapolation</span><span>${scale.note} At 100k disputes/year: <strong>₹${val100k}</strong> net value.</span>`;
+    banner.innerHTML = `<span class="banner-chip">Scale Projection</span><span>${scale.note} At 100k disputes/year: <strong>₹${val100k}</strong> net value.</span>`;
   }
 }
 
@@ -195,116 +190,121 @@ function renderKPIs() {
   setText('stat-prec', pct(m.macro_precision));
   setText('stat-rec', pct(m.macro_recall));
   setText('stat-auc', m.win_prediction_auc.toFixed(3));
-  setText('stat-win-auc', m.win_predictor_dedicated_auc ? m.win_predictor_dedicated_auc.toFixed(3) : '0.826');
+  setText('stat-win-auc', m.win_predictor_dedicated_auc ? m.win_predictor_dedicated_auc.toFixed(3) : '0.783');
 }
 
 function pct(v) { return (v * 100).toFixed(1) + '%'; }
 function setText(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
 
-// ── Render Model Performance Charts & Tables ─────────────────────
-function renderPerformanceSection() {
+// ── Render Performance Charts & Tables ───────────────────────────
+function renderPerformanceCharts() {
   if (!globalMetrics) return;
   const m = globalMetrics;
 
-  // 1. Cost vs Threshold Curve
+  // 1. Cost Curve
   const curve = m.cost_curve || [];
-  destroyChart('chart-cost-curve');
-  chartInstances['chart-cost-curve'] = new Chart(document.getElementById('chart-cost-curve'), {
-    type: 'line',
-    data: {
-      labels: curve.map(c => c.threshold.toFixed(2)),
-      datasets: [
-        {
-          label: 'Net ₹/Dispute',
-          data: curve.map(c => c.net_value_per_dispute),
-          borderColor: '#10B981',
-          backgroundColor: 'rgba(16, 185, 129, 0.08)',
-          fill: true,
-          tension: 0.35,
-          pointRadius: 5,
-          pointHoverRadius: 7,
-          pointBackgroundColor: '#10B981',
-          borderWidth: 2.5
-        },
-        {
-          label: 'Auto-Respond %',
-          data: curve.map(c => c.auto_respond_pct * 100),
-          borderColor: '#0C83FF',
-          tension: 0.35,
-          pointRadius: 4,
-          pointBackgroundColor: '#0C83FF',
-          borderWidth: 2,
-          yAxisID: 'y1'
-        },
-        {
-          label: 'Win Rate %',
-          data: curve.map(c => c.win_rate_at_threshold * 100),
-          borderColor: '#F59E0B',
-          tension: 0.35,
-          pointRadius: 4,
-          pointBackgroundColor: '#F59E0B',
-          borderWidth: 2,
-          yAxisID: 'y1'
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: { intersect: false, mode: 'index' },
-      scales: {
-        y: {
-          title: { display: true, text: 'Net ₹/Dispute', color: '#10B981', font: { weight: 'bold' } },
-          grid: { color: '#F1F5F9' },
-          ticks: { callback: v => '₹' + v }
-        },
-        y1: {
-          position: 'right',
-          title: { display: true, text: 'Percent (%)', color: '#64748B', font: { weight: 'bold' } },
-          grid: { display: false },
-          ticks: { callback: v => v + '%' }
-        },
-        x: {
-          title: { display: true, text: 'Confidence Threshold Gate', color: '#64748B', font: { weight: 'bold' } },
-          grid: { color: '#F1F5F9' }
-        }
+  const costCanvas = document.getElementById('chart-cost-curve');
+  if (costCanvas) {
+    destroyChart('chart-cost-curve');
+    chartInstances['chart-cost-curve'] = new Chart(costCanvas, {
+      type: 'line',
+      data: {
+        labels: curve.map(c => c.threshold.toFixed(2)),
+        datasets: [
+          {
+            label: 'Net ₹ / Dispute',
+            data: curve.map(c => c.net_value_per_dispute),
+            borderColor: '#059669',
+            backgroundColor: 'rgba(5, 150, 105, 0.08)',
+            fill: true,
+            tension: 0.35,
+            pointRadius: 4,
+            pointBackgroundColor: '#059669',
+            borderWidth: 2
+          },
+          {
+            label: 'Auto-Respond %',
+            data: curve.map(c => c.auto_respond_pct * 100),
+            borderColor: '#0284C7',
+            tension: 0.35,
+            pointRadius: 3,
+            pointBackgroundColor: '#0284C7',
+            borderWidth: 1.8,
+            yAxisID: 'y1'
+          },
+          {
+            label: 'Win Rate %',
+            data: curve.map(c => c.win_rate_at_threshold * 100),
+            borderColor: '#D97706',
+            tension: 0.35,
+            pointRadius: 3,
+            pointBackgroundColor: '#D97706',
+            borderWidth: 1.8,
+            yAxisID: 'y1'
+          }
+        ]
       },
-      plugins: {
-        legend: { position: 'top', labels: { boxWidth: 12, usePointStyle: true, padding: 12 } }
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { intersect: false, mode: 'index' },
+        scales: {
+          y: {
+            title: { display: true, text: 'Net ₹ / Dispute', color: '#059669', font: { weight: 'bold' } },
+            grid: { color: '#F1F5F9' },
+            ticks: { callback: v => '₹' + v }
+          },
+          y1: {
+            position: 'right',
+            title: { display: true, text: 'Percent (%)', color: '#64748B', font: { weight: 'bold' } },
+            grid: { display: false },
+            ticks: { callback: v => v + '%' }
+          },
+          x: {
+            title: { display: true, text: 'Confidence Threshold Gate', color: '#64748B', font: { weight: 'bold' } },
+            grid: { color: '#F1F5F9' }
+          }
+        },
+        plugins: {
+          legend: { position: 'top', labels: { boxWidth: 10, usePointStyle: true } }
+        }
       }
-    }
-  });
+    });
+  }
 
   // 2. Feature Importances
   const fi = m.top_feature_importances || {};
-  destroyChart('chart-features');
-  chartInstances['chart-features'] = new Chart(document.getElementById('chart-features'), {
-    type: 'bar',
-    data: {
-      labels: Object.keys(fi).map(l => l.replace(/_/g, ' ')),
-      datasets: [{
-        data: Object.values(fi),
-        backgroundColor: '#EBF4FF',
-        borderColor: '#0C83FF',
-        hoverBackgroundColor: '#0C83FF',
-        borderWidth: 1.5,
-        borderRadius: 4
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      indexAxis: 'y',
-      plugins: { legend: { display: false } },
-      scales: {
-        x: {
-          grid: { color: '#F1F5F9' },
-          title: { display: true, text: 'Gini Importance Score', color: '#64748B' }
-        },
-        y: { grid: { display: false } }
+  const featCanvas = document.getElementById('chart-features');
+  if (featCanvas) {
+    destroyChart('chart-features');
+    chartInstances['chart-features'] = new Chart(featCanvas, {
+      type: 'bar',
+      data: {
+        labels: Object.keys(fi).map(l => l.replace(/_/g, ' ')),
+        datasets: [{
+          data: Object.values(fi),
+          backgroundColor: '#F0F9FF',
+          borderColor: '#0284C7',
+          hoverBackgroundColor: '#0284C7',
+          borderWidth: 1.2,
+          borderRadius: 3
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        plugins: { legend: { display: false } },
+        scales: {
+          x: {
+            grid: { color: '#F1F5F9' },
+            title: { display: true, text: 'Gini Gain Score', color: '#64748B' }
+          },
+          y: { grid: { display: false } }
+        }
       }
-    }
-  });
+    });
+  }
 
   // 3. Per-Class Table
   const tbody = document.getElementById('per-class-tbody');
@@ -315,10 +315,10 @@ function renderPerformanceSection() {
       const d = pc[code];
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td><strong style="color:var(--rzp-navy-dark);">${code}</strong></td>
+        <td><strong>${code}</strong></td>
         <td>${pct(d.precision)}</td>
         <td>${pct(d.recall)}</td>
-        <td><strong style="color:var(--rzp-blue);">${pct(d['f1-score'])}</strong></td>
+        <td><strong style="color:var(--brand-blue);">${pct(d['f1-score'])}</strong></td>
         <td>${d.support}</td>
       `;
       tbody.appendChild(tr);
@@ -338,7 +338,7 @@ function renderPerformanceSection() {
         <td>${r.tp}</td>
         <td>${r.fp}</td>
         <td>${r.fn}</td>
-        <td><strong style="color:var(--rzp-emerald-text);">₹${r.net_value.toLocaleString('en-IN')}</strong></td>
+        <td><strong style="color:var(--brand-emerald-text);">₹${r.net_value.toLocaleString('en-IN')}</strong></td>
         <td>₹${r.net_value_per_dispute.toFixed(0)}</td>
       `;
       ct.appendChild(tr);
@@ -364,7 +364,7 @@ async function fetchMonitoringDrift() {
     if (!res.ok) return;
     renderMonitoring(await res.json());
   } catch (e) {
-    console.warn('Monitoring:', e);
+    console.warn('Monitoring fetch error:', e);
   }
 }
 
@@ -376,50 +376,56 @@ function renderMonitoring(d) {
   setText('mon-autorate', d.auto_rate_pct ? d.auto_rate_pct + '%' : '--');
 
   const rc = d.reason_code_distribution || {};
-  destroyChart('chart-mon-rc');
-  chartInstances['chart-mon-rc'] = new Chart(document.getElementById('chart-mon-rc'), {
-    type: 'bar',
-    data: {
-      labels: Object.keys(rc),
-      datasets: [{
-        data: Object.values(rc),
-        backgroundColor: '#EBF4FF',
-        borderColor: '#0C83FF',
-        hoverBackgroundColor: '#0C83FF',
-        borderWidth: 1.5,
-        borderRadius: 4
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { grid: { color: '#F1F5F9' } },
-        x: { grid: { display: false }, ticks: { maxRotation: 45, font: { size: 10 } } }
+  const rcCanvas = document.getElementById('chart-mon-rc');
+  if (rcCanvas) {
+    destroyChart('chart-mon-rc');
+    chartInstances['chart-mon-rc'] = new Chart(rcCanvas, {
+      type: 'bar',
+      data: {
+        labels: Object.keys(rc),
+        datasets: [{
+          data: Object.values(rc),
+          backgroundColor: '#F0F9FF',
+          borderColor: '#0284C7',
+          hoverBackgroundColor: '#0284C7',
+          borderWidth: 1.2,
+          borderRadius: 3
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { grid: { color: '#F1F5F9' } },
+          x: { grid: { display: false }, ticks: { maxRotation: 45, font: { size: 9 } } }
+        }
       }
-    }
-  });
+    });
+  }
 
   const ad = d.action_distribution || {};
-  destroyChart('chart-mon-action');
-  chartInstances['chart-mon-action'] = new Chart(document.getElementById('chart-mon-action'), {
-    type: 'doughnut',
-    data: {
-      labels: Object.keys(ad),
-      datasets: [{
-        data: Object.values(ad),
-        backgroundColor: ['#10B981', '#F59E0B'],
-        borderColor: ['#FFFFFF', '#FFFFFF'],
-        borderWidth: 2
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12 } } }
-    }
-  });
+  const actionCanvas = document.getElementById('chart-mon-action');
+  if (actionCanvas) {
+    destroyChart('chart-mon-action');
+    chartInstances['chart-mon-action'] = new Chart(actionCanvas, {
+      type: 'doughnut',
+      data: {
+        labels: Object.keys(ad),
+        datasets: [{
+          data: Object.values(ad),
+          backgroundColor: ['#059669', '#D97706'],
+          borderColor: ['#FFFFFF', '#FFFFFF'],
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { boxWidth: 10 } } }
+      }
+    });
+  }
 }
 
 // ── Case Explorer ───────────────────────────────────────────────
@@ -430,7 +436,7 @@ function populateCaseDropdown() {
   globalPredictions.slice(0, 50).forEach(p => {
     const o = document.createElement('option');
     o.value = p.dispute_id;
-    o.textContent = `${p.dispute_id} (${p.actual} → ${p.predicted}) · Confidence: ${(p.confidence * 100).toFixed(0)}%`;
+    o.textContent = `${p.dispute_id} (${p.actual} → ${p.predicted}) | Confidence: ${(p.confidence * 100).toFixed(0)}%`;
     sel.appendChild(o);
   });
 }
@@ -512,7 +518,7 @@ function analyzeFromJSON() {
     }
     runPipeline(payload, document.getElementById('run-json-btn'));
   } catch (e) {
-    errDiv.innerHTML = `<span class="chip chip-danger">Invalid JSON format: ${e.message}</span>`;
+    errDiv.innerHTML = `<span class="chip chip-danger">Invalid JSON: ${e.message}</span>`;
     errDiv.style.display = 'block';
   }
 }
@@ -527,12 +533,12 @@ async function runPipeline(payload, btn) {
   badge.innerHTML = '<span class="spinner"></span>';
   btn.disabled = true;
   const origText = btn.textContent;
-  btn.textContent = 'Processing Pipeline…';
+  btn.textContent = 'Processing Pipeline...';
 
   try {
-    // Step 1: Input Received
+    // Step 1: Input Received with Complex Terms Explained
     await revealStep(stepsC, 'Step 1 — Input Ingested',
-      `Dispute <strong>${payload.dispute_id || 'N/A'}</strong> · ₹${(payload.dispute_amount || 0).toLocaleString('en-IN')} · ${payload.card_network || 'Unknown'} Network`, '', 220);
+      `Dispute <strong>${payload.dispute_id || 'N/A'}</strong> [Unique Dispute ID] · ₹${(payload.dispute_amount || 0).toLocaleString('en-IN')} [Contested Amount] · ${payload.card_network || 'Unknown'} [Governing Card Scheme]`, '', 220);
 
     const res = await fetch('/api/disputes', {
       method: 'POST',
@@ -546,35 +552,39 @@ async function runPipeline(payload, btn) {
     }
     const data = await res.json();
 
-    // Step 2: Reason Code Classification
+    // Step 2: Reason Code Classification with Plain Language
     const clf = data.classification || {};
     const topK = (clf.top_k_predictions || []).map((t, i) => {
       const p = (t.confidence * 100).toFixed(1);
-      return `<div style="margin-top:4px;"><span style="color:var(--text-muted);font-size:11px;">#${i+1}</span> <strong>${t.reason_code}</strong> <span style="color:var(--rzp-blue);">${p}%</span><div class="conf-bar-track"><div class="conf-bar-fill" style="width:${p}%"></div></div></div>`;
+      return `<div style="margin-top:4px;"><span style="color:var(--text-muted);font-size:11px;">#${i+1}</span> <strong>Code ${t.reason_code}</strong> <span style="color:var(--brand-blue);">${p}%</span><div class="conf-bar-track"><div class="conf-bar-fill" style="width:${p}%"></div></div></div>`;
     }).join('');
     
     await revealStep(stepsC, 'Step 2 — Reason Code Classification',
-      `Primary: <strong>${clf.predicted_reason_code || 'N/A'}</strong> — ${((clf.confidence||0)*100).toFixed(1)}% calibrated confidence${topK}
-      <div class="callout" style="margin-top:8px;margin-bottom:0;"><span class="callout-icon">ⓘ</span> The LightGBM classifier predicts <strong>${clf.predicted_reason_code || 'N/A'}</strong> with ${((clf.confidence||0)*100).toFixed(1)}% Platt-scaled confidence based on transaction signals.</div>`,
+      `Predicted Reason Code: <strong>${clf.predicted_reason_code || 'N/A'}</strong> at ${((clf.confidence||0)*100).toFixed(1)}% calibrated confidence.${topK}
+      <div class="callout" style="margin-top:8px;margin-bottom:0;">
+        <strong>Term Explanation:</strong> Reason codes (such as 10.4 for Card-Absent Fraud) are standard industry categories assigned by card networks. Platt-scaled confidence means a 90% score reflects an empirical 9-out-of-10 probability of being the correct dispute category.
+      </div>`,
       'step-success', 300);
 
-    // Step 3: Evidence Rule Table Check
+    // Step 3: Evidence Checklist Retrieval
     const ev = data.evidence || {};
     const evPkg = ev.evidence_package || {};
     const chips = [
-      ...(evPkg.compelling||[]).map(e => `<span class="chip chip-success">✓ ${e.field}</span>`),
-      ...(evPkg.supporting||[]).map(e => `<span class="chip chip-success">✓ ${e.field}</span>`),
-      ...(evPkg.missing||[]).map(m => `<span class="chip chip-danger">✗ ${m}</span>`)
+      ...(evPkg.compelling||[]).map(e => `<span class="chip chip-success">Present: ${e.field}</span>`),
+      ...(evPkg.supporting||[]).map(e => `<span class="chip chip-success">Present: ${e.field}</span>`),
+      ...(evPkg.missing||[]).map(m => `<span class="chip chip-danger">Missing: ${m}</span>`)
     ].join(' ');
     const totalEvidence = (evPkg.compelling||[]).length + (evPkg.supporting||[]).length + (evPkg.missing||[]).length;
     const presentEvidence = (evPkg.compelling||[]).length + (evPkg.supporting||[]).length;
     
-    await revealStep(stepsC, 'Step 3 — Evidence Retrieved',
-      `Evidence strength: <strong>${((ev.evidence_strength||0)*100).toFixed(0)}%</strong><div style="margin:8px 0;">${chips}</div>
-      <div class="callout" style="margin-top:8px;margin-bottom:0;"><span class="callout-icon">ⓘ</span> This reason code requires ${totalEvidence} evidence types under ${payload.card_network}'s representment rules. ${presentEvidence} of ${totalEvidence} items are present.</div>`,
+    await revealStep(stepsC, 'Step 3 — Evidence Checklist Retrieval',
+      `Evidence Strength Score: <strong>${((ev.evidence_strength||0)*100).toFixed(0)}%</strong> (${presentEvidence}/${totalEvidence} required items present).<div style="margin:8px 0;">${chips}</div>
+      <div class="callout" style="margin-top:8px;margin-bottom:0;">
+        <strong>Term Explanation:</strong> Visa and Mastercard enforce strict evidence requirements. Compelling items (e.g. proof of delivery, 3D-Secure) directly prove legitimate fulfillment to the issuing bank.
+      </div>`,
       ev.evidence_strength >= 0.6 ? 'step-success' : 'step-warning', 300);
 
-    // Step 4: Decision & Recommendation
+    // Step 4: Decision & Document Generation
     const wp = data.win_probability || 0;
     const ev_inr = data.expected_value_inr || 0;
     const action = data.response ? data.response.action : 'UNKNOWN';
@@ -586,9 +596,9 @@ async function runPipeline(payload, btn) {
     if (responseText) {
       window.lastResponseText = responseText;
       docBtnHtml = `
-        <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border-color);">
+        <div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border-color);">
           <button class="btn-secondary" style="width:100%; justify-content:center;" onclick="toggleRepresentmentDoc()">
-            📄 Generate &amp; View Representment Document
+            View Rendered Representment Document
           </button>
           <div id="representment-doc-panel" style="display:none; margin-top:10px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
@@ -603,20 +613,22 @@ async function runPipeline(payload, btn) {
 
     await revealStep(stepsC, 'Step 4 — Final Recommendation',
       `<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
-        <span style="font-size:22px;font-weight:900;color:var(--rzp-navy-dark);">Win probability: ${(wp*100).toFixed(1)}%</span>
+        <span style="font-size:20px;font-weight:900;color:var(--brand-navy-dark);">Win Probability: ${(wp*100).toFixed(1)}%</span>
         <span class="chip ${chipClass}">${action}</span>
       </div>
-      <div style="display:flex;gap:20px;font-size:13px;color:var(--text-secondary);margin-bottom:8px;">
-        <span>Expected Net Value: <strong style="color:var(--rzp-emerald-text);">₹${ev_inr.toLocaleString('en-IN')}</strong></span>
+      <div style="display:flex;gap:20px;font-size:12px;color:var(--text-secondary);margin-bottom:8px;">
+        <span>Expected Net Value: <strong style="color:var(--brand-emerald-text);">₹${ev_inr.toLocaleString('en-IN')}</strong></span>
       </div>
-      <div class="callout" style="margin-top:8px;margin-bottom:0;"><span class="callout-icon">ⓘ</span> <strong>Decision Logic:</strong> Calibrated confidence (${((clf.confidence||0)*100).toFixed(1)}%) ${(clf.confidence||0) >= 0.70 ? 'exceeds' : 'is below'} the 70% threshold gate, and evidence strength (${((ev.evidence_strength||0)*100).toFixed(0)}%) ${(ev.evidence_strength||0) >= 0.60 ? 'exceeds' : 'is below'} the 60% minimum gate.</div>
+      <div class="callout" style="margin-top:8px;margin-bottom:0;">
+        <strong>Decision Explanation:</strong> ${isAuto ? 'Confidence and evidence strength both exceed threshold gates. This case has strong probability of winning, yielding positive expected recovery.' : 'Confidence or evidence strength fell below threshold gates. Case is safely routed to human review to prevent filing fee loss.'}
+      </div>
       ${docBtnHtml}`,
       isAuto ? 'step-success' : 'step-warning', 250);
 
     badge.innerHTML = `<span class="chip ${chipClass}">${action}</span>`;
     outPre.textContent = JSON.stringify(data, null, 2);
   } catch (err) {
-    stepsC.innerHTML += `<div class="pipeline-step revealed" style="border-left-color:var(--rzp-rose);"><div class="step-label">Execution Error</div><div class="step-content">${err.message}</div></div>`;
+    stepsC.innerHTML += `<div class="pipeline-step revealed" style="border-left-color:var(--brand-rose);"><div class="step-label">Execution Error</div><div class="step-content">${err.message}</div></div>`;
     badge.innerHTML = '';
     outPre.textContent = 'Error: ' + err.message;
   } finally {
