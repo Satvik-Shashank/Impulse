@@ -11,74 +11,86 @@
 <body>
   <div class="app-wrapper">
 
-    <!-- ═══ Top Bar ═══ -->
-    <header class="top-bar">
-      <div class="top-bar-left">
-        <div class="logo-mark">CI</div>
-        <div>
-          <div class="top-bar-title">Chargeback Intelligence Platform</div>
-          <div class="top-bar-subtitle">Track 02 · AI Risk Manager</div>
+    <!-- ═══ Top Navigation Bar (Razorpay Navbar Style) ═══ -->
+    <header class="navbar">
+      <a href="#overview-analyzer" class="nav-brand">
+        <div class="rzp-icon">R</div>
+        <div class="rzp-title-wrap">
+          <div class="rzp-logo-text">Razorpay <span>RiskAI</span></div>
+          <div class="rzp-tagline">Chargeback Intelligence Platform</div>
         </div>
-      </div>
-      <div class="status-chip">
-        <span class="dot"></span>
-        <span id="api-status">API Online</span>
+      </a>
+
+      <!-- Smooth Scroll Navigation Links -->
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#overview-analyzer" class="nav-link-btn active" onclick="setActiveNav(this)">⚡ Live Analyzer &amp; Overview</a></li>
+          <li><a href="#model-performance" class="nav-link-btn" onclick="setActiveNav(this)">📈 Model Performance</a></li>
+          <li><a href="#case-explorer" class="nav-link-btn" onclick="setActiveNav(this)">🔍 Case Explorer</a></li>
+          <li><a href="#monitoring" class="nav-link-btn" onclick="setActiveNav(this)">🔬 Monitoring</a></li>
+          <li><a href="#guardrails" class="nav-link-btn" onclick="setActiveNav(this)">🛡️ Guardrails</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-right">
+        <div class="status-pill">
+          <span class="dot"></span>
+          <span id="api-status">API Online</span>
+        </div>
       </div>
     </header>
 
-    <!-- ═══ Page Header ═══ -->
-    <div class="page-header">
-      <h1>Chargeback Intelligence &amp; Auto-Resolution Platform</h1>
-      <p>Classifies incoming chargeback disputes, retrieves the required evidence, predicts win likelihood, and recommends auto-respond or human review — with every decision backed by a rupee-denominated cost model, not just an accuracy score.</p>
-    </div>
+    <!-- ═══ Hero Section (Razorpay Marketing Style) ═══ -->
+    <section class="hero-section">
+      <div class="hero-pill-badge">
+        <span class="tag">AI Risk Manager</span>
+        <span>Razorpay AI Buildathon · Track 02</span>
+      </div>
+      <h1 class="hero-title">
+        Supercharge <span class="text-blue">chargeback defense</span> with <span class="text-emerald">calibrated AI</span>
+      </h1>
+      <p class="hero-subtitle">
+        Automate dispute representment with rupee-denominated cost optimization, deterministic card-network evidence retrieval, and calibrated win probabilities at sub-50ms latency.
+      </p>
+      <div class="hero-actions">
+        <a href="#live-analyzer-form" class="btn-hero-primary">⚡ Test Live Dispute Analyzer</a>
+        <a href="#model-performance" class="btn-hero-secondary">📈 View Model Performance Graphs</a>
+      </div>
+    </section>
 
-    <!-- ═══ Tab Navigation (underline style) ═══ -->
-    <nav class="tabs">
-      <button class="tab-btn active" onclick="switchTab('overview')">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        Overview
-      </button>
-      <button class="tab-btn" onclick="switchTab('analyze')">
-        <svg viewBox="0 0 24 24"><path d="M11 4H4v14a2 2 0 002 2h14v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        Analyze a Dispute
-      </button>
-      <button class="tab-btn" onclick="switchTab('cases')">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-        Case Explorer
-      </button>
-      <button class="tab-btn" onclick="switchTab('performance')">
-        <svg viewBox="0 0 24 24"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
-        Model Performance
-      </button>
-      <button class="tab-btn" onclick="switchTab('monitoring')">
-        <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-        Monitoring
-      </button>
-      <button class="tab-btn" onclick="switchTab('guardrails')">
-        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Guardrails
-      </button>
-    </nav>
+    <!-- ═══════════════════════════════════════════════════════════════
+         SECTION 1: OVERVIEW & LIVE DISPUTE ANALYZER (UNIFIED FIRST PAGE)
+         ═══════════════════════════════════════════════════════════════ -->
+    <section id="overview-analyzer" class="content-section">
+      
+      <!-- Part 1A: Baseline Recovery Metrics -->
+      <div class="section-header-wrap">
+        <div class="section-tag">Executive Summary</div>
+        <h2 class="section-title">Net Financial Recovery &amp; Strategic Baselines</h2>
+        <p class="section-desc">A live evaluation comparing this system against naive representment strategies across held-out disputes.</p>
+      </div>
 
-    <!-- ═══ Tab 1: Overview ═══ -->
-    <div id="tab-overview" class="tab-panel active">
-      <h2 class="section-title">Overview</h2>
-      <p class="section-desc">A live snapshot of what this system is doing across all processed disputes, and what it's worth in ₹ compared to two naive strategies.</p>
-
-      <!-- Baseline comparison cards -->
       <div class="metric-grid">
         <div class="metric-card">
-          <div class="metric-label"><span class="metric-dot dot-danger"></span> Fight Everything (Naive)</div>
+          <div class="metric-header">
+            <span class="metric-label"><span class="metric-dot dot-danger"></span> Fight Everything (Naive)</span>
+          </div>
           <div class="metric-value" id="val-fight-everything">₹0</div>
-          <div class="metric-desc">Fights 100% of disputes blindly, regardless of evidence strength. Wastes ₹1,000 filing fee on every losing case.</div>
+          <div class="metric-desc">Fights 100% of disputes blindly. Wastes ₹1,000 filing fee on every losing case.</div>
         </div>
+
         <div class="metric-card">
-          <div class="metric-label"><span class="metric-dot dot-neutral"></span> Fight Nothing (Concede All)</div>
+          <div class="metric-header">
+            <span class="metric-label"><span class="metric-dot dot-neutral"></span> Fight Nothing (Concede All)</span>
+          </div>
           <div class="metric-value" id="val-fight-nothing">₹0</div>
           <div class="metric-desc">Forfeits 100% of disputable funds without review. Loses ₹350 in ops labor for every winnable case left on the table.</div>
         </div>
-        <div class="metric-card">
-          <div class="metric-label"><span class="metric-dot dot-success"></span> This System (Cost-Optimal)</div>
+
+        <div class="metric-card card-featured">
+          <div class="metric-header">
+            <span class="metric-label"><span class="metric-dot dot-success"></span> This System (Cost-Optimal)</span>
+          </div>
           <div class="metric-value" id="val-system-best">₹0</div>
           <div class="metric-desc">Uses calibrated confidence and evidence strength to auto-respond only on high-value, high-confidence cases.</div>
           <div class="delta-chip success" id="val-delta">+₹0 vs naive</div>
@@ -87,25 +99,10 @@
 
       <div class="callout">
         <span class="callout-icon">ⓘ</span>
-        <strong>What these numbers mean:</strong> Each strategy's value is calculated as: (correct auto-responses × ₹2,250 saved) − (incorrect auto-responses × ₹1,000 wasted) − (missed winning cases × ₹350 manual review cost). All cost figures are working modeling assumptions, not cited industry data.
+        <strong>What these numbers mean:</strong> Each strategy's value is calculated as: <em>(correct auto-responses × ₹2,250 saved) − (incorrect auto-responses × ₹1,000 wasted) − (missed winning cases × ₹350 manual review cost)</em>.
       </div>
 
-      <!-- Chart -->
-      <div class="card" style="margin-bottom: 24px;">
-        <div style="font-size:13px; font-weight:600; color:var(--color-text-secondary); margin-bottom:8px;">Net Recovery Comparison (INR)</div>
-        <div class="chart-container"><canvas id="chart-baseline"></canvas></div>
-        <div class="callout" style="margin-top:12px; margin-bottom:0;">
-          <span class="callout-icon">ⓘ</span> The green bar is the strategy this system actually recommends — it selectively auto-responds only when confidence and evidence both exceed threshold gates.
-        </div>
-      </div>
-
-      <!-- Scale extrapolation -->
-      <div class="scale-banner" id="scale-banner-text">
-        <span class="banner-chip">Illustrative</span>
-        <span>Loading scale extrapolation…</span>
-      </div>
-
-      <!-- KPI tiles -->
+      <!-- KPI Summary Row -->
       <div class="kpi-grid">
         <div class="kpi-tile">
           <div class="kpi-label">Reason-Code Accuracy</div>
@@ -129,319 +126,349 @@
         </div>
       </div>
 
-      <div class="callout">
-        <span class="callout-icon">ⓘ</span>
-        <strong>Reason-Code Accuracy</strong> tells you how often the model assigns the correct chargeback reason code on unseen test data. <strong>Win-Prediction AUC</strong> measures how well the evidence-strength score ranks disputes by likelihood of winning — 0.5 is random guessing, 1.0 is perfect ranking. These are separate capabilities: one identifies the dispute type, the other predicts the outcome.
-      </div>
-    </div>
-
-    <!-- ═══ Tab 2: Analyze a Dispute ═══ -->
-    <div id="tab-analyze" class="tab-panel">
-      <h2 class="section-title">Analyze a Dispute</h2>
-      <p class="section-desc">Submit a real dispute to see the full AI pipeline in action — classification, evidence retrieval, win prediction, and cost-optimal recommendation with step-by-step reasoning.</p>
-
-      <!-- Mode toggle -->
-      <div class="mode-toggle">
-        <button class="active" onclick="setAnalyzerMode('form')">Fill out a dispute</button>
-        <button onclick="setAnalyzerMode('json')">Paste raw JSON</button>
+      <!-- Scale Extrapolation Banner -->
+      <div class="scale-banner" id="scale-banner-text">
+        <span class="banner-chip">Scale Extrapolation</span>
+        <span>Loading metrics extrapolation…</span>
       </div>
 
-      <!-- Quick-fill presets -->
-      <div class="quickfill-row">
-        Quick-fill:
-        <button class="btn-secondary" onclick="loadPreset('strong')">Strong evidence example</button>
-        <button class="btn-secondary" onclick="loadPreset('weak')">Weak evidence example</button>
-      </div>
+      <!-- Part 1B: Interactive Live Dispute Analyzer (Right on First Page) -->
+      <div id="live-analyzer-form" style="scroll-margin-top: 90px; margin-top: 36px;">
+        <div class="section-header-wrap">
+          <div class="section-tag" style="background:var(--rzp-emerald-light); color:var(--rzp-emerald-text);">Interactive AI Pipeline</div>
+          <h2 class="section-title">Analyze a Dispute in Real-Time</h2>
+          <p class="section-desc">Customize dispute parameters and toggle evidence items below to watch the calibrated decision engine reason step-by-step.</p>
+        </div>
 
-      <div class="analyzer-layout">
-        <!-- Left: Input -->
-        <div>
-          <!-- FORM MODE -->
-          <div id="form-mode" class="card">
-            <div class="form-grid">
-              <div class="form-group">
-                <label for="f-amount">Dispute amount (₹)</label>
-                <input type="number" id="f-amount" value="12499" step="0.01" min="0">
-              </div>
-              <div class="form-group">
-                <label for="f-network">Card network</label>
-                <select id="f-network">
-                  <option value="Visa" selected>Visa</option>
-                  <option value="Mastercard">Mastercard</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="f-days">Days since transaction</label>
-                <div class="form-hint">How long after purchase was this disputed?</div>
-                <input type="number" id="f-days" value="35" min="0">
-              </div>
-              <div class="form-group">
-                <label for="f-category">Product category</label>
-                <select id="f-category">
-                  <option value="electronics" selected>Electronics</option>
-                  <option value="fashion">Fashion</option>
-                  <option value="grocery">Grocery</option>
-                  <option value="home">Home</option>
-                  <option value="books">Books</option>
-                  <option value="beauty">Beauty</option>
-                  <option value="sports">Sports</option>
-                  <option value="toys">Toys</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="f-shipping">Shipping method</label>
-                <select id="f-shipping">
-                  <option value="express" selected>Express</option>
-                  <option value="standard">Standard</option>
-                  <option value="same_day">Same day</option>
-                  <option value="pickup">Pickup</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="f-acct-age">Account age (days)</label>
-                <input type="number" id="f-acct-age" value="45" min="0">
-              </div>
-            </div>
-
-            <div class="form-section-label">Evidence Available</div>
-            <p style="font-size:12px; color:var(--color-text-tertiary); margin-bottom:12px;">Toggle each item ON if the merchant has this evidence on file:</p>
-            <div class="toggle-group">
-              <label class="toggle-item"><input type="checkbox" id="f-delivery" checked> Delivery confirmed</label>
-              <label class="toggle-item"><input type="checkbox" id="f-proof" checked> Proof of delivery on file</label>
-              <label class="toggle-item"><input type="checkbox" id="f-ip" checked> IP matches customer region</label>
-              <label class="toggle-item"><input type="checkbox" id="f-correspondence"> Customer correspondence</label>
-              <label class="toggle-item"><input type="checkbox" id="f-3ds" checked> 3D-Secure authentication</label>
-            </div>
-
-            <div style="margin-top:16px;">
-              <label style="font-size:13px; font-weight:600; color:var(--color-text-primary);">AVS/CVV match level</label>
-              <div class="radio-group">
-                <label class="radio-item"><input type="radio" name="avs" value="both_match" checked> Both match</label>
-                <label class="radio-item"><input type="radio" name="avs" value="avs_only"> AVS only</label>
-                <label class="radio-item"><input type="radio" name="avs" value="cvv_only"> CVV only</label>
-                <label class="radio-item"><input type="radio" name="avs" value="neither"> Neither</label>
-              </div>
-            </div>
-
-            <div class="form-section-label">Customer History</div>
-            <div class="form-grid">
-              <div class="form-group">
-                <label for="f-prior-disputes">Prior disputes</label>
-                <input type="number" id="f-prior-disputes" value="0" min="0">
-              </div>
-              <div class="form-group">
-                <label for="f-prior-orders">Prior completed orders</label>
-                <input type="number" id="f-prior-orders" value="3" min="0">
-              </div>
-            </div>
-
-            <div style="margin-top:20px;">
-              <button class="btn-primary" id="run-form-btn" onclick="analyzeFromForm()">Analyze Dispute</button>
-            </div>
+        <!-- Mode Toggle & Quick Fills -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+          <div class="mode-toggle">
+            <button class="active" onclick="setAnalyzerMode('form', this)">Fill out a dispute</button>
+            <button onclick="setAnalyzerMode('json', this)">Paste raw JSON</button>
           </div>
 
-          <!-- JSON MODE (hidden by default) -->
-          <div id="json-mode" class="card" style="display:none;">
-            <div class="form-group">
-              <label for="dispute-json-input">Dispute JSON Payload</label>
-              <textarea id="dispute-json-input" class="code-textarea" spellcheck="false" placeholder='Paste dispute JSON here, e.g.:\n{\n  "dispute_id": "DSP-2026-00142",\n  "dispute_amount": 12499.00,\n  "card_network": "Visa",\n  "days_to_dispute": 35,\n  ...\n}'></textarea>
-            </div>
-            <div id="json-error" style="display:none; margin-bottom:8px;"></div>
-            <button class="btn-primary" id="run-json-btn" onclick="analyzeFromJSON()">Validate &amp; Analyze</button>
+          <div class="quickfill-row" style="margin-bottom:0;">
+            <span>⚡ Quick-fill:</span>
+            <button class="btn-secondary" onclick="loadPreset('strong')">Strong Evidence Example (AUTO_SUBMIT)</button>
+            <button class="btn-secondary" onclick="loadPreset('weak')">Weak Evidence Example (HUMAN_REVIEW)</button>
           </div>
         </div>
 
-        <!-- Right: Output -->
-        <div>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-            <span style="font-size:12px; font-weight:700; color:var(--color-text-tertiary); text-transform:uppercase; letter-spacing:0.04em;">Pipeline Decision Output</span>
-            <span id="action-badge-container"></span>
-          </div>
+        <div class="analyzer-layout">
+          <!-- Left Column: Input Form -->
+          <div>
+            <!-- FORM MODE -->
+            <div id="form-mode" class="card">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="f-amount">Dispute amount (₹)</label>
+                  <input type="number" id="f-amount" value="12499" step="0.01" min="0">
+                </div>
+                <div class="form-group">
+                  <label for="f-network">Card network</label>
+                  <select id="f-network">
+                    <option value="Visa" selected>Visa</option>
+                    <option value="Mastercard">Mastercard</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="f-days">Days since transaction</label>
+                  <div class="form-hint">How long after purchase was this disputed?</div>
+                  <input type="number" id="f-days" value="35" min="0">
+                </div>
+                <div class="form-group">
+                  <label for="f-category">Product category</label>
+                  <select id="f-category">
+                    <option value="electronics" selected>Electronics</option>
+                    <option value="fashion">Fashion</option>
+                    <option value="grocery">Grocery</option>
+                    <option value="home">Home</option>
+                    <option value="books">Books</option>
+                    <option value="beauty">Beauty</option>
+                    <option value="sports">Sports</option>
+                    <option value="toys">Toys</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="f-shipping">Shipping method</label>
+                  <select id="f-shipping">
+                    <option value="express" selected>Express</option>
+                    <option value="standard">Standard</option>
+                    <option value="same_day">Same day</option>
+                    <option value="pickup">Pickup</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="f-acct-age">Account age (days)</label>
+                  <input type="number" id="f-acct-age" value="45" min="0">
+                </div>
+              </div>
 
-          <div id="pipeline-steps">
-            <div class="pipeline-step revealed" style="opacity:0.5; border-left-color:var(--color-border-strong);">
-              <div class="step-label">Waiting</div>
-              <div class="step-content">Fill out the form and click "Analyze Dispute" to see the step-by-step pipeline decision.</div>
+              <div class="form-section-label">Evidence Available On File</div>
+              <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Toggle each item ON if the merchant has this evidence on file:</p>
+              
+              <div class="toggle-group">
+                <label class="toggle-item"><input type="checkbox" id="f-delivery" checked> Delivery confirmed</label>
+                <label class="toggle-item"><input type="checkbox" id="f-proof" checked> Proof of delivery on file</label>
+                <label class="toggle-item"><input type="checkbox" id="f-ip" checked> IP matches customer region</label>
+                <label class="toggle-item"><input type="checkbox" id="f-correspondence"> Customer correspondence</label>
+                <label class="toggle-item"><input type="checkbox" id="f-3ds" checked> 3D-Secure authentication</label>
+              </div>
+
+              <div style="margin-top:16px;">
+                <label style="font-size:12px; font-weight:700; color:var(--rzp-navy-dark);">AVS / CVV Verification Match</label>
+                <div class="radio-group">
+                  <label class="radio-item"><input type="radio" name="avs" value="both_match" checked> Both match</label>
+                  <label class="radio-item"><input type="radio" name="avs" value="avs_only"> AVS only</label>
+                  <label class="radio-item"><input type="radio" name="avs" value="cvv_only"> CVV only</label>
+                  <label class="radio-item"><input type="radio" name="avs" value="neither"> Neither</label>
+                </div>
+              </div>
+
+              <div class="form-section-label">Customer History</div>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="f-prior-disputes">Prior disputes</label>
+                  <input type="number" id="f-prior-disputes" value="0" min="0">
+                </div>
+                <div class="form-group">
+                  <label for="f-prior-orders">Prior completed orders</label>
+                  <input type="number" id="f-prior-orders" value="3" min="0">
+                </div>
+              </div>
+
+              <div style="margin-top:20px;">
+                <button class="btn-primary" id="run-form-btn" onclick="analyzeFromForm()">⚡ Run AI Decision Pipeline</button>
+              </div>
+            </div>
+
+            <!-- JSON MODE -->
+            <div id="json-mode" class="card" style="display:none;">
+              <div class="form-group">
+                <label for="dispute-json-input">Dispute JSON Payload</label>
+                <textarea id="dispute-json-input" class="code-textarea" spellcheck="false" placeholder='Paste dispute JSON payload here...'></textarea>
+              </div>
+              <div id="json-error" style="display:none; margin-top:8px;"></div>
+              <div style="margin-top:16px;">
+                <button class="btn-primary" id="run-json-btn" onclick="analyzeFromJSON()">Validate &amp; Analyze</button>
+              </div>
             </div>
           </div>
 
-          <pre class="code-block" id="demo-result-output" style="margin-top:12px; max-height:220px;">// Full pipeline JSON output will appear here</pre>
+          <!-- Right Column: Staged Pipeline Decision Reveal Output -->
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <span style="font-size:12px; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;">Pipeline Decision Output</span>
+              <span id="action-badge-container"></span>
+            </div>
+
+            <div id="pipeline-steps">
+              <div class="pipeline-step revealed" style="opacity:0.6; border-left-color:var(--border-color-strong);">
+                <div class="step-label">Ready for Input</div>
+                <div class="step-content">Click <strong>"Run AI Decision Pipeline"</strong> to execute real-time classification, evidence rule-table retrieval, and calibrated win prediction.</div>
+              </div>
+            </div>
+
+            <pre class="code-block" id="demo-result-output" style="margin-top:12px; max-height:220px;">// Full pipeline JSON output will appear here</pre>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- ═══ Tab 3: Case Explorer ═══ -->
-    <div id="tab-cases" class="tab-panel">
-      <h2 class="section-title">Case Explorer</h2>
-      <p class="section-desc">Inspect individual disputes from the held-out test set to understand how the model classifies and scores each case.</p>
-      <div class="card">
-        <div class="form-group" style="max-width:400px; margin-bottom:16px;">
-          <label for="case-select">Select Dispute ID</label>
-          <select id="case-select" class="form-select" onchange="inspectCase(this.value)">
-            <option value="">Loading cases…</option>
-          </select>
-        </div>
-        <pre class="code-block" id="case-json-display">Select a dispute ID above to inspect its classification, evidence, and predicted outcome.</pre>
-      </div>
-    </div>
-
-    <!-- ═══ Tab 4: Model Performance ═══ -->
-    <div id="tab-performance" class="tab-panel">
-      <h2 class="section-title">Model Performance</h2>
-      <p class="section-desc">How well the reason-code classifier and win predictor perform on data the models never saw during training — this is what "honest metrics" means for this project.</p>
-
-      <div class="kpi-grid" style="margin-bottom:16px;">
-        <div class="kpi-tile">
-          <div class="kpi-label">Reason-Code Accuracy</div>
-          <div class="kpi-value" id="perf-acc">--</div>
-        </div>
-        <div class="kpi-tile">
-          <div class="kpi-label">Macro F1</div>
-          <div class="kpi-value" id="perf-f1">--</div>
-        </div>
-        <div class="kpi-tile">
-          <div class="kpi-label">Win Predictor AUC</div>
-          <div class="kpi-value" id="perf-win-auc">--</div>
-        </div>
+    <!-- ═══════════════════════════════════════════════════════════════
+         SECTION 2: MODEL PERFORMANCE (GRAPHS PLACED PROMINENTLY AT TOP)
+         ═══════════════════════════════════════════════════════════════ -->
+    <section id="model-performance" class="content-section">
+      <div class="section-header-wrap">
+        <div class="section-tag" style="background:var(--rzp-blue-light); color:var(--rzp-blue);">Model Evaluation</div>
+        <h2 class="section-title">Model Performance &amp; Decision Curves</h2>
+        <p class="section-desc">Performance metrics evaluated on held-out test data that the models never saw during training.</p>
       </div>
 
-      <div class="callout">
-        <span class="callout-icon">ⓘ</span>
-        <strong>Reason-Code Accuracy:</strong> Out of every 100 disputes, this is how many the model assigns to the correct reason code (10.4, 13.1, etc.) on unseen test data. <strong>Macro F1</strong> balances precision and recall equally across all reason codes, preventing the model from gaming accuracy by over-predicting common categories. <strong>Win Predictor AUC</strong> measures how well the dedicated outcome model separates winners from losers.
-      </div>
-
-      <h3 style="font-size:14px; font-weight:600; margin:20px 0 12px;">Per-Class Performance</h3>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Reason Code</th><th>Precision</th><th>Recall</th><th>F1-Score</th><th>Support</th></tr></thead>
-          <tbody id="per-class-tbody"><tr><td colspan="5" style="text-align:center;">Loading…</td></tr></tbody>
-        </table>
-      </div>
-
-      <div class="chart-row" style="margin-top:24px;">
+      <!-- HIGHER UP: The Two Core Visual Graphs Placed Right at the Top -->
+      <div class="chart-row">
         <div class="card">
-          <div style="font-size:13px; font-weight:600; color:var(--color-text-secondary); margin-bottom:8px;">Cost vs. Threshold Curve</div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <span style="font-size:14px; font-weight:800; color:var(--rzp-navy-dark);">Cost vs. Threshold Curve</span>
+            <span class="chip chip-success">Optimal Gate: 0.70</span>
+          </div>
           <div class="chart-container"><canvas id="chart-cost-curve"></canvas></div>
-          <div class="callout" style="margin-top:8px; margin-bottom:0;">
-            <span class="callout-icon">ⓘ</span> As the confidence threshold rises, fewer disputes are auto-responded (blue line falls) but those that are responded win more often (orange line rises). The green line shows net ₹ per dispute — the optimal operating point balances automation volume against accuracy.
+          <div class="callout" style="margin-top:10px; margin-bottom:0;">
+            <span class="callout-icon">ⓘ</span> As confidence threshold rises, fewer disputes are auto-responded (blue line) but win rate increases (orange line). The green line shows net ₹ per dispute, identifying the optimal operating point.
           </div>
         </div>
+
         <div class="card">
-          <div style="font-size:13px; font-weight:600; color:var(--color-text-secondary); margin-bottom:8px;">Feature Importances</div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <span style="font-size:14px; font-weight:800; color:var(--rzp-navy-dark);">Feature Importances (Top Signals)</span>
+            <span class="chip chip-neutral">LightGBM Gini Gain</span>
+          </div>
           <div class="chart-container"><canvas id="chart-features"></canvas></div>
-          <div class="callout" style="margin-top:8px; margin-bottom:0;">
-            <span class="callout-icon">ⓘ</span> Shows which transaction features the reason-code classifier relies on most. Higher values mean that feature contributes more to distinguishing between dispute types.
+          <div class="callout" style="margin-top:10px; margin-bottom:0;">
+            <span class="callout-icon">ⓘ</span> Account age, dispute amount, days to dispute, and order history are the strongest predictive signals for distinguishing chargeback reason codes.
           </div>
         </div>
       </div>
 
-      <h3 style="font-size:14px; font-weight:600; margin:20px 0 12px;">Cost-Sensitive Operating Point</h3>
-      <div class="card" style="margin-bottom:16px;">
-        <div class="form-group" style="max-width:400px;">
-          <label for="threshold-slider">Confidence Threshold Gate (<span id="threshold-val">0.70</span>)</label>
+      <!-- Interactive Cost-Sensitive Operating Point Slider -->
+      <div class="card" style="margin-bottom:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+          <div>
+            <h3 style="font-size:15px; font-weight:800; color:var(--rzp-navy-dark); margin-bottom:2px;">Interactive Operating Point Gate</h3>
+            <p style="font-size:12px; color:var(--text-secondary);">Drag the confidence gate to test how strict or lenient auto-respond routing should be:</p>
+          </div>
+          <div style="font-size:13px; font-weight:700; color:var(--rzp-blue); background:var(--rzp-blue-light); padding:4px 12px; border-radius:var(--radius-sm);">
+            Confidence Threshold: <span id="threshold-val">0.70</span>
+          </div>
+        </div>
+
+        <div style="max-width:480px; margin-bottom:18px;">
           <input type="range" id="threshold-slider" class="slider-input" min="0.50" max="0.95" step="0.05" value="0.70" oninput="updateCostPoint(this.value)">
         </div>
+
         <div class="kpi-grid" style="margin-bottom:0;">
           <div class="kpi-tile"><div class="kpi-label">Auto-Respond %</div><div class="kpi-value" id="cost-auto-pct">--</div></div>
           <div class="kpi-tile"><div class="kpi-label">Win Rate @ Gate</div><div class="kpi-value" id="cost-win-rate">--</div></div>
           <div class="kpi-tile"><div class="kpi-label">Net ₹ / Dispute</div><div class="kpi-value" id="cost-net-dispute">--</div></div>
         </div>
-        <p style="font-size:11px; color:var(--color-text-tertiary); margin-top:10px;">Cost figures: COST_FP = ₹1,000 · COST_FN = ₹350 · SAVINGS_TP = ₹2,250. These are working assumptions for decision optimization.</p>
       </div>
 
-      <h3 style="font-size:14px; font-weight:600; margin:20px 0 12px;">Cost Curve Data</h3>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Threshold</th><th>Auto %</th><th>Win Rate</th><th>TP</th><th>FP</th><th>FN</th><th>Net ₹</th><th>₹/Dispute</th></tr></thead>
-          <tbody id="cost-curve-tbody"><tr><td colspan="8" style="text-align:center;">Loading…</td></tr></tbody>
-        </table>
+      <!-- Per-Class Performance Table -->
+      <div class="card" style="margin-bottom:20px;">
+        <h3 style="font-size:14px; font-weight:800; color:var(--rzp-navy-dark); margin-bottom:12px;">Per-Class Reason Code Performance</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Reason Code</th><th>Precision</th><th>Recall</th><th>F1-Score</th><th>Support</th></tr></thead>
+            <tbody id="per-class-tbody"><tr><td colspan="5" style="text-align:center;">Loading…</td></tr></tbody>
+          </table>
+        </div>
       </div>
-    </div>
 
-    <!-- ═══ Tab 5: Monitoring ═══ -->
-    <div id="tab-monitoring" class="tab-panel">
-      <h2 class="section-title">Model Monitoring &amp; Drift Detection</h2>
-      <p class="section-desc">Tracks whether the incoming dispute mix or evidence quality is shifting away from what the model was trained on — an early-warning system, not a performance metric.</p>
+      <!-- Cost Curve Data Table -->
+      <div class="card">
+        <h3 style="font-size:14px; font-weight:800; color:var(--rzp-navy-dark); margin-bottom:12px;">Cost Curve Operating Threshold Breakdown</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Threshold</th><th>Auto %</th><th>Win Rate</th><th>TP</th><th>FP</th><th>FN</th><th>Net ₹</th><th>₹/Dispute</th></tr></thead>
+            <tbody id="cost-curve-tbody"><tr><td colspan="8" style="text-align:center;">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         SECTION 3: CASE EXPLORER
+         ═══════════════════════════════════════════════════════════════ -->
+    <section id="case-explorer" class="content-section">
+      <div class="section-header-wrap">
+        <div class="section-tag">Audit Inspector</div>
+        <h2 class="section-title">Case Explorer (Held-Out Test Cases)</h2>
+        <p class="section-desc">Select any dispute from the test set to inspect the input parameters, model predictions, evidence evaluation, and final outcome.</p>
+      </div>
+
+      <div class="card">
+        <div class="form-group" style="max-width:440px; margin-bottom:16px;">
+          <label for="case-select">Select Test Dispute Record</label>
+          <select id="case-select" class="form-select" onchange="inspectCase(this.value)">
+            <option value="">Loading test dispute cases…</option>
+          </select>
+        </div>
+        <pre class="code-block" id="case-json-display">Select a dispute ID above to inspect its classification, evidence, and predicted outcome.</pre>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         SECTION 4: MONITORING & DRIFT DETECTION
+         ═══════════════════════════════════════════════════════════════ -->
+    <section id="monitoring" class="content-section">
+      <div class="section-header-wrap">
+        <div class="section-tag" style="background:var(--rzp-emerald-light); color:var(--rzp-emerald-text);">Observability</div>
+        <h2 class="section-title">Model Health &amp; Concept Drift Tracking</h2>
+        <p class="section-desc">Tracks whether incoming dispute distributions, evidence completeness, or confidence levels are shifting away from training priors.</p>
+      </div>
 
       <div class="kpi-grid">
-        <div class="kpi-tile"><div class="kpi-label">Window Size</div><div class="kpi-value" id="mon-window">--</div></div>
+        <div class="kpi-tile"><div class="kpi-label">Rolling Window Size</div><div class="kpi-value" id="mon-window">--</div></div>
         <div class="kpi-tile"><div class="kpi-label">Avg Confidence</div><div class="kpi-value" id="mon-conf">--</div></div>
         <div class="kpi-tile"><div class="kpi-label">Avg Evidence Strength</div><div class="kpi-value" id="mon-evidence">--</div></div>
         <div class="kpi-tile"><div class="kpi-label">Avg Win Probability</div><div class="kpi-value" id="mon-winprob">--</div></div>
         <div class="kpi-tile"><div class="kpi-label">Auto-Submit Rate</div><div class="kpi-value" id="mon-autorate">--</div></div>
       </div>
 
-      <div class="callout">
-        <span class="callout-icon">ⓘ</span>
-        These rolling averages are computed over the last 200 predictions logged. If average confidence drops significantly below training-time baselines, it may indicate the incoming dispute population is shifting — a signal to investigate and potentially retrain.
-      </div>
-
       <div class="chart-row">
         <div class="card">
-          <div style="font-size:13px; font-weight:600; color:var(--color-text-secondary); margin-bottom:8px;">Reason Code Distribution (Recent)</div>
+          <div style="font-size:13px; font-weight:700; color:var(--rzp-navy-dark); margin-bottom:8px;">Reason Code Mix Distribution (Recent Stream)</div>
           <div class="chart-container"><canvas id="chart-mon-rc"></canvas></div>
         </div>
         <div class="card">
-          <div style="font-size:13px; font-weight:600; color:var(--color-text-secondary); margin-bottom:8px;">Action Distribution</div>
+          <div style="font-size:13px; font-weight:700; color:var(--rzp-navy-dark); margin-bottom:8px;">Decision Action Distribution (AUTO vs REVIEW)</div>
           <div class="chart-container"><canvas id="chart-mon-action"></canvas></div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- ═══ Tab 6: Guardrails ═══ -->
-    <div id="tab-guardrails" class="tab-panel">
-      <h2 class="section-title">Defense-Only Guardrails</h2>
-      <p class="section-desc">What this system will never do, and how it behaves on the cases it's expected to get wrong.</p>
-
-      <div class="table-wrap" style="margin-bottom:24px;">
-        <table>
-          <thead><tr><th>Guardrail</th><th>Implementation Detail</th></tr></thead>
-          <tbody>
-            <tr><td><strong>No Dispute Generation</strong></td><td>System only responds defensively to incoming chargeback webhooks — it never initiates or manufactures disputes.</td></tr>
-            <tr><td><strong>No PII Exposure</strong></td><td>100% synthetic data generated via Faker (Indian BFSI context). No real customer data is stored or logged.</td></tr>
-            <tr><td><strong>No Raw Card Data</strong></td><td>Card numbers are masked/tokenized upstream. System only accepts boolean match signals (avs_cvv_match).</td></tr>
-            <tr><td><strong>Auditable Evidence Rules</strong></td><td>Reason-code-to-evidence mapping is a deterministic rule table derived from published Visa/Mastercard representment specs.</td></tr>
-            <tr><td><strong>Kill Switch</strong></td><td>Set <code>AUTO_RESPOND_CONFIDENCE = 1.0</code> to instantly route 100% of disputes to human review.</td></tr>
-          </tbody>
-        </table>
+    <!-- ═══════════════════════════════════════════════════════════════
+         SECTION 5: GUARDRAILS & FAILURE MODES
+         ═══════════════════════════════════════════════════════════════ -->
+    <section id="guardrails" class="content-section">
+      <div class="section-header-wrap">
+        <div class="section-tag" style="background:var(--rzp-rose-light); color:var(--rzp-rose-text);">Security &amp; Compliance</div>
+        <h2 class="section-title">Defense-Only Guardrails &amp; Documented Failures</h2>
+        <p class="section-desc">Architectural constraints that guarantee security, zero PII exposure, and deterministic fallbacks.</p>
       </div>
 
-      <h2 class="section-title" style="margin-top:32px;">Documented Failure Modes</h2>
-      <p class="section-desc">The system is deliberately tested against cases it is expected to handle poorly, and its behavior in each case is documented rather than hidden.</p>
-
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Failure Mode</th><th>System Behavior</th><th>Why This Is the Right Behavior</th></tr></thead>
-          <tbody>
-            <tr>
-              <td><strong>Weak / Absent Evidence</strong></td>
-              <td><span class="chip chip-warning">HUMAN_REVIEW</span> — never auto-submitted</td>
-              <td>Auto-submit requires both confidence ≥ 70% and evidence strength ≥ 60% with ≥ 2 compelling pieces.</td>
-            </tr>
-            <tr>
-              <td><strong>Ambiguous Mixed-Signal</strong></td>
-              <td>Platt calibration keeps confidence low → routes to review</td>
-              <td>Platt scaling ensures confidence represents true probability, not a score the model arbitrarily pushed high.</td>
-            </tr>
-            <tr>
-              <td><strong>Unknown Reason Code</strong></td>
-              <td>Falls back to <code>generic.j2</code> with auto_respond_eligible = false</td>
-              <td>System fails closed, not open, on unrecognized inputs.</td>
-            </tr>
-            <tr>
-              <td><strong>High-Value + Strong Evidence</strong></td>
-              <td>Subject to standard threshold logic (no special-casing)</td>
-              <td>Prevents arbitrary human overrides when stakes are highest — the same rules apply regardless of amount.</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="card" style="margin-bottom:24px;">
+        <h3 style="font-size:14px; font-weight:800; color:var(--rzp-navy-dark); margin-bottom:12px;">Operational Guardrails</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Guardrail</th><th>Implementation Detail</th></tr></thead>
+            <tbody>
+              <tr><td><strong>No Dispute Generation</strong></td><td>System only responds defensively to incoming chargeback webhooks — it never initiates or manufactures disputes.</td></tr>
+              <tr><td><strong>No PII Exposure</strong></td><td>100% synthetic data generated via Faker (Indian BFSI context). No real customer data is stored or logged.</td></tr>
+              <tr><td><strong>No Raw Card Data</strong></td><td>Card numbers are masked/tokenized upstream. System only accepts boolean match signals (avs_cvv_match).</td></tr>
+              <tr><td><strong>Auditable Evidence Rules</strong></td><td>Reason-code-to-evidence mapping is a deterministic rule table derived from published Visa/Mastercard representment specs.</td></tr>
+              <tr><td><strong>Emergency Kill Switch</strong></td><td>Set <code>AUTO_RESPOND_CONFIDENCE = 1.0</code> to instantly route 100% of disputes to human review.</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
 
-    <!-- Footer -->
+      <div class="card">
+        <h3 style="font-size:14px; font-weight:800; color:var(--rzp-navy-dark); margin-bottom:12px;">Documented Failure Modes &amp; Handling</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Failure Mode</th><th>System Behavior</th><th>Why This Is the Right Behavior</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Weak / Absent Evidence</strong></td>
+                <td><span class="chip chip-warning">HUMAN_REVIEW</span> — never auto-submitted</td>
+                <td>Auto-submit requires both confidence ≥ 70% and evidence strength ≥ 60% with ≥ 2 compelling pieces.</td>
+              </tr>
+              <tr>
+                <td><strong>Ambiguous Mixed-Signal</strong></td>
+                <td>Platt calibration keeps confidence low → routes to review</td>
+                <td>Platt scaling ensures confidence represents true probability, not an uncalibrated heuristic score.</td>
+              </tr>
+              <tr>
+                <td><strong>Unknown Reason Code</strong></td>
+                <td>Falls back to <code>generic.j2</code> with auto_respond_eligible = false</td>
+                <td>System fails closed, not open, on unrecognized inputs.</td>
+              </tr>
+              <tr>
+                <td><strong>High-Value + Strong Evidence</strong></td>
+                <td>Subject to standard threshold logic (no special-casing)</td>
+                <td>Prevents arbitrary human overrides when stakes are highest — the same rules apply regardless of amount.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Footer ═══ -->
     <footer class="footer">
-      <p>Chargeback Intelligence Platform v2.0 · Razorpay AI Buildathon · Track 02: AI Risk Manager</p>
-      <p style="margin-top:4px;">Built with LightGBM, FastAPI, and vanilla HTML/CSS/JS · Deployed on <a href="https://vercel.com" target="_blank" rel="noopener">Vercel</a></p>
+      <p>Chargeback Intelligence &amp; Auto-Resolution Platform · Razorpay AI Buildathon · Track 02: AI Risk Manager</p>
+      <p style="margin-top:4px;">Built with LightGBM, FastAPI, and Vanilla HTML/CSS/JS · Deployed on <a href="https://vercel.com" target="_blank" rel="noopener">Vercel</a></p>
     </footer>
 
   </div>
