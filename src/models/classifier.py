@@ -84,6 +84,21 @@ class DisputeClassifier:
             },
         }
 
+    def predict_top_k(self, dispute: dict, k: int = 3) -> list:
+        """Return top-k predicted reason codes with calibrated confidence."""
+        row = pd.DataFrame([dispute])
+        X = self._encode(row)
+        probs = self.model.predict_proba(X)[0]
+        top_indices = probs.argsort()[::-1][:k]
+
+        return [
+            {
+                "reason_code": self.label_encoder.inverse_transform([idx])[0],
+                "confidence": float(probs[idx]),
+            }
+            for idx in top_indices
+        ]
+
     def predict_batch(self, df: pd.DataFrame) -> pd.DataFrame:
         """Vectorised prediction for a DataFrame. Returns predicted/confidence."""
         X = self._encode(df)

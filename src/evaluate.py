@@ -5,10 +5,12 @@ Computes:
   * Confusion matrix (PNG)
   * Calibration / reliability curve (PNG) - justifies the auto-respond threshold
   * End-to-end win-prediction AUC (evidence strength -> merchant_won)
+  * Win predictor model AUC (dedicated binary model)
   * Cost-sensitive threshold-vs-value curve (PNG + table)
   * Three-way baseline comparison: fight-everything / fight-nothing / this system
   * A rough scale extrapolation (see NOTE below — clearly labeled as illustrative)
   * results/metrics.json + results/predictions.csv
+  * Mock monitoring log entries for drift demonstration
 
 Usage:
     python -m src.evaluate --test-set data/disputes_test.csv --output results/
@@ -26,6 +28,7 @@ from sklearn.metrics import classification_report, confusion_matrix, roc_auc_sco
 from sklearn.calibration import calibration_curve
 
 from src.models.classifier import DisputeClassifier
+from src.models.win_predictor import WinPredictor
 from src.pipeline.evidence_retriever import retrieve_evidence
 
 
@@ -165,10 +168,59 @@ def plot_baseline_comparison(fight_everything, fight_nothing, system_best, out_p
     plt.close(fig)
 
 
+def train_win_predictor(train_path, val_path, model_path):
+    """Train the WinPredictor model and save it."""
+    train_df = pd.read_csv(train_path, dtype={"reason_code": str})
+    val_df = pd.read_csv(val_path, dtype={"reason_code": str})
+
+    wp = WinPredictor()
+    auc = wp.train(train_df, val_df)
+    wp.save(model_path)
+
+    print(f"WinPredictor validation AUC: {auc:.4f}")
+    print(f"WinPredictor saved to: {model_path}")
+    print("\nWin predictor feature importances:")
+    for feat, imp in list(wp.feature_importances().items())[:10]:
+        print(f"  {feat:32s} {imp:.1f}")
+    return auc, wp
+
+
+def generate_mock_monitoring_log(results_df, out_dir):
+    """Generate mock monitoring log entries for drift demonstration."""
+    from datetime import datetime, timedelta
+    log_path = os.path.join(out_dir, "monitoring_log.jsonl")
+
+    base_time = datetime.utcnow() - timedelta(hours=len(results_df) * 0.1)
+    with open(log_path, "w", encoding="utf-8") as f:
+        for i, (_, row) in enumerate(results_df.iterrows()):
+            ts = (base_time + timedelta(hours=i * 0.1)).isoformat() + "Z"
+            entry = {
+                "timestamp": ts,
+                "dispute_id": row.get("dispute_id", f"DSP-MOCK-{i:04d}"),
+                "reason_code": row.get("predicted", "unknown"),
+                "confidence": round(float(row.get("confidence", 0.5)), 4),
+                "evidence_strength": round(float(row.get("evidence_strength", 0.5)), 4),
+                "win_probability": round(float(row.get("confidence", 0.5) * 0.8), 4),
+                "expected_value_inr": round(float(row.get("confidence", 0.5) * 1500 - 500), 2),
+                "action": "AUTO_SUBMIT" if row.get("confidence", 0) >= 0.70 else "HUMAN_REVIEW",
+            }
+            f.write(json.dumps(entry) + "\n")
+    print(f"Mock monitoring log written: {log_path} ({len(results_df)} entries)")
+
+
 def main(test_path="data/disputes_test.csv", model_path="models/classifier.pkl",
-         out_dir="results"):
+         out_dir="results", train_path="data/disputes_train.csv",
+         val_path="data/disputes_val.csv"):
     os.makedirs(out_dir, exist_ok=True)
     test_df = pd.read_csv(test_path, dtype={"reason_code": str})
+
+    # Train Win Predictor if not already trained
+    win_model_path = "models/win_predictor.pkl"
+    win_auc_dedicated = float("nan")
+    try:
+        win_auc_dedicated, _ = train_win_predictor(train_path, val_path, win_model_path)
+    except Exception as e:
+        print(f"Warning: WinPredictor training failed: {e}")
 
     results, clf = build_results(test_df, model_path)
     results.to_csv(os.path.join(out_dir, "predictions.csv"), index=False)
@@ -224,6 +276,7 @@ def main(test_path="data/disputes_test.csv", model_path="models/classifier.pkl",
         "macro_recall": round(report["macro avg"]["recall"], 4),
         "macro_f1": round(report["macro avg"]["f1-score"], 4),
         "win_prediction_auc": round(win_auc, 4),
+        "win_predictor_dedicated_auc": round(win_auc_dedicated, 4) if not np.isnan(win_auc_dedicated) else None,
         "per_class": {k: v for k, v in report.items() if k in labels},
         "cost_curve": curve,
         "best_operating_point": best_row,
@@ -239,6 +292,9 @@ def main(test_path="data/disputes_test.csv", model_path="models/classifier.pkl",
     with open(os.path.join(out_dir, "metrics.json"), "w") as fh:
         json.dump(metrics, fh, indent=2)
 
+    # Generate mock monitoring log for demo
+    generate_mock_monitoring_log(results, out_dir)
+
     print("=" * 60)
     print("EVALUATION SUMMARY (held-out test set)")
     print("=" * 60)
@@ -247,6 +303,8 @@ def main(test_path="data/disputes_test.csv", model_path="models/classifier.pkl",
     print(f"Macro F1:                {metrics['macro_f1']:.3f}")
     print(f"Macro precision/recall:  {metrics['macro_precision']:.3f} / {metrics['macro_recall']:.3f}")
     print(f"Win-prediction AUC:      {metrics['win_prediction_auc']:.3f}")
+    if metrics.get("win_predictor_dedicated_auc"):
+        print(f"Win predictor (dedicated) AUC: {metrics['win_predictor_dedicated_auc']:.3f}")
     print("\nThreshold curve:")
     print(curve_df.to_string(index=False))
     print(f"\nBest operating point @ threshold {best_row['threshold']}: "
@@ -264,5 +322,7 @@ if __name__ == "__main__":
     ap.add_argument("--test-set", default="data/disputes_test.csv")
     ap.add_argument("--model", default="models/classifier.pkl")
     ap.add_argument("--output", default="results")
+    ap.add_argument("--train-set", default="data/disputes_train.csv")
+    ap.add_argument("--val-set", default="data/disputes_val.csv")
     args = ap.parse_args()
-    main(args.test_set, args.model, args.output)
+    main(args.test_set, args.model, args.output, args.train_set, args.val_set)

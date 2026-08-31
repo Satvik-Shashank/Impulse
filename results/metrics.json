@@ -11,6 +11,7 @@
   "macro_recall": 0.3728,
   "macro_f1": 0.3462,
   "win_prediction_auc": 0.7319,
+  "win_predictor_dedicated_auc": 0.7831,
   "per_class": {
     "10.4": {
       "precision": 0.7338129496402878,

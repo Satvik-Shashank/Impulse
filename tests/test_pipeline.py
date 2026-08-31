@@ -8,7 +8,8 @@ def test_end_to_end(trained_model):
     responder = ChargebackResponder(trained_model)
     dispute = build_dataset(n=1).iloc[0].to_dict()
     result = responder.process(dispute)
-    assert set(result.keys()) == {"dispute_id", "classification", "evidence", "response"}
+    expected_keys = {"dispute_id", "classification", "evidence", "response", "win_probability", "expected_value_inr", "reasoning"}
+    assert expected_keys.issubset(set(result.keys()))
     assert result["response"]["action"] in {"AUTO_SUBMIT", "HUMAN_REVIEW"}
     assert isinstance(result["response"]["response_text"], str)
     assert result["response"]["response_text"].strip() != ""
