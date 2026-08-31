@@ -200,11 +200,23 @@ function switchTab(tabId, btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
 
-  if (btn) btn.classList.add('active');
+  // Find and activate the correct navbar button
+  // Map tabId to navbar button index for reliable sync
+  const tabIndexMap = { 'home': 0, 'performance': 1, 'cases': 2, 'monitoring': 3, 'guardrails': 4 };
+  const navButtons = document.querySelectorAll('.tabs-nav .tab-btn');
+  if (btn && btn.classList.contains('tab-btn')) {
+    btn.classList.add('active');
+  } else if (tabIndexMap[tabId] !== undefined && navButtons[tabIndexMap[tabId]]) {
+    navButtons[tabIndexMap[tabId]].classList.add('active');
+  }
+
   const panel = document.getElementById(`tab-${tabId}`);
   if (panel) {
     panel.classList.add('active');
   }
+
+  // Scroll to top when switching tabs
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 
   if (tabId === 'performance') {
     setTimeout(renderPerformanceCharts, 50);

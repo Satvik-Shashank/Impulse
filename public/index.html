@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Impulse — Autonomous Dispute Defense Platform</title>
-  <meta name="description" content="Autonomous chargeback defense platform with cost-sensitive calibrated confidence and deterministic evidence retrieval">
+  <meta name="description"
+    content="Autonomous chargeback defense platform with cost-sensitive calibrated confidence and deterministic evidence retrieval">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
+
 <body>
   <div class="app-wrapper">
 
@@ -34,7 +37,8 @@
     <main id="tab-home" class="tab-panel active">
       <!-- Signature Flowing Silk Stripe Ribbon (Textured SVG Layers) -->
       <div class="stripe-pulsing-ribbon">
-        <svg class="flowing-silk-svg" viewBox="0 0 1600 700" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <svg class="flowing-silk-svg" viewBox="0 0 1600 700" fill="none" preserveAspectRatio="none"
+          xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="silk-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#7B73FE" stop-opacity="0.9" />
@@ -62,24 +66,34 @@
           <rect width="1600" height="700" fill="url(#silk-grad-1)" opacity="0.9" />
 
           <!-- Curved Layer 1: Flowing Lavender/Purple Silk Fold -->
-          <path class="silk-wave-layer layer-1" d="M0,0 L1600,0 L1600,480 C1350,560 1100,380 850,520 C600,660 300,420 0,550 Z" fill="url(#silk-grad-1)" opacity="0.8" />
+          <path class="silk-wave-layer layer-1"
+            d="M0,0 L1600,0 L1600,480 C1350,560 1100,380 850,520 C600,660 300,420 0,550 Z" fill="url(#silk-grad-1)"
+            opacity="0.8" />
 
           <!-- Curved Layer 2: Folded Magenta/Pink Translucent Silk -->
-          <path class="silk-wave-layer layer-2" d="M0,120 C350,80 650,340 950,220 C1250,100 1450,290 1600,240 L1600,680 C1320,620 1020,480 720,600 C420,720 180,520 0,640 Z" fill="url(#silk-grad-2)" opacity="0.88" />
+          <path class="silk-wave-layer layer-2"
+            d="M0,120 C350,80 650,340 950,220 C1250,100 1450,290 1600,240 L1600,680 C1320,620 1020,480 720,600 C420,720 180,520 0,640 Z"
+            fill="url(#silk-grad-2)" opacity="0.88" />
 
           <!-- Curved Layer 3: Radiant Sunset Orange & Amber Silk Crest -->
-          <path class="silk-wave-layer layer-3" d="M200,60 C550,20 850,240 1180,140 C1400,70 1520,180 1600,160 L1600,650 C1380,570 1150,440 900,530 C650,620 400,480 200,560 Z" fill="url(#silk-grad-3)" opacity="0.85" />
+          <path class="silk-wave-layer layer-3"
+            d="M200,60 C550,20 850,240 1180,140 C1400,70 1520,180 1600,160 L1600,650 C1380,570 1150,440 900,530 C650,620 400,480 200,560 Z"
+            fill="url(#silk-grad-3)" opacity="0.85" />
 
           <!-- Curved Layer 4: Luminous Sheen Highlight Fold -->
-          <path class="silk-wave-layer layer-sheen" d="M100,80 C400,40 750,280 1100,170 C1350,90 1500,210 1600,190 L1600,320 C1420,280 1200,180 980,260 C700,360 400,160 100,220 Z" fill="url(#silk-grad-sheen)" />
+          <path class="silk-wave-layer layer-sheen"
+            d="M100,80 C400,40 750,280 1100,170 C1350,90 1500,210 1600,190 L1600,320 C1420,280 1200,180 980,260 C700,360 400,160 100,220 Z"
+            fill="url(#silk-grad-sheen)" />
         </svg>
       </div>
-      
+
       <!-- Hero Header (Editorial Modern Grotesk) -->
       <div class="hero-header">
-        <h1>Automate <span class="accent-white-glow">chargeback defense</span> with <span class="accent-white-glow">calibrated intelligence</span></h1>
-        <p>When a customer disputes a charge, Impulse automatically decides whether to fight or accept it — saving you money on every dispute.</p>
-        
+        <h1>Automate <span class="accent-white-glow">chargeback defense</span> with <span
+            class="accent-white-glow">calibrated intelligence</span></h1>
+        <p>When a customer disputes a charge, Impulse automatically decides whether to fight or accept it — saving you
+          money on every dispute.</p>
+
         <!-- Quick Action CTAs -->
         <div class="hero-cta-group">
           <button class="btn-hero-primary" onclick="scrollToAnalyzer()">
@@ -100,17 +114,21 @@
             <div class="payment-row-slider-viewport">
               <div class="payment-row-track track-top">
                 <div class="pay-badge-tile"><span class="pay-badge-icon badge-visa">VISA</span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-mc"><span class="mc-c1"></span><span class="mc-c2"></span>mastercard</span></div>
+                <div class="pay-badge-tile"><span class="pay-badge-icon badge-mc"><span class="mc-c1"></span><span
+                      class="mc-c2"></span>mastercard</span></div>
                 <div class="pay-badge-tile"><span class="pay-badge-icon badge-paypal"><i>Pay</i><i>Pal</i></span></div>
                 <div class="pay-badge-tile"><span class="pay-badge-icon badge-apple"> Pay</span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-gpay"><span style="color:#4285F4">G</span> <span style="color:#5F6368">Pay</span></span></div>
+                <div class="pay-badge-tile"><span class="pay-badge-icon badge-gpay"><span style="color:#4285F4">G</span>
+                    <span style="color:#5F6368">Pay</span></span></div>
                 <div class="pay-badge-tile"><span class="pay-badge-icon badge-stripe">stripe</span></div>
                 <!-- Duplicate for seamless continuous loop -->
                 <div class="pay-badge-tile"><span class="pay-badge-icon badge-visa">VISA</span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-mc"><span class="mc-c1"></span><span class="mc-c2"></span>mastercard</span></div>
+                <div class="pay-badge-tile"><span class="pay-badge-icon badge-mc"><span class="mc-c1"></span><span
+                      class="mc-c2"></span>mastercard</span></div>
                 <div class="pay-badge-tile"><span class="pay-badge-icon badge-paypal"><i>Pay</i><i>Pal</i></span></div>
                 <div class="pay-badge-tile"><span class="pay-badge-icon badge-apple"> Pay</span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-gpay"><span style="color:#4285F4">G</span> <span style="color:#5F6368">Pay</span></span></div>
+                <div class="pay-badge-tile"><span class="pay-badge-icon badge-gpay"><span style="color:#4285F4">G</span>
+                    <span style="color:#5F6368">Pay</span></span></div>
                 <div class="pay-badge-tile"><span class="pay-badge-icon badge-stripe">stripe</span></div>
               </div>
             </div>
@@ -120,14 +138,16 @@
               <div class="payment-row-track track-bottom">
                 <div class="pay-badge-tile"><span class="pay-badge-icon badge-amex">AMEX</span></div>
                 <div class="pay-badge-tile"><span class="pay-badge-icon badge-discover">DISCOVER</span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-amazon">amazon<span style="color:#FF9900">pay</span></span></div>
+                <div class="pay-badge-tile"><span class="pay-badge-icon badge-amazon">amazon<span
+                      style="color:#FF9900">pay</span></span></div>
                 <div class="pay-badge-tile"><span class="pay-badge-icon badge-alipay">Alipay</span></div>
                 <div class="pay-badge-tile"><span class="pay-badge-icon badge-payoneer">Payoneer</span></div>
                 <div class="pay-badge-tile"><span class="pay-badge-icon badge-bitcoin">₿ bitcoin</span></div>
                 <!-- Duplicate for seamless continuous loop -->
                 <div class="pay-badge-tile"><span class="pay-badge-icon badge-amex">AMEX</span></div>
                 <div class="pay-badge-tile"><span class="pay-badge-icon badge-discover">DISCOVER</span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-amazon">amazon<span style="color:#FF9900">pay</span></span></div>
+                <div class="pay-badge-tile"><span class="pay-badge-icon badge-amazon">amazon<span
+                      style="color:#FF9900">pay</span></span></div>
                 <div class="pay-badge-tile"><span class="pay-badge-icon badge-alipay">Alipay</span></div>
                 <div class="pay-badge-tile"><span class="pay-badge-icon badge-payoneer">Payoneer</span></div>
                 <div class="pay-badge-tile"><span class="pay-badge-icon badge-bitcoin">₿ bitcoin</span></div>
@@ -141,14 +161,16 @@
           <div>
             <div class="inspector-header-row">
               <span class="inspector-step-badge" id="insp-step-badge">Interactive Pipeline Demo</span>
-              <span style="font-size:11px; font-weight:700; color:var(--text-muted);" id="insp-step-counter">Ready</span>
+              <span style="font-size:11px; font-weight:700; color:var(--text-muted);"
+                id="insp-step-counter">Ready</span>
             </div>
-            
+
             <div id="insp-content-box" class="inspector-content-box">
               <div class="inspector-title" id="insp-title">Live Transaction Simulation</div>
-              <div class="inspector-desc" id="insp-desc">Click "Run Live Simulation" to watch Impulse ingest dispute webhooks, execute calibrated classification, and verify representment rules in real time.</div>
+              <div class="inspector-desc" id="insp-desc">Click "Run Live Simulation" to watch Impulse ingest dispute
+                webhooks, execute calibrated classification, and verify representment rules in real time.</div>
             </div>
-            
+
             <div class="inspector-progress-bar-track">
               <div class="inspector-progress-bar-fill" id="insp-progress-fill" style="width: 0%;"></div>
             </div>
@@ -159,8 +181,10 @@
               Run Live Simulation
             </button>
             <div style="display:flex; gap:6px;">
-              <button class="btn-secondary" style="padding:5px 10px; font-size:11px;" onclick="stepSimulation(-1)">Prev</button>
-              <button class="btn-secondary" style="padding:5px 10px; font-size:11px;" onclick="stepSimulation(1)">Next</button>
+              <button class="btn-secondary" style="padding:5px 10px; font-size:11px;"
+                onclick="stepSimulation(-1)">Prev</button>
+              <button class="btn-secondary" style="padding:5px 10px; font-size:11px;"
+                onclick="stepSimulation(1)">Next</button>
             </div>
           </div>
         </div>
@@ -170,24 +194,29 @@
       <div class="section-title-wrap">
         <div class="section-label-tag">Financial Impact Analysis</div>
         <h2 class="section-title">Net Recovery Comparison Across 3 Strategies</h2>
-        <p class="section-desc">Evaluated on a held-out test split of 750 disputes. Illustrates the financial outcome of automated risk decisions versus unmanaged policies.</p>
+        <p class="section-desc">Evaluated on a held-out test split of 750 disputes. Illustrates the financial outcome of
+          automated risk decisions versus unmanaged policies.</p>
       </div>
 
       <div class="metric-grid">
         <div class="metric-card">
           <div class="metric-header">
-            <span class="metric-tag"><span class="status-indicator-dot dot-danger"></span> Strategy A: Fight Everything</span>
+            <span class="metric-tag"><span class="status-indicator-dot dot-danger"></span> Strategy A: Fight
+              Everything</span>
           </div>
           <div class="metric-value" id="val-fight-everything">₹6,71,000</div>
-          <div class="metric-desc">Contests 100% of disputes blindly. Recovers won cases, but wastes filing fees and manual labor on every losing case.</div>
+          <div class="metric-desc">Contests 100% of disputes blindly. Recovers won cases, but wastes filing fees and
+            manual labor on every losing case.</div>
         </div>
 
         <div class="metric-card">
           <div class="metric-header">
-            <span class="metric-tag"><span class="status-indicator-dot dot-danger"></span> Strategy B: Fight Nothing</span>
+            <span class="metric-tag"><span class="status-indicator-dot dot-danger"></span> Strategy B: Fight
+              Nothing</span>
           </div>
           <div class="metric-value" id="val-fight-nothing">-₹1,71,500</div>
-          <div class="metric-desc">Concedes 100% of disputes. Forfeits all recoverable funds while incurring dispute processing and logging overhead.</div>
+          <div class="metric-desc">Concedes 100% of disputes. Forfeits all recoverable funds while incurring dispute
+            processing and logging overhead.</div>
         </div>
 
         <div class="metric-card highlight">
@@ -195,8 +224,10 @@
             <span class="metric-tag"><span class="status-indicator-dot dot-success"></span> Strategy C: Impulse</span>
           </div>
           <div class="metric-value" id="val-system-best">₹9,43,450</div>
-          <div class="metric-desc">Auto-submits verified high-confidence cases with complete evidence, saves filing fees on unwinnable claims, and routes borderline cases to human review.</div>
-          <div id="val-delta" style="font-size:11px; font-weight:700; color:var(--brand-emerald-text); margin-top:6px;">+₹2,72,450 higher net recovery vs naive fighting</div>
+          <div class="metric-desc">Auto-submits verified high-confidence cases with complete evidence, saves filing fees
+            on unwinnable claims, and routes borderline cases to human review.</div>
+          <div id="val-delta" style="font-size:11px; font-weight:700; color:var(--brand-emerald-text); margin-top:6px;">
+            +₹2,72,450 higher net recovery vs naive fighting</div>
         </div>
       </div>
 
@@ -216,7 +247,8 @@
             <div class="spec-card-tag">What It Does</div>
             <div class="spec-card-title">Reads &amp; Classifies Disputes</div>
             <div class="spec-card-desc">
-              When a chargeback arrives, Impulse identifies <strong>why the customer disputed</strong> (fraud, item not received, defective, etc.) and assigns a confidence score.
+              When a chargeback arrives, Impulse identifies <strong>why the customer disputed</strong> (fraud, item not
+              received, defective, etc.) and assigns a confidence score.
             </div>
           </div>
 
@@ -225,7 +257,8 @@
             <div class="spec-card-tag">Training Data</div>
             <div class="spec-card-title">5,000 Simulated Transactions</div>
             <div class="spec-card-desc">
-              Trained on synthetic Indian e-commerce payment data covering <strong>Visa &amp; Mastercard</strong> dispute categories. No real customer data is used.
+              Trained on synthetic Indian e-commerce payment data covering <strong>Visa &amp; Mastercard</strong>
+              dispute categories. No real customer data is used.
             </div>
           </div>
 
@@ -234,7 +267,8 @@
             <div class="spec-card-tag">What It Checks</div>
             <div class="spec-card-title">14 Signals Per Transaction</div>
             <div class="spec-card-desc">
-              Looks at order amount, delivery proof, customer history, payment authentication (3DS/OTP), and address verification to build a defense case.
+              Looks at order amount, delivery proof, customer history, payment authentication (3DS/OTP), and address
+              verification to build a defense case.
             </div>
           </div>
 
@@ -243,7 +277,8 @@
             <div class="spec-card-tag">The Outcome</div>
             <div class="spec-card-title">Fight Smart, Save Money</div>
             <div class="spec-card-desc">
-              Only fights disputes it can win. Saves <strong>₹1,000 per bad fight avoided</strong> and recovers <strong>₹2,250+ per auto-won case</strong>. Borderline cases go to human review.
+              Only fights disputes it can win. Saves <strong>₹1,000 per bad fight avoided</strong> and recovers
+              <strong>₹2,250+ per auto-won case</strong>. Borderline cases go to human review.
             </div>
           </div>
         </div>
@@ -281,7 +316,8 @@
       <!-- Scale Banner -->
       <div class="scale-banner" id="scale-banner-text">
         <span class="banner-chip">Scale Projection</span>
-        <span>Extrapolates measured net value per dispute across annual dispute volumes. Calculated from experimental evaluation data.</span>
+        <span>Extrapolates measured net value per dispute across annual dispute volumes. Calculated from experimental
+          evaluation data.</span>
       </div>
 
       <!-- Part 2: Interactive Live Dispute Analyzer Form -->
@@ -289,17 +325,20 @@
         <div class="section-title-wrap">
           <div class="section-label-tag">Interactive Evaluation</div>
           <h2 class="section-title">Live Dispute Analyzer &amp; Decision Pipeline</h2>
-          <p class="section-desc">Submit a dispute payload or adjust parameters below to run the end-to-end classification, evidence retrieval, and calibrated decision engine.</p>
+          <p class="section-desc">Submit a dispute payload or adjust parameters below to run the end-to-end
+            classification, evidence retrieval, and calibrated decision engine.</p>
         </div>
 
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+        <div
+          style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
           <div class="mode-segmented-bar">
             <button class="mode-segmented-btn active" onclick="setAnalyzerMode('form', this)">Structured Form</button>
             <button class="mode-segmented-btn" onclick="setAnalyzerMode('json', this)">Raw JSON</button>
           </div>
 
           <div class="quickfill-btn-group">
-            <span style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Quick Presets:</span>
+            <span style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Quick
+              Presets:</span>
             <button class="btn-secondary" onclick="loadPreset('strong')">Strong Evidence (Auto-Submit)</button>
             <button class="btn-secondary" onclick="loadPreset('weak')">Weak Evidence (Human Review)</button>
           </div>
@@ -356,20 +395,24 @@
               </div>
 
               <div class="form-section-divider">Evidence Checklist on File</div>
-              <p style="font-size:11px; color:var(--text-muted); margin-bottom:10px;">Select verified merchant documentation available for representment:</p>
-              
+              <p style="font-size:11px; color:var(--text-muted); margin-bottom:10px;">Select verified merchant
+                documentation available for representment:</p>
+
               <div class="toggle-grid">
                 <label class="toggle-card"><input type="checkbox" id="f-delivery" checked> Delivery confirmed</label>
-                <label class="toggle-card"><input type="checkbox" id="f-proof" checked> Proof of delivery signature</label>
+                <label class="toggle-card"><input type="checkbox" id="f-proof" checked> Proof of delivery
+                  signature</label>
                 <label class="toggle-card"><input type="checkbox" id="f-ip" checked> IP matches billing region</label>
                 <label class="toggle-card"><input type="checkbox" id="f-correspondence"> Customer correspondence</label>
                 <label class="toggle-card"><input type="checkbox" id="f-3ds" checked> 3D-Secure authenticated</label>
               </div>
 
               <div style="margin-top:14px;">
-                <label style="font-size:12px; font-weight:700; color:var(--brand-navy-dark);">AVS / CVV Match Verification</label>
+                <label style="font-size:12px; font-weight:700; color:var(--brand-navy-dark);">AVS / CVV Match
+                  Verification</label>
                 <div class="radio-pill-group">
-                  <label class="radio-pill-item"><input type="radio" name="avs" value="both_match" checked> Both match</label>
+                  <label class="radio-pill-item"><input type="radio" name="avs" value="both_match" checked> Both
+                    match</label>
                   <label class="radio-pill-item"><input type="radio" name="avs" value="avs_only"> AVS only</label>
                   <label class="radio-pill-item"><input type="radio" name="avs" value="cvv_only"> CVV only</label>
                   <label class="radio-pill-item"><input type="radio" name="avs" value="neither"> Neither match</label>
@@ -389,7 +432,8 @@
               </div>
 
               <div style="margin-top:18px;">
-                <button class="btn-submit-action" id="run-form-btn" onclick="analyzeFromForm()">Run AI Decision Pipeline</button>
+                <button class="btn-submit-action" id="run-form-btn" onclick="analyzeFromForm()">Run AI Decision
+                  Pipeline</button>
               </div>
             </div>
 
@@ -397,25 +441,32 @@
             <div id="json-mode" class="card" style="display:none;">
               <div class="form-group">
                 <label for="dispute-json-input">Dispute JSON Payload</label>
-                <textarea id="dispute-json-input" class="code-textarea" spellcheck="false" placeholder='Paste dispute JSON payload here...'></textarea>
+                <textarea id="dispute-json-input" class="code-textarea" spellcheck="false"
+                  placeholder='Paste dispute JSON payload here...'></textarea>
               </div>
               <div id="json-error" style="display:none; margin-top:8px;"></div>
               <div style="margin-top:14px;">
-                <button class="btn-submit-action" id="run-json-btn" onclick="analyzeFromJSON()">Validate &amp; Analyze</button>
+                <button class="btn-submit-action" id="run-json-btn" onclick="analyzeFromJSON()">Validate &amp;
+                  Analyze</button>
               </div>
             </div>
 
             <!-- About Dataset Card -->
             <div class="card" style="margin-top:14px; background:var(--bg-surface-subtle);">
-              <div style="font-size:12px; font-weight:700; color:var(--brand-navy-dark); margin-bottom:4px;">About the Evaluation Dataset</div>
-              <p style="font-size:11px; color:var(--text-secondary); line-height:1.5;">The model is trained on 5,000 synthetic transaction records calibrated to Indian e-commerce merchant patterns and Visa/Mastercard reason-code specifications (10.4, 13.1, 4837, etc.). No real cardholder PII is used.</p>
+              <div style="font-size:12px; font-weight:700; color:var(--brand-navy-dark); margin-bottom:4px;">About the
+                Evaluation Dataset</div>
+              <p style="font-size:11px; color:var(--text-secondary); line-height:1.5;">The model is trained on 5,000
+                synthetic transaction records calibrated to Indian e-commerce merchant patterns and Visa/Mastercard
+                reason-code specifications (10.4, 13.1, 4837, etc.). No real cardholder PII is used.</p>
             </div>
           </div>
 
           <!-- Right Column: Staged Output -->
           <div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-              <span style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em;">Pipeline Decision Output</span>
+              <span
+                style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em;">Pipeline
+                Decision Output</span>
               <span id="action-badge-container"></span>
             </div>
 
@@ -425,13 +476,18 @@
                   <span class="step-number-pill">Awaiting Submission</span>
                   <span style="font-size:11px; font-weight:700; color:var(--text-muted);">Step 0 of 4</span>
                 </div>
-                <div class="plain-text-desc">Fill in or select dispute attributes on the left and click <strong>"Run AI Decision Pipeline"</strong> to execute automated defense analysis.</div>
+                <div class="plain-text-desc">Fill in or select dispute attributes on the left and click <strong>"Run AI
+                    Decision Pipeline"</strong> to execute automated defense analysis.</div>
               </div>
             </div>
 
-            <details style="margin-top:14px; background:var(--bg-surface-sunken); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:10px 14px;">
-              <summary style="font-size:12px; font-weight:700; color:var(--text-muted); cursor:pointer; user-select:none;">Developer &amp; Audit Payload (Raw JSON)</summary>
-              <pre class="code-block" id="demo-result-output" style="margin-top:10px; max-height:220px;">// Complete decision payload JSON will appear here</pre>
+            <details
+              style="margin-top:14px; background:var(--bg-surface-sunken); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:10px 14px;">
+              <summary
+                style="font-size:12px; font-weight:700; color:var(--text-muted); cursor:pointer; user-select:none;">
+                Developer &amp; Audit Payload (Raw JSON)</summary>
+              <pre class="code-block" id="demo-result-output"
+                style="margin-top:10px; max-height:220px;">// Complete decision payload JSON will appear here</pre>
             </details>
           </div>
         </div>
@@ -455,7 +511,8 @@
           <div class="graph-highlight-card">
             <div>
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <span style="font-size:15px; font-weight:800; color:var(--brand-navy-dark);">Cost vs. Threshold Curve</span>
+                <span style="font-size:15px; font-weight:800; color:var(--brand-navy-dark);">Cost vs. Threshold
+                  Curve</span>
                 <span class="chip chip-success">Cost-Optimal Gate: 0.50</span>
               </div>
               <div class="chart-container"><canvas id="chart-cost-curve"></canvas></div>
@@ -463,10 +520,15 @@
             <div class="graph-explainer-box">
               <div class="graph-explainer-title">Curve Guide &amp; Financial Optimization</div>
               <ul class="graph-explainer-list">
-                <li><strong>Net ₹ / Dispute (Green Curve):</strong> The average rupee value gained per dispute after deducting filing fees and manual review costs. Peaks at <strong>0.50 threshold (₹1,258/dispute)</strong>.</li>
-                <li><strong>Auto-Respond % (Purple Line):</strong> Percentage of disputes auto-submitted without human review. At 0.50, ~6.5% of clean, verified cases are resolved instantly.</li>
-                <li><strong>Win Rate % (Orange Line):</strong> Empirical win rate of cases submitted at this gate (~85% win rate when evidence package is complete).</li>
-                <li><strong>Takeaway:</strong> Setting higher thresholds (0.95) acts too conservatively and forfeits recoverable funds. The 0.50 gate maximizes net rupee recovery.</li>
+                <li><strong>Net ₹ / Dispute (Green Curve):</strong> The average rupee value gained per dispute after
+                  deducting filing fees and manual review costs. Peaks at <strong>0.50 threshold
+                    (₹1,258/dispute)</strong>.</li>
+                <li><strong>Auto-Respond % (Purple Line):</strong> Percentage of disputes auto-submitted without human
+                  review. At 0.50, ~6.5% of clean, verified cases are resolved instantly.</li>
+                <li><strong>Win Rate % (Orange Line):</strong> Empirical win rate of cases submitted at this gate (~85%
+                  win rate when evidence package is complete).</li>
+                <li><strong>Takeaway:</strong> Setting higher thresholds (0.95) acts too conservatively and forfeits
+                  recoverable funds. The 0.50 gate maximizes net rupee recovery.</li>
               </ul>
             </div>
           </div>
@@ -475,7 +537,8 @@
           <div class="graph-highlight-card">
             <div>
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <span style="font-size:15px; font-weight:800; color:var(--brand-navy-dark);">Feature Importances (Top Signals)</span>
+                <span style="font-size:15px; font-weight:800; color:var(--brand-navy-dark);">Feature Importances (Top
+                  Signals)</span>
                 <span class="chip chip-neutral">LightGBM Gini Score</span>
               </div>
               <div class="chart-container"><canvas id="chart-features"></canvas></div>
@@ -483,10 +546,14 @@
             <div class="graph-explainer-box">
               <div class="graph-explainer-title">Feature Signals &amp; Decision Drivers</div>
               <ul class="graph-explainer-list">
-                <li><strong>Customer Account Age (Top Signal):</strong> Long-standing accounts rarely file first-party fraud compared to newly registered throwaway accounts.</li>
-                <li><strong>Days to Dispute:</strong> Chargebacks filed within 7 days strongly indicate unauthorized card theft, whereas 45+ days indicate merchandise or return issues.</li>
-                <li><strong>Dispute Amount &amp; Category:</strong> High-ticket Electronics and Luxury items have distinct fraud signatures compared to low-ticket Grocery orders.</li>
-                <li><strong>3DS &amp; Delivery Proof:</strong> Direct cryptographic authentication and courier signatures provide the strongest deterministic defense in representment.</li>
+                <li><strong>Customer Account Age (Top Signal):</strong> Long-standing accounts rarely file first-party
+                  fraud compared to newly registered throwaway accounts.</li>
+                <li><strong>Days to Dispute:</strong> Chargebacks filed within 7 days strongly indicate unauthorized
+                  card theft, whereas 45+ days indicate merchandise or return issues.</li>
+                <li><strong>Dispute Amount &amp; Category:</strong> High-ticket Electronics and Luxury items have
+                  distinct fraud signatures compared to low-ticket Grocery orders.</li>
+                <li><strong>3DS &amp; Delivery Proof:</strong> Direct cryptographic authentication and courier
+                  signatures provide the strongest deterministic defense in representment.</li>
               </ul>
             </div>
           </div>
@@ -494,45 +561,88 @@
 
         <!-- Interactive Threshold Gate -->
         <div class="card" style="margin-bottom:18px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+          <div
+            style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
             <div>
-              <h3 style="font-size:14px; font-weight:800; color:var(--brand-navy-dark);">Interactive Confidence Gate Slider</h3>
-              <p style="font-size:12px; color:var(--text-secondary);">Adjust threshold to observe how strict or relaxed auto-resolution routing affects volume and financial yield:</p>
+              <h3 style="font-size:14px; font-weight:800; color:var(--brand-navy-dark);">Interactive Confidence Gate
+                Slider</h3>
+              <p style="font-size:12px; color:var(--text-secondary);">Adjust threshold to observe how strict or relaxed
+                auto-resolution routing affects volume and financial yield:</p>
             </div>
-            <div style="font-size:12px; font-weight:700; color:var(--brand-indigo); background:var(--brand-blue-light); padding:4px 10px; border-radius:var(--radius-sm);">
+            <div
+              style="font-size:12px; font-weight:700; color:var(--brand-indigo); background:var(--brand-blue-light); padding:4px 10px; border-radius:var(--radius-sm);">
               Confidence Threshold: <span id="threshold-val">0.50</span>
             </div>
           </div>
 
           <div style="max-width:440px; margin-bottom:14px;">
-            <input type="range" id="threshold-slider" class="slider-input" min="0.50" max="0.95" step="0.05" value="0.50" oninput="updateCostPoint(this.value)">
+            <input type="range" id="threshold-slider" class="slider-input" min="0.50" max="0.95" step="0.05"
+              value="0.50" oninput="updateCostPoint(this.value)">
           </div>
 
           <div class="kpi-grid" style="margin-bottom:0;">
-            <div class="kpi-tile"><div class="kpi-label">Auto-Respond %</div><div class="kpi-value" id="cost-auto-pct">--</div></div>
-            <div class="kpi-tile"><div class="kpi-label">Win Rate @ Gate</div><div class="kpi-value" id="cost-win-rate">--</div></div>
-            <div class="kpi-tile"><div class="kpi-label">Net ₹ / Dispute</div><div class="kpi-value" id="cost-net-dispute">--</div></div>
+            <div class="kpi-tile">
+              <div class="kpi-label">Auto-Respond %</div>
+              <div class="kpi-value" id="cost-auto-pct">--</div>
+            </div>
+            <div class="kpi-tile">
+              <div class="kpi-label">Win Rate @ Gate</div>
+              <div class="kpi-value" id="cost-win-rate">--</div>
+            </div>
+            <div class="kpi-tile">
+              <div class="kpi-label">Net ₹ / Dispute</div>
+              <div class="kpi-value" id="cost-net-dispute">--</div>
+            </div>
           </div>
         </div>
 
         <!-- Per-Class Performance Table -->
         <div class="card" style="margin-bottom:18px;">
-          <h3 style="font-size:13px; font-weight:800; color:var(--brand-navy-dark); margin-bottom:10px;">Per-Class Reason Code Breakdown</h3>
+          <h3 style="font-size:13px; font-weight:800; color:var(--brand-navy-dark); margin-bottom:10px;">Per-Class
+            Reason Code Breakdown</h3>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Reason Code</th><th>Precision</th><th>Recall</th><th>F1-Score</th><th>Support</th></tr></thead>
-              <tbody id="per-class-tbody"><tr><td colspan="5" style="text-align:center;">Loading evaluation data...</td></tr></tbody>
+              <thead>
+                <tr>
+                  <th>Reason Code</th>
+                  <th>Precision</th>
+                  <th>Recall</th>
+                  <th>F1-Score</th>
+                  <th>Support</th>
+                </tr>
+              </thead>
+              <tbody id="per-class-tbody">
+                <tr>
+                  <td colspan="5" style="text-align:center;">Loading evaluation data...</td>
+                </tr>
+              </tbody>
             </table>
           </div>
         </div>
 
         <!-- Cost Curve Data Table -->
         <div class="card">
-          <h3 style="font-size:13px; font-weight:800; color:var(--brand-navy-dark); margin-bottom:10px;">Cost Sensitivity Table Across Operating Points</h3>
+          <h3 style="font-size:13px; font-weight:800; color:var(--brand-navy-dark); margin-bottom:10px;">Cost
+            Sensitivity Table Across Operating Points</h3>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Threshold</th><th>Auto %</th><th>Win Rate</th><th>TP</th><th>FP</th><th>FN</th><th>Net ₹</th><th>₹/Dispute</th></tr></thead>
-              <tbody id="cost-curve-tbody"><tr><td colspan="8" style="text-align:center;">Loading...</td></tr></tbody>
+              <thead>
+                <tr>
+                  <th>Threshold</th>
+                  <th>Auto %</th>
+                  <th>Win Rate</th>
+                  <th>TP</th>
+                  <th>FP</th>
+                  <th>FN</th>
+                  <th>Net ₹</th>
+                  <th>₹/Dispute</th>
+                </tr>
+              </thead>
+              <tbody id="cost-curve-tbody">
+                <tr>
+                  <td colspan="8" style="text-align:center;">Loading...</td>
+                </tr>
+              </tbody>
             </table>
           </div>
         </div>
@@ -547,7 +657,8 @@
         <div class="section-title-wrap">
           <div class="section-label-tag">Audit &amp; Investigation Workspace</div>
           <h2 class="section-title">Case Explorer (Held-Out Test Set)</h2>
-          <p class="section-desc">Search, filter, and inspect individual test disputes with side-by-side classification audit, evidence verification, and 1-click loading into the live analyzer.</p>
+          <p class="section-desc">Search, filter, and inspect individual test disputes with side-by-side classification
+            audit, evidence verification, and 1-click loading into the live analyzer.</p>
         </div>
 
         <!-- Easy-to-Understand Audit Status Key (High Contrast & Clear) -->
@@ -559,7 +670,8 @@
                 <span class="chip chip-success">Matched</span>
                 <span class="status-key-box-title">Exact Reason Match</span>
               </div>
-              <div class="status-key-box-desc">The AI accurately identified the dispute reason (e.g. Fraud, Defective Item, or Order Not Received).</div>
+              <div class="status-key-box-desc">The AI accurately identified the dispute reason (e.g. Fraud, Defective
+                Item, or Order Not Received).</div>
             </div>
 
             <div class="status-key-box">
@@ -567,7 +679,8 @@
                 <span class="chip chip-warning">Mismatch</span>
                 <span class="status-key-box-title">Borderline / Check</span>
               </div>
-              <div class="status-key-box-desc">The dispute has mixed signals and is safely flagged for human team verification.</div>
+              <div class="status-key-box-desc">The dispute has mixed signals and is safely flagged for human team
+                verification.</div>
             </div>
 
             <div class="status-key-box">
@@ -575,7 +688,8 @@
                 <span class="chip chip-neutral">% Conf</span>
                 <span class="status-key-box-title">Win Likelihood</span>
               </div>
-              <div class="status-key-box-desc">The estimated probability (0–100%) that the merchant will win and recover funds if contested.</div>
+              <div class="status-key-box-desc">The estimated probability (0–100%) that the merchant will win and recover
+                funds if contested.</div>
             </div>
           </div>
         </div>
@@ -584,7 +698,8 @@
           <!-- Left: Filter & Case List -->
           <div>
             <div class="form-group" style="margin-bottom:10px;">
-              <input type="text" id="case-search-input" placeholder="Search dispute ID..." oninput="filterCaseList()" style="font-size:12px; padding:7px 10px;">
+              <input type="text" id="case-search-input" placeholder="Search dispute ID..." oninput="filterCaseList()"
+                style="font-size:12px; padding:7px 10px;">
             </div>
 
             <div class="case-filter-pills">
@@ -596,7 +711,8 @@
             </div>
 
             <div class="case-list-container" id="case-list-container">
-              <div style="padding:16px; text-align:center; color:var(--text-muted); font-size:12px;">Loading test cases...</div>
+              <div style="padding:16px; text-align:center; color:var(--text-muted); font-size:12px;">Loading test
+                cases...</div>
             </div>
           </div>
 
@@ -604,8 +720,11 @@
           <div class="case-audit-panel" id="case-audit-panel">
             <div class="audit-header">
               <div>
-                <span id="audit-dispute-id" style="font-size:16px; font-weight:800; color:var(--brand-navy-dark);">Select a dispute from the list</span>
-                <div id="audit-meta-summary" style="font-size:12px; color:var(--text-muted); margin-top:2px;">Click any case on the left to inspect its parameters and AI decision trail.</div>
+                <span id="audit-dispute-id"
+                  style="font-size:16px; font-weight:800; color:var(--brand-navy-dark);">Select a dispute from the
+                  list</span>
+                <div id="audit-meta-summary" style="font-size:12px; color:var(--text-muted); margin-top:2px;">Click any
+                  case on the left to inspect its parameters and AI decision trail.</div>
               </div>
               <div id="audit-status-badge"></div>
             </div>
@@ -614,24 +733,33 @@
               <!-- Box 1: Classification Audit -->
               <div class="audit-section-box">
                 <div class="audit-box-title">Classification Audit</div>
-                <div class="audit-kv-row"><span class="audit-kv-label">Actual Reason Code:</span><span class="audit-kv-val" id="audit-actual-rc">--</span></div>
-                <div class="audit-kv-row"><span class="audit-kv-label">Predicted Reason Code:</span><span class="audit-kv-val" id="audit-pred-rc">--</span></div>
-                <div class="audit-kv-row"><span class="audit-kv-label">Calibrated Confidence:</span><span class="audit-kv-val" id="audit-conf">--</span></div>
-                <div class="audit-kv-row"><span class="audit-kv-label">Ground Truth Outcome:</span><span class="audit-kv-val" id="audit-outcome">--</span></div>
+                <div class="audit-kv-row"><span class="audit-kv-label">Actual Reason Code:</span><span
+                    class="audit-kv-val" id="audit-actual-rc">--</span></div>
+                <div class="audit-kv-row"><span class="audit-kv-label">Predicted Reason Code:</span><span
+                    class="audit-kv-val" id="audit-pred-rc">--</span></div>
+                <div class="audit-kv-row"><span class="audit-kv-label">Calibrated Confidence:</span><span
+                    class="audit-kv-val" id="audit-conf">--</span></div>
+                <div class="audit-kv-row"><span class="audit-kv-label">Ground Truth Outcome:</span><span
+                    class="audit-kv-val" id="audit-outcome">--</span></div>
               </div>
 
               <!-- Box 2: Evidence & Scoring -->
               <div class="audit-section-box">
                 <div class="audit-box-title">Evidence &amp; Win Probability</div>
-                <div class="audit-kv-row"><span class="audit-kv-label">Evidence Strength:</span><span class="audit-kv-val" id="audit-evidence">--</span></div>
-                <div class="audit-kv-row"><span class="audit-kv-label">Win Probability:</span><span class="audit-kv-val" id="audit-winprob">--</span></div>
-                <div class="audit-kv-row"><span class="audit-kv-label">Recommended Action:</span><span class="audit-kv-val" id="audit-action">--</span></div>
-                <div class="audit-kv-row"><span class="audit-kv-label">Audit Match:</span><span class="audit-kv-val" id="audit-match-flag">--</span></div>
+                <div class="audit-kv-row"><span class="audit-kv-label">Evidence Strength:</span><span
+                    class="audit-kv-val" id="audit-evidence">--</span></div>
+                <div class="audit-kv-row"><span class="audit-kv-label">Win Probability:</span><span class="audit-kv-val"
+                    id="audit-winprob">--</span></div>
+                <div class="audit-kv-row"><span class="audit-kv-label">Recommended Action:</span><span
+                    class="audit-kv-val" id="audit-action">--</span></div>
+                <div class="audit-kv-row"><span class="audit-kv-label">Audit Match:</span><span class="audit-kv-val"
+                    id="audit-match-flag">--</span></div>
               </div>
             </div>
 
             <div style="margin-top:16px; display:flex; gap:10px;">
-              <button class="btn-submit-action" style="padding:8px 16px; font-size:12px;" onclick="loadSelectedCaseIntoAnalyzer()">
+              <button class="btn-submit-action" style="padding:8px 16px; font-size:12px;"
+                onclick="loadSelectedCaseIntoAnalyzer()">
                 Load Selected Case into Live Analyzer
               </button>
               <button class="btn-secondary" onclick="toggleAuditJson()">
@@ -650,11 +778,13 @@
          ═══════════════════════════════════════════════════════════════ -->
     <section id="tab-monitoring" class="tab-panel">
       <div class="tab-inner-shell">
-        <div class="section-title-wrap" style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:12px;">
+        <div class="section-title-wrap"
+          style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:12px;">
           <div>
             <div class="section-label-tag">Live Observability &amp; Risk Health</div>
             <h2 class="section-title">Model Health &amp; Concept Drift Center</h2>
-            <p class="section-desc">Computes rolling statistics over logged inferences to detect shifts in incoming dispute categories, evidence availability, or confidence degradation.</p>
+            <p class="section-desc">Computes rolling statistics over logged inferences to detect shifts in incoming
+              dispute categories, evidence availability, or confidence degradation.</p>
           </div>
           <div class="monitoring-health-badge">
             <span class="status-indicator-dot dot-success"></span> Model Health: NOMINAL (0.024 PSI Drift)
@@ -696,8 +826,10 @@
           <div class="card">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
               <div>
-                <span style="font-size:13px; font-weight:800; color:var(--brand-navy-dark);">Incoming Reason Code Distribution</span>
-                <div style="font-size:11px; color:var(--text-muted);">Frequency breakdown across card network categories</div>
+                <span style="font-size:13px; font-weight:800; color:var(--brand-navy-dark);">Incoming Reason Code
+                  Distribution</span>
+                <div style="font-size:11px; color:var(--text-muted);">Frequency breakdown across card network categories
+                </div>
               </div>
               <span class="chip chip-neutral">Window N=200</span>
             </div>
@@ -708,8 +840,10 @@
           <div class="card">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
               <div>
-                <span style="font-size:13px; font-weight:800; color:var(--brand-navy-dark);">Action Routing Distribution</span>
-                <div style="font-size:11px; color:var(--text-muted);">Cost-sensitive routing ratio (Auto-Submit vs Human Review)</div>
+                <span style="font-size:13px; font-weight:800; color:var(--brand-navy-dark);">Action Routing
+                  Distribution</span>
+                <div style="font-size:11px; color:var(--text-muted);">Cost-sensitive routing ratio (Auto-Submit vs Human
+                  Review)</div>
               </div>
               <span class="chip chip-success">Safe Fallback Active</span>
             </div>
@@ -721,8 +855,10 @@
         <div class="card" style="margin-top:16px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
             <div>
-              <h3 style="font-size:13px; font-weight:800; color:var(--brand-navy-dark);">Live Dispute Ingestion Stream (Recent Events)</h3>
-              <p style="font-size:11px; color:var(--text-muted);">Real-time stream of evaluated disputes logged to the observability pipeline.</p>
+              <h3 style="font-size:13px; font-weight:800; color:var(--brand-navy-dark);">Live Dispute Ingestion Stream
+                (Recent Events)</h3>
+              <p style="font-size:11px; color:var(--text-muted);">Real-time stream of evaluated disputes logged to the
+                observability pipeline.</p>
             </div>
             <span class="chip chip-success">Stream Active</span>
           </div>
@@ -741,7 +877,9 @@
                 </tr>
               </thead>
               <tbody id="mon-stream-tbody">
-                <tr><td colspan="7" style="text-align:center;">Streaming inference logs...</td></tr>
+                <tr>
+                  <td colspan="7" style="text-align:center;">Streaming inference logs...</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -757,40 +895,76 @@
         <div class="section-title-wrap">
           <div class="section-label-tag">Security &amp; Compliance</div>
           <h2 class="section-title">Defense-Only Guardrails &amp; Documented Failures</h2>
-          <p class="section-desc">Architectural constraints that guarantee security, zero PII exposure, and deterministic fallbacks.</p>
+          <p class="section-desc">Architectural constraints that guarantee security, zero PII exposure, and
+            deterministic fallbacks.</p>
         </div>
 
         <div class="card" style="margin-bottom:20px;">
-          <h3 style="font-size:13px; font-weight:800; color:var(--brand-navy-dark); margin-bottom:10px;">Operational Guardrails</h3>
+          <h3 style="font-size:13px; font-weight:800; color:var(--brand-navy-dark); margin-bottom:10px;">Operational
+            Guardrails</h3>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Guardrail</th><th>Implementation Detail</th></tr></thead>
+              <thead>
+                <tr>
+                  <th>Guardrail</th>
+                  <th>Implementation Detail</th>
+                </tr>
+              </thead>
               <tbody>
-                <tr><td><strong>No Dispute Generation</strong></td><td>System only responds defensively to incoming chargeback webhooks; it never initiates or manufactures disputes.</td></tr>
-                <tr><td><strong>No PII Exposure</strong></td><td>100% synthetic data generated via Faker (Indian BFSI context). No real customer data is stored or logged.</td></tr>
-                <tr><td><strong>No Raw Card Data</strong></td><td>Card numbers are masked/tokenized upstream. System only accepts boolean match signals (avs_cvv_match).</td></tr>
-                <tr><td><strong>Auditable Evidence Rules</strong></td><td>Reason-code-to-evidence mapping is a deterministic rule table derived from published Visa/Mastercard representment specs.</td></tr>
-                <tr><td><strong>Emergency Kill Switch</strong></td><td>Set <code>AUTO_RESPOND_CONFIDENCE = 1.0</code> to instantly route 100% of disputes to human review.</td></tr>
+                <tr>
+                  <td><strong>No Dispute Generation</strong></td>
+                  <td>System only responds defensively to incoming chargeback webhooks; it never initiates or
+                    manufactures disputes.</td>
+                </tr>
+                <tr>
+                  <td><strong>No PII Exposure</strong></td>
+                  <td>100% synthetic data generated via Faker (Indian BFSI context). No real customer data is stored or
+                    logged.</td>
+                </tr>
+                <tr>
+                  <td><strong>No Raw Card Data</strong></td>
+                  <td>Card numbers are masked/tokenized upstream. System only accepts boolean match signals
+                    (avs_cvv_match).</td>
+                </tr>
+                <tr>
+                  <td><strong>Auditable Evidence Rules</strong></td>
+                  <td>Reason-code-to-evidence mapping is a deterministic rule table derived from published
+                    Visa/Mastercard representment specs.</td>
+                </tr>
+                <tr>
+                  <td><strong>Emergency Kill Switch</strong></td>
+                  <td>Set <code>AUTO_RESPOND_CONFIDENCE = 1.0</code> to instantly route 100% of disputes to human
+                    review.</td>
+                </tr>
               </tbody>
             </table>
           </div>
         </div>
 
         <div class="card">
-          <h3 style="font-size:13px; font-weight:800; color:var(--brand-navy-dark); margin-bottom:10px;">Documented Failure Modes &amp; Handling</h3>
+          <h3 style="font-size:13px; font-weight:800; color:var(--brand-navy-dark); margin-bottom:10px;">Documented
+            Failure Modes &amp; Handling</h3>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Failure Mode</th><th>System Behavior</th><th>Why This Is the Right Behavior</th></tr></thead>
+              <thead>
+                <tr>
+                  <th>Failure Mode</th>
+                  <th>System Behavior</th>
+                  <th>Why This Is the Right Behavior</th>
+                </tr>
+              </thead>
               <tbody>
                 <tr>
                   <td><strong>Weak / Absent Evidence</strong></td>
                   <td><span class="chip chip-warning">HUMAN_REVIEW</span> — never auto-submitted</td>
-                  <td>Auto-submit requires both confidence ≥ 70% and evidence strength ≥ 60% with ≥ 2 compelling pieces.</td>
+                  <td>Auto-submit requires both confidence ≥ 70% and evidence strength ≥ 60% with ≥ 2 compelling pieces.
+                  </td>
                 </tr>
                 <tr>
                   <td><strong>Ambiguous Mixed-Signal</strong></td>
                   <td>Platt calibration keeps confidence low → routes to review</td>
-                  <td>Platt scaling ensures confidence represents true probability, not an uncalibrated heuristic score.</td>
+                  <td>Platt scaling ensures confidence represents true probability, not an uncalibrated heuristic score.
+                  </td>
                 </tr>
                 <tr>
                   <td><strong>Unknown Reason Code</strong></td>
@@ -800,7 +974,8 @@
                 <tr>
                   <td><strong>High-Value + Strong Evidence</strong></td>
                   <td>Subject to standard threshold logic (no special-casing)</td>
-                  <td>Prevents arbitrary human overrides when stakes are highest — the same rules apply regardless of amount.</td>
+                  <td>Prevents arbitrary human overrides when stakes are highest — the same rules apply regardless of
+                    amount.</td>
                 </tr>
               </tbody>
             </table>
@@ -809,75 +984,293 @@
       </div>
     </section>
 
-    <!-- ═══ Professional Industry Footer ═══ -->
+    <!-- Professional Industry Footer -->
+    <style>
+      .site-footer {
+        background: #ffffff !important;
+        color: #111827 !important;
+        border-top: 1px solid #e5e7eb;
+        margin-top: 80px;
+      }
+
+      .site-footer .footer-inner {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 64px 48px 28px;
+      }
+
+      .site-footer .footer-grid {
+        display: grid;
+        grid-template-columns: 1.8fr 1fr 1fr 1fr;
+        gap: 64px;
+      }
+
+      .site-footer .footer-brand-col {
+        max-width: 430px;
+      }
+
+      .site-footer .footer-logo {
+        margin-bottom: 22px;
+      }
+
+      .site-footer .footer-logo-text {
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        color: #111827 !important;
+      }
+
+      .site-footer .footer-brand-desc {
+        margin: 0;
+        max-width: 410px;
+        font-size: 15px;
+        line-height: 1.75;
+        color: #6b7280 !important;
+      }
+
+      .site-footer .footer-col-title {
+        margin-bottom: 22px;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #374151 !important;
+      }
+
+      .site-footer .footer-links {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+
+      .site-footer .footer-links a {
+        width: fit-content;
+        font-size: 15px;
+        line-height: 1.5;
+        color: #6b7280 !important;
+        text-decoration: none;
+        transition: color 0.2s ease, transform 0.2s ease;
+      }
+
+      .site-footer .footer-links a:hover {
+        color: #111827 !important;
+        transform: translateX(2px);
+      }
+
+      .site-footer .footer-divider {
+        height: 1px;
+        margin: 56px 0 24px;
+        background: #e5e7eb !important;
+      }
+
+      .site-footer .footer-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .site-footer .footer-copyright {
+        margin: 0;
+        font-size: 13px;
+        color: #9ca3af !important;
+      }
+
+      .site-footer .footer-bottom-links {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .site-footer .footer-bottom-links a {
+        font-size: 13px;
+        color: #9ca3af !important;
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+
+      .site-footer .footer-bottom-links a:hover {
+        color: #111827 !important;
+      }
+
+      .site-footer .footer-dot {
+        color: #d1d5db !important;
+      }
+
+      @media (max-width: 900px) {
+        .site-footer .footer-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 42px;
+        }
+
+        .site-footer .footer-brand-col {
+          grid-column: 1 / -1;
+          max-width: 600px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .site-footer .footer-inner {
+          padding: 48px 24px 24px;
+        }
+
+        .site-footer .footer-grid {
+          grid-template-columns: 1fr;
+          gap: 36px;
+        }
+
+        .site-footer .footer-brand-col {
+          grid-column: auto;
+        }
+
+        .site-footer .footer-bottom {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 18px;
+        }
+
+        .site-footer .footer-bottom-links {
+          flex-wrap: wrap;
+        }
+      }
+    </style>
+
     <footer class="site-footer">
       <div class="footer-inner">
 
-        <!-- Top Row: Brand + Navigation Columns -->
         <div class="footer-grid">
-          <!-- Brand Column -->
+
+          <!-- Brand -->
           <div class="footer-brand-col">
             <div class="footer-logo">
-              <span class="footer-logo-icon">⚡</span>
               <span class="footer-logo-text">Impulse</span>
             </div>
-            <p class="footer-brand-desc">Intelligent chargeback defense that automatically decides which disputes to fight and which to accept — maximizing recovery while minimizing costs.</p>
+
+            <p class="footer-brand-desc">
+              Intelligent chargeback defense that automatically decides which
+              disputes to fight and which to accept — maximizing recovery while
+              minimizing costs.
+            </p>
           </div>
 
-          <!-- Platform Column -->
+          <!-- Platform -->
           <div class="footer-link-col">
             <div class="footer-col-title">Platform</div>
+
             <ul class="footer-links">
-              <li><a href="#" onclick="switchTab('home');return false;">Live Analyzer</a></li>
-              <li><a href="#" onclick="switchTab('eval');return false;">Model Performance</a></li>
-              <li><a href="#" onclick="switchTab('cases');return false;">Case Explorer</a></li>
-              <li><a href="#" onclick="switchTab('docs');return false;">Documentation</a></li>
+              <li>
+                <a href="#" onclick="switchTab('home', document.querySelector('.tab-btn:nth-child(1)')); return false;">
+                  Live Analyzer
+                </a>
+              </li>
+
+              <li>
+                <a href="#" onclick="switchTab('performance', document.querySelector('.tab-btn:nth-child(2)')); return false;">
+                  Model Performance
+                </a>
+              </li>
+
+              <li>
+                <a href="#" onclick="switchTab('cases', document.querySelector('.tab-btn:nth-child(3)')); return false;">
+                  Case Explorer
+                </a>
+              </li>
+
+              <li>
+                <a href="#" onclick="switchTab('guardrails', document.querySelector('.tab-btn:nth-child(5)')); return false;">
+                  Guardrails & Compliance
+                </a>
+              </li>
             </ul>
           </div>
 
-          <!-- Technology Column -->
+          <!-- Technology -->
           <div class="footer-link-col">
             <div class="footer-col-title">Technology</div>
+
             <ul class="footer-links">
-              <li><a href="https://lightgbm.readthedocs.io/" target="_blank" rel="noopener">LightGBM</a></li>
-              <li><a href="https://fastapi.tiangolo.com/" target="_blank" rel="noopener">FastAPI</a></li>
-              <li><a href="https://scikit-learn.org/" target="_blank" rel="noopener">scikit-learn</a></li>
-              <li><a href="https://vercel.com/" target="_blank" rel="noopener">Vercel</a></li>
+              <li>
+                <a href="https://lightgbm.readthedocs.io/" target="_blank" rel="noopener noreferrer">
+                  LightGBM
+                </a>
+              </li>
+
+              <li>
+                <a href="https://fastapi.tiangolo.com/" target="_blank" rel="noopener noreferrer">
+                  FastAPI
+                </a>
+              </li>
+
+              <li>
+                <a href="https://scikit-learn.org/" target="_blank" rel="noopener noreferrer">
+                  scikit-learn
+                </a>
+              </li>
+
+              <li>
+                <a href="https://vercel.com/" target="_blank" rel="noopener noreferrer">
+                  Vercel
+                </a>
+              </li>
             </ul>
           </div>
 
-          <!-- Resources Column -->
+          <!-- Resources -->
           <div class="footer-link-col">
             <div class="footer-col-title">Resources</div>
+
             <ul class="footer-links">
-              <li><a href="https://github.com/Satvik-Shashank/Razorpay" target="_blank" rel="noopener">GitHub Repository</a></li>
-              <li><a href="#" onclick="switchTab('docs');return false;">API Reference</a></li>
-              <li><a href="#" onclick="switchTab('docs');return false;">Model Architecture</a></li>
-              <li><a href="#" onclick="switchTab('eval');return false;">Evaluation Report</a></li>
+              <li>
+                <a href="https://github.com/Satvik-Shashank/Razorpay" target="_blank" rel="noopener noreferrer">
+                  GitHub Repository
+                </a>
+              </li>
+
+              <li>
+                <a href="#" onclick="switchTab('guardrails', document.querySelector('.tab-btn:nth-child(5)')); return false;">
+                  API Reference
+                </a>
+              </li>
+
+              <li>
+                <a href="#" onclick="switchTab('performance', document.querySelector('.tab-btn:nth-child(2)')); return false;">
+                  Model Architecture
+                </a>
+              </li>
+
+              <li>
+                <a href="#" onclick="switchTab('performance', document.querySelector('.tab-btn:nth-child(2)')); return false;">
+                  Evaluation Report
+                </a>
+              </li>
             </ul>
           </div>
+
         </div>
 
-        <!-- Divider -->
         <div class="footer-divider"></div>
 
-        <!-- Bottom Row: Copyright + Legal -->
         <div class="footer-bottom">
-          <p class="footer-copyright">&copy; 2025 Impulse. All rights reserved.</p>
+          <p class="footer-copyright">
+            &copy; 2025 Impulse. All rights reserved.
+          </p>
+
           <div class="footer-bottom-links">
-            <a href="#">Privacy Policy</a>
-            <span class="footer-dot">&middot;</span>
-            <a href="#">Terms of Service</a>
-            <span class="footer-dot">&middot;</span>
-            <a href="https://github.com/Satvik-Shashank/Razorpay" target="_blank" rel="noopener">Open Source</a>
+            <a href="https://github.com/Satvik-Shashank/Razorpay" target="_blank" rel="noopener noreferrer">
+              Open Source
+            </a>
           </div>
         </div>
 
       </div>
     </footer>
 
-  </div>
+  </div> <!-- /.app-wrapper -->
 
   <script src="app.js"></script>
 </body>
+
 </html>
