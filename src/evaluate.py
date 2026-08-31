@@ -86,85 +86,107 @@ def build_results(test_df, model_path):
     return results, clf
 
 
+def apply_light_plot_style():
+    plt.rcParams.update({
+        "figure.facecolor": "#FFFFFF",
+        "axes.facecolor": "#FFFFFF",
+        "axes.edgecolor": "#E4E7EC",
+        "axes.labelcolor": "#475467",
+        "axes.grid": True,
+        "grid.color": "#F2F4F7",
+        "grid.linestyle": "-",
+        "xtick.color": "#475467",
+        "ytick.color": "#475467",
+        "font.family": "sans-serif",
+        "font.size": 10,
+    })
+
+
 def plot_confusion_matrix(results, labels, out_path):
+    apply_light_plot_style()
     cm = confusion_matrix(results["actual"], results["predicted"], labels=labels)
-    fig, ax = plt.subplots(figsize=(9, 8))
-    im = ax.imshow(cm, cmap="Blues")
+    fig, ax = plt.subplots(figsize=(8, 7))
+    im = ax.imshow(cm, cmap="Blues", interpolation="nearest")
     ax.set_xticks(range(len(labels)))
     ax.set_yticks(range(len(labels)))
-    ax.set_xticklabels(labels, rotation=45, ha="right")
-    ax.set_yticklabels(labels)
-    ax.set_xlabel("Predicted reason code")
-    ax.set_ylabel("Actual reason code")
-    ax.set_title("Confusion Matrix - Reason Code Classifier")
+    ax.set_xticklabels(labels, rotation=45, ha="right", fontsize=9)
+    ax.set_yticklabels(labels, fontsize=9)
+    ax.set_xlabel("Predicted Reason Code", fontweight="600", labelpad=8)
+    ax.set_ylabel("Actual Reason Code", fontweight="600", labelpad=8)
+    ax.set_title("Confusion Matrix — Reason Code Classifier", fontweight="700", fontsize=12, pad=12)
     thresh = cm.max() / 2 if cm.max() else 0
     for i in range(len(labels)):
         for j in range(len(labels)):
             ax.text(j, i, cm[i, j], ha="center", va="center",
-                    color="white" if cm[i, j] > thresh else "black", fontsize=8)
+                    color="white" if cm[i, j] > thresh else "#101828", fontsize=8)
     fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
     fig.tight_layout()
-    fig.savefig(out_path, dpi=150)
+    fig.savefig(out_path, dpi=150, facecolor=fig.get_facecolor(), edgecolor="none")
     plt.close(fig)
 
 
 def plot_calibration(results, out_path):
+    apply_light_plot_style()
     y_true = (results["predicted"] == results["actual"]).astype(int).values
     y_prob = results["confidence"].values
     frac_pos, mean_pred = calibration_curve(y_true, y_prob, n_bins=10, strategy="quantile")
 
-    fig, ax = plt.subplots(figsize=(7, 6))
-    ax.plot(mean_pred, frac_pos, marker="o", label="Calibrated (Platt)")
-    ax.plot([0, 1], [0, 1], "--", color="gray", label="Perfect calibration")
-    ax.set_xlabel("Mean predicted confidence")
-    ax.set_ylabel("Fraction correct")
-    ax.set_title("Calibration Curve - Auto-Respond Threshold Reliability")
-    ax.legend()
+    fig, ax = plt.subplots(figsize=(7, 5.5))
+    ax.plot(mean_pred, frac_pos, marker="o", color="#2563EB", linewidth=2, label="Calibrated (Platt)")
+    ax.plot([0, 1], [0, 1], "--", color="#98A2B3", linewidth=1.5, label="Perfect Calibration")
+    ax.set_xlabel("Mean Predicted Confidence", fontweight="600", labelpad=8)
+    ax.set_ylabel("Fraction Correct", fontweight="600", labelpad=8)
+    ax.set_title("Calibration Curve — Auto-Respond Reliability", fontweight="700", fontsize=12, pad=12)
+    ax.legend(frameon=True, facecolor="#F8FAFC", edgecolor="#E2E8F0")
     fig.tight_layout()
-    fig.savefig(out_path, dpi=150)
+    fig.savefig(out_path, dpi=150, facecolor=fig.get_facecolor(), edgecolor="none")
     plt.close(fig)
 
 
 def plot_cost_curve(curve_df, out_path):
-    fig, ax1 = plt.subplots(figsize=(8, 6))
+    apply_light_plot_style()
+    fig, ax1 = plt.subplots(figsize=(8, 5.5))
     ax1.plot(curve_df["threshold"], curve_df["net_value_per_dispute"],
-             marker="o", color="tab:green", label="Net value / dispute (INR)")
-    ax1.set_xlabel("Confidence threshold")
-    ax1.set_ylabel("Net value per dispute (INR)", color="tab:green")
-    ax1.tick_params(axis="y", labelcolor="tab:green")
+             marker="o", color="#027A48", linewidth=2, label="Net Value / Dispute (INR)")
+    ax1.set_xlabel("Confidence Threshold Gate", fontweight="600", labelpad=8)
+    ax1.set_ylabel("Net Value per Dispute (INR)", color="#027A48", fontweight="600")
+    ax1.tick_params(axis="y", labelcolor="#027A48")
 
     ax2 = ax1.twinx()
     ax2.plot(curve_df["threshold"], curve_df["auto_respond_pct"] * 100,
-             marker="s", color="tab:blue", label="Auto-respond %")
+             marker="s", color="#2563EB", linewidth=1.5, label="Auto-Respond %")
     ax2.plot(curve_df["threshold"], curve_df["win_rate_at_threshold"] * 100,
-             marker="^", color="tab:orange", label="Win rate %")
-    ax2.set_ylabel("Percent", color="tab:blue")
+             marker="^", color="#B54708", linewidth=1.5, label="Win Rate %")
+    ax2.set_ylabel("Percent (%)", color="#475467", fontweight="600")
 
-    ax1.set_title("Cost-Sensitive Operating Point Selection")
+    ax1.set_title("Cost-Sensitive Operating Point Selection", fontweight="700", fontsize=12, pad=12)
     lines1, labels1 = ax1.get_legend_handles_labels()
     lines2, labels2 = ax2.get_legend_handles_labels()
-    ax1.legend(lines1 + lines2, labels1 + labels2, loc="lower center")
+    ax1.legend(lines1 + lines2, labels1 + labels2, loc="lower center", frameon=True, facecolor="#F8FAFC", edgecolor="#E2E8F0")
     fig.tight_layout()
-    fig.savefig(out_path, dpi=150)
+    fig.savefig(out_path, dpi=150, facecolor=fig.get_facecolor(), edgecolor="none")
     plt.close(fig)
 
 
 def plot_baseline_comparison(fight_everything, fight_nothing, system_best, out_path):
     """The headline chart: lead every demo with this."""
-    labels = ["Fight everything\n(naive)", "Fight nothing\n(concede all)", "This system\n(cost-optimal)"]
+    apply_light_plot_style()
+    labels = ["Fight Everything\n(Naive)", "Fight Nothing\n(Concede All)", "This System\n(Cost-Optimal)"]
     values = [fight_everything, fight_nothing, system_best]
-    colors = ["tab:red", "tab:gray", "tab:green"]
+    colors = ["#FECDCA", "#EAECF0", "#ABEFC6"]
+    edge_colors = ["#B42318", "#475467", "#027A48"]
 
-    fig, ax = plt.subplots(figsize=(8, 6))
-    bars = ax.bar(labels, values, color=colors)
-    ax.set_ylabel("Net value across test set (INR)")
-    ax.set_title("Net Recovery: Naive Strategies vs. This System")
-    ax.axhline(0, color="black", linewidth=0.8)
+    fig, ax = plt.subplots(figsize=(7.5, 5))
+    bars = ax.bar(labels, values, color=colors, edgecolor=edge_colors, linewidth=1.2, width=0.55)
+    ax.set_ylabel("Net Value Across Test Set (INR)", fontweight="600", labelpad=8)
+    ax.set_title("Net Financial Recovery: Naive vs. This System", fontweight="700", fontsize=12, pad=12)
+    ax.axhline(0, color="#101828", linewidth=0.8)
     for bar, val in zip(bars, values):
-        ax.text(bar.get_x() + bar.get_width() / 2, val, f"₹{val:,.0f}",
-                ha="center", va="bottom" if val >= 0 else "top", fontsize=11, fontweight="bold")
+        ax.text(bar.get_x() + bar.get_width() / 2, val + (max(values)*0.02 if val >= 0 else -max(values)*0.05),
+                f"₹{val:,.0f}", ha="center", va="bottom" if val >= 0 else "top",
+                fontsize=10, fontweight="bold", color="#101828")
     fig.tight_layout()
-    fig.savefig(out_path, dpi=150)
+    fig.savefig(out_path, dpi=150, facecolor=fig.get_facecolor(), edgecolor="none")
     plt.close(fig)
 
 
