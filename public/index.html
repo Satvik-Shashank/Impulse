@@ -32,52 +32,8 @@
          TAB 1: HOME (HERO + SPECIFICATION BOX + LIVE ANALYZER)
          ═══════════════════════════════════════════════════════════════ -->
     <main id="tab-home" class="tab-panel active">
-      <!-- Signature Dynamic Flowing Silk Stripe Ribbon (Organic Curved Geometry) -->
-      <div class="stripe-pulsing-ribbon" id="stripe-flowing-ribbon">
-        <svg class="flowing-silk-svg" id="flowing-silk-canvas" viewBox="0 0 1600 700" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <!-- Gradient 1: Lilac to Lavender -->
-            <linearGradient id="silk-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#7B73FE" stop-opacity="0.9" />
-              <stop offset="35%" stop-color="#A855F7" stop-opacity="0.95" />
-              <stop offset="100%" stop-color="#EC4899" stop-opacity="0.8" />
-            </linearGradient>
-            <!-- Gradient 2: Hot Pink to Sunset Coral -->
-            <linearGradient id="silk-grad-2" x1="10%" y1="10%" x2="90%" y2="90%">
-              <stop offset="0%" stop-color="#EC4899" stop-opacity="0.95" />
-              <stop offset="50%" stop-color="#FF5436" stop-opacity="0.98" />
-              <stop offset="100%" stop-color="#FF8800" stop-opacity="0.9" />
-            </linearGradient>
-            <!-- Gradient 3: Radiant Orange to Warm Amber -->
-            <linearGradient id="silk-grad-3" x1="20%" y1="0%" x2="80%" y2="100%">
-              <stop offset="0%" stop-color="#FF5436" stop-opacity="0.95" />
-              <stop offset="45%" stop-color="#FF8800" stop-opacity="0.98" />
-              <stop offset="100%" stop-color="#FFAE19" stop-opacity="0.85" />
-            </linearGradient>
-            <!-- Gradient 4: Translucent White Luminous Sheen -->
-            <linearGradient id="silk-grad-sheen" x1="0%" y1="0%" x2="100%" y2="50%">
-              <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.4" />
-              <stop offset="40%" stop-color="#FFE4D6" stop-opacity="0.18" />
-              <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.0" />
-            </linearGradient>
-          </defs>
-
-          <!-- Base Ambient Mesh Layer -->
-          <rect width="1600" height="700" fill="url(#silk-grad-1)" opacity="0.9" />
-
-          <!-- Curved Layer 1: Flowing Lavender/Purple Silk Fold -->
-          <path class="silk-wave-layer layer-1" d="M0,0 L1600,0 L1600,480 C1350,560 1100,380 850,520 C600,660 300,420 0,550 Z" fill="url(#silk-grad-1)" opacity="0.8" />
-
-          <!-- Curved Layer 2: Folded Magenta/Pink Translucent Silk -->
-          <path class="silk-wave-layer layer-2" d="M0,120 C350,80 650,340 950,220 C1250,100 1450,290 1600,240 L1600,680 C1320,620 1020,480 720,600 C420,720 180,520 0,640 Z" fill="url(#silk-grad-2)" opacity="0.88" />
-
-          <!-- Curved Layer 3: Radiant Sunset Orange & Amber Silk Crest -->
-          <path class="silk-wave-layer layer-3" d="M200,60 C550,20 850,240 1180,140 C1400,70 1520,180 1600,160 L1600,650 C1380,570 1150,440 900,530 C650,620 400,480 200,560 Z" fill="url(#silk-grad-3)" opacity="0.85" />
-
-          <!-- Curved Layer 4: Luminous Sheen Highlight Fold -->
-          <path class="silk-wave-layer layer-sheen" d="M100,80 C400,40 750,280 1100,170 C1350,90 1500,210 1600,190 L1600,320 C1420,280 1200,180 980,260 C700,360 400,160 100,220 Z" fill="url(#silk-grad-sheen)" />
-        </svg>
-      </div>
+      <!-- Signature Stripe Slanted Warm Sunset Ribbon (GPU-Accelerated) -->
+      <div class="stripe-pulsing-ribbon"></div>
       
       <!-- Hero Header (Editorial Modern Grotesk) -->
       <div class="hero-header">
@@ -188,7 +144,7 @@
 
         <div class="metric-card">
           <div class="metric-header">
-            <span class="metric-tag"><span class="status-indicator-dot dot-neutral"></span> Strategy B: Fight Nothing</span>
+            <span class="metric-tag"><span class="status-indicator-dot dot-danger"></span> Strategy B: Fight Nothing</span>
           </div>
           <div class="metric-value" id="val-fight-nothing">-₹1,71,500</div>
           <div class="metric-desc">Concedes 100% of disputes. Forfeits all recoverable funds while incurring dispute processing and logging overhead.</div>
@@ -554,21 +510,32 @@
           <p class="section-desc">Search, filter, and inspect individual test disputes with side-by-side classification audit, evidence verification, and 1-click loading into the live analyzer.</p>
         </div>
 
-        <!-- Audit Terminology & Status Key -->
-        <div class="card" style="margin-bottom:18px; background:var(--bg-surface-sunken); border-left:4px solid var(--brand-indigo);">
-          <div style="font-size:12px; font-weight:800; color:var(--brand-navy-dark); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.05em;">Audit Terminology &amp; Classification Status Key</div>
-          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:12px; font-size:12px; color:var(--text-secondary);">
-            <div>
-              <span class="chip chip-success">Matched</span>
-              <span style="margin-left:4px;">Model's predicted reason code <strong>exactly matches</strong> the ground-truth reason code filed by the issuing bank (e.g. Visa 10.4).</span>
+        <!-- Easy-to-Understand Audit Status Key (High Contrast & Clear) -->
+        <div class="status-key-container">
+          <div class="status-key-title">Quick Guide to Case Status Badges</div>
+          <div class="status-key-grid">
+            <div class="status-key-box">
+              <div class="status-key-box-header">
+                <span class="chip chip-success">Matched</span>
+                <span class="status-key-box-title">Exact Reason Match</span>
+              </div>
+              <div class="status-key-box-desc">The AI accurately identified the dispute reason (e.g. Fraud, Defective Item, or Order Not Received).</div>
             </div>
-            <div>
-              <span class="chip chip-warning">Mismatch</span>
-              <span style="margin-left:4px;">Model predicted an <strong>adjacent reason code</strong> (e.g. predicted 13.1 Merchandise Not Received vs actual 13.3 Defective). Handled safely by requesting common evidence and routing low confidence to human review.</span>
+
+            <div class="status-key-box">
+              <div class="status-key-box-header">
+                <span class="chip chip-warning">Mismatch</span>
+                <span class="status-key-box-title">Borderline / Check</span>
+              </div>
+              <div class="status-key-box-desc">The dispute has mixed signals and is safely flagged for human team verification.</div>
             </div>
-            <div>
-              <span class="chip chip-neutral">% Conf</span>
-              <span style="margin-left:4px;"><strong>Platt-Calibrated Confidence</strong> — Posterior probability that the classified reason code is accurate.</span>
+
+            <div class="status-key-box">
+              <div class="status-key-box-header">
+                <span class="chip chip-neutral">% Conf</span>
+                <span class="status-key-box-title">Win Likelihood</span>
+              </div>
+              <div class="status-key-box-desc">The estimated probability (0–100%) that the merchant will win and recover funds if contested.</div>
             </div>
           </div>
         </div>
