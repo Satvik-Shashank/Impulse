@@ -86,7 +86,7 @@ body {
   overflow-x: hidden;
 }
 
-/* ── Hardware-Accelerated High Performance Warm Sunset Stripe Ribbon ── */
+/* ── Flowing Silk Stripe Ribbon with Textured SVG Layers ── */
 .stripe-pulsing-ribbon {
   position: absolute;
   top: -100px;
@@ -97,43 +97,61 @@ body {
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
-  background: linear-gradient(
-    115deg,
-    #7B73FE 0%,
-    #A855F7 18%,
-    #EC4899 38%,
-    #FF5436 60%,
-    #FF8800 80%,
-    #FFAE19 100%
-  );
   box-shadow: 0 28px 80px rgba(255, 84, 54, 0.25);
   border-radius: 0 0 40px 40px;
-  will-change: opacity;
-  animation: stripeGlowPulse 10s ease-in-out infinite alternate;
 }
 
-.stripe-pulsing-ribbon::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    circle at 75% 30%,
-    rgba(255, 200, 80, 0.35) 0%,
-    rgba(255, 84, 54, 0.2) 40%,
-    transparent 70%
-  ), linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.2) 0%,
-    transparent 50%,
-    rgba(15, 23, 42, 0.2) 100%
-  );
-  pointer-events: none;
+.flowing-silk-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  will-change: transform;
 }
 
-@keyframes stripeGlowPulse {
-  0% { opacity: 0.92; }
-  50% { opacity: 0.98; }
-  100% { opacity: 0.92; }
+/* Organic Silk Layer Waves — Slow, GPU-Optimized Motion */
+.silk-wave-layer {
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.silk-wave-layer.layer-1 {
+  animation: silkDrift1 24s ease-in-out infinite alternate;
+}
+
+.silk-wave-layer.layer-2 {
+  animation: silkDrift2 20s ease-in-out infinite alternate;
+}
+
+.silk-wave-layer.layer-3 {
+  animation: silkDrift3 26s ease-in-out infinite alternate;
+}
+
+.silk-wave-layer.layer-sheen {
+  animation: sheenDrift 16s ease-in-out infinite alternate;
+}
+
+@keyframes silkDrift1 {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(-20px, 8px, 0) scale(1.02); }
+  100% { transform: translate3d(18px, -12px, 0) scale(0.99); }
+}
+
+@keyframes silkDrift2 {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(28px, -14px, 0) scale(1.03); }
+  100% { transform: translate3d(-22px, 10px, 0) scale(0.98); }
+}
+
+@keyframes silkDrift3 {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(-18px, 16px, 0) scale(1.015); }
+  100% { transform: translate3d(22px, -10px, 0) scale(1.005); }
+}
+
+@keyframes sheenDrift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); opacity: 0.35; }
+  50%  { transform: translate3d(35px, -18px, 0) scale(1.04); opacity: 0.5; }
+  100% { transform: translate3d(-28px, 10px, 0) scale(0.96); opacity: 0.28; }
 }
 
 .app-wrapper {
@@ -368,26 +386,22 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.22) !important;
-  color: #FFFFFF !important;
+  background: #FFFFFF !important;
+  color: #0F172A !important;
   font-weight: 700;
   font-size: 14px;
   padding: 12px 24px;
   border-radius: var(--radius-pill);
-  border: 1.5px solid rgba(255, 255, 255, 0.6) !important;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  border: 2px solid rgba(255, 84, 54, 0.4) !important;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.15);
   transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .btn-hero-secondary:hover {
-  background: #FFFFFF !important;
-  color: #0F172A !important;
-  border-color: #FFFFFF !important;
+  border-color: rgba(255, 84, 54, 0.7) !important;
   transform: translateY(-3px) scale(1.01);
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.25);
+  box-shadow: 0 14px 36px rgba(255, 84, 54, 0.2);
 }
 
 /* ── Hero Showcase Container with Smooth Zoom Focus ─────────────── */
