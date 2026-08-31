@@ -381,13 +381,19 @@
             </div>
 
             <div id="pipeline-steps">
-              <div class="pipeline-step revealed" style="opacity:0.6; border-left-color:var(--border-color-strong);">
-                <div class="step-label">Awaiting Submission</div>
-                <div class="step-content">Select dispute attributes and click <strong>"Run AI Decision Pipeline"</strong> to execute classification, evidence retrieval, and calibrated decision analysis.</div>
+              <div class="pipeline-step-card revealed step-card-info">
+                <div class="pipeline-card-header">
+                  <span class="step-number-pill">Awaiting Submission</span>
+                  <span style="font-size:11px; font-weight:700; color:var(--text-muted);">Step 0 of 4</span>
+                </div>
+                <div class="plain-text-desc">Fill in or select dispute attributes on the left and click <strong>"Run AI Decision Pipeline"</strong> to execute automated defense analysis.</div>
               </div>
             </div>
 
-            <pre class="code-block" id="demo-result-output" style="margin-top:10px; max-height:220px;">// Complete decision payload JSON will appear here</pre>
+            <details style="margin-top:14px; background:var(--bg-surface-sunken); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:10px 14px;">
+              <summary style="font-size:12px; font-weight:700; color:var(--text-muted); cursor:pointer; user-select:none;">Developer &amp; Audit Payload (Raw JSON)</summary>
+              <pre class="code-block" id="demo-result-output" style="margin-top:10px; max-height:220px;">// Complete decision payload JSON will appear here</pre>
+            </details>
           </div>
         </div>
       </div>

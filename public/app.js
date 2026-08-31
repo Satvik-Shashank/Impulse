@@ -831,7 +831,28 @@ function analyzeFromJSON() {
   }
 }
 
-// ── Execute Pipeline with Staged Reveal ───────────────────────────
+const RC_NAMES = {
+  "10.4": "Card-Absent Fraud (Unauthorized)",
+  "13.1": "Merchandise / Goods Not Received",
+  "13.3": "Defective or Not as Described",
+  "13.6": "Credit / Refund Not Processed",
+  "4837": "Fraud — No Cardholder Authorization",
+  "4853": "Cardholder Dispute (Services / Terms)",
+  "4855": "Non-Receipt of Merchandise",
+  "4860": "Credit Not Processed",
+  "4863": "Cardholder Does Not Recognize"
+};
+
+const EVIDENCE_NAMES = {
+  "delivery_confirmed": "Carrier Delivery Confirmed",
+  "has_delivery_proof": "Proof of Delivery Signature",
+  "ip_geolocation_match": "IP Matches Billing Region",
+  "has_3ds_authentication": "3D-Secure Authenticated (OTP)",
+  "has_customer_correspondence": "Customer Email/Chat Correspondence",
+  "avs_cvv_match": "AVS / CVV Security Code Match"
+};
+
+// ── Execute Pipeline with Accessible Staged Reveal ───────────────
 async function runPipeline(payload, btn) {
   const stepsC = document.getElementById('pipeline-steps');
   const outPre = document.getElementById('demo-result-output');
@@ -845,8 +866,21 @@ async function runPipeline(payload, btn) {
 
   try {
     // Step 1: Input Received
-    await revealStep(stepsC, 'Step 1 — Input Ingested',
-      `Dispute <strong>${payload.dispute_id || 'N/A'}</strong> · ₹${(payload.dispute_amount || 0).toLocaleString('en-IN')} · ${payload.card_network || 'Unknown'} Network`, '', 220);
+    await revealStep(
+      stepsC,
+      'Step 1 of 4',
+      'Dispute Claim Ingested',
+      `<div class="plain-text-desc">
+        A chargeback notice of <strong>₹${(payload.dispute_amount || 0).toLocaleString('en-IN')}</strong> was received on the <strong>${payload.card_network || 'Visa'}</strong> network for an <strong>${(payload.product_category || 'Electronics').toUpperCase()}</strong> order.
+      </div>
+      <div style="display:flex; gap:16px; font-size:12px; color:var(--text-muted); flex-wrap:wrap;">
+        <span>Dispute ID: <strong>${payload.dispute_id || 'N/A'}</strong></span>
+        <span>Account Age: <strong>${payload.customer_account_age_days || 0} days</strong></span>
+        <span>Prior Orders: <strong>${payload.customer_prior_orders || 0}</strong></span>
+      </div>`,
+      'step-card-info',
+      220
+    );
 
     const res = await fetch('/api/disputes', {
       method: 'POST',
@@ -862,35 +896,65 @@ async function runPipeline(payload, btn) {
 
     // Step 2: Reason Code Classification
     const clf = data.classification || {};
-    const topK = (clf.top_k_predictions || []).map((t, i) => {
-      const p = (t.confidence * 100).toFixed(1);
-      return `<div style="margin-top:4px;"><span style="color:var(--text-muted);font-size:11px;">#${i+1}</span> <strong>Code ${t.reason_code}</strong> <span style="color:var(--brand-indigo);">${p}%</span><div class="conf-bar-track"><div class="conf-bar-fill" style="width:${p}%"></div></div></div>`;
-    }).join('');
-    
-    await revealStep(stepsC, 'Step 2 — Reason Code Classification',
-      `Predicted Reason Code: <strong>${clf.predicted_reason_code || 'N/A'}</strong> at ${((clf.confidence||0)*100).toFixed(1)}% calibrated confidence.${topK}
-      <div class="callout" style="margin-top:8px;margin-bottom:0;">
-        <strong>Term Explanation:</strong> Reason codes (such as 10.4 for Card-Absent Fraud) are standard industry categories assigned by card networks. Platt-scaled confidence means a 90% score reflects an empirical 9-out-of-10 probability of being the correct dispute category.
+    const code = clf.predicted_reason_code || '13.1';
+    const friendlyName = RC_NAMES[code] || `Category Code ${code}`;
+    const confPct = ((clf.confidence || 0) * 100).toFixed(1);
+
+    await revealStep(
+      stepsC,
+      'Step 2 of 4',
+      'Dispute Reason Identified',
+      `<div class="plain-text-desc">
+        The AI analyzed order timing, customer history, and payment signals to identify the exact claim category:
+      </div>
+      <div style="background:#F8FAFC; border:1px solid var(--border-color); border-radius:8px; padding:12px; margin-bottom:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+          <strong style="font-size:14px; color:var(--brand-navy-dark);">${friendlyName} (Code ${code})</strong>
+          <span class="chip chip-success">${confPct}% Certainty</span>
+        </div>
+        <div class="conf-bar-track"><div class="conf-bar-fill" style="width:${confPct}%"></div></div>
+      </div>
+      <div class="plain-explainer-card">
+        <strong>What this means:</strong> The customer filed under "${friendlyName}". The system uses this to determine exactly what documents the card network requires to overturn the chargeback.
       </div>`,
-      'step-success', 300);
+      'step-card-success',
+      300
+    );
 
     // Step 3: Evidence Checklist Retrieval
     const ev = data.evidence || {};
     const evPkg = ev.evidence_package || {};
-    const chips = [
-      ...(evPkg.compelling||[]).map(e => `<span class="chip chip-success">Present: ${e.field}</span>`),
-      ...(evPkg.supporting||[]).map(e => `<span class="chip chip-success">Present: ${e.field}</span>`),
-      ...(evPkg.missing||[]).map(m => `<span class="chip chip-danger">Missing: ${m}</span>`)
-    ].join(' ');
-    const totalEvidence = (evPkg.compelling||[]).length + (evPkg.supporting||[]).length + (evPkg.missing||[]).length;
-    const presentEvidence = (evPkg.compelling||[]).length + (evPkg.supporting||[]).length;
-    
-    await revealStep(stepsC, 'Step 3 — Evidence Checklist Retrieval',
-      `Evidence Strength Score: <strong>${((ev.evidence_strength||0)*100).toFixed(0)}%</strong> (${presentEvidence}/${totalEvidence} required items present).<div style="margin:8px 0;">${chips}</div>
-      <div class="callout" style="margin-top:8px;margin-bottom:0;">
-        <strong>Term Explanation:</strong> Visa and Mastercard enforce strict evidence requirements. Compelling items (e.g. proof of delivery, 3D-Secure) directly prove legitimate fulfillment to the issuing bank.
+    const compelling = evPkg.compelling || [];
+    const supporting = evPkg.supporting || [];
+    const missing = evPkg.missing || [];
+    const totalCount = compelling.length + supporting.length + missing.length;
+    const presentCount = compelling.length + supporting.length;
+    const evStrengthPct = ((ev.evidence_strength || 0) * 100).toFixed(0);
+
+    const itemsHtml = [
+      ...compelling.map(e => `<div class="plain-evidence-item present"><span>${EVIDENCE_NAMES[e.field] || e.field}</span> <span>&#10003; Verified on File</span></div>`),
+      ...supporting.map(e => `<div class="plain-evidence-item present"><span>${EVIDENCE_NAMES[e.field] || e.field}</span> <span>&#10003; Supporting Proof</span></div>`),
+      ...missing.map(m => `<div class="plain-evidence-item missing"><span>${EVIDENCE_NAMES[m] || m}</span> <span>&#10007; Missing</span></div>`)
+    ].join('');
+
+    await revealStep(
+      stepsC,
+      'Step 3 of 4',
+      'Merchant Evidence Verification',
+      `<div class="plain-text-desc">
+        Checking merchant fulfillment records against official card-network requirements:
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span style="font-size:13px; font-weight:700; color:var(--brand-navy-dark);">Evidence Completeness Score:</span>
+        <span class="chip ${ev.evidence_strength >= 0.6 ? 'chip-success' : 'chip-warning'}">${evStrengthPct}% (${presentCount}/${totalCount} documents verified)</span>
+      </div>
+      <div class="plain-evidence-list">${itemsHtml}</div>
+      <div class="plain-explainer-card">
+        <strong>Why this matters:</strong> Banks require concrete proof before reversing a dispute. Having digital carrier tracking and customer authentication gives you the strongest chance of winning.
       </div>`,
-      ev.evidence_strength >= 0.6 ? 'step-success' : 'step-warning', 300);
+      ev.evidence_strength >= 0.6 ? 'step-card-success' : 'step-card-warning',
+      300
+    );
 
     // Step 4: Decision & Document Generation
     const wp = data.win_probability || 0;
@@ -904,14 +968,14 @@ async function runPipeline(payload, btn) {
     if (responseText) {
       window.lastResponseText = responseText;
       docBtnHtml = `
-        <div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border-color);">
-          <button class="btn-secondary" style="width:100%; justify-content:center;" onclick="toggleRepresentmentDoc()">
-            View Rendered Representment Document
+        <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border-color);">
+          <button class="btn-secondary" style="width:100%; justify-content:center; padding:9px 16px; font-weight:700;" onclick="toggleRepresentmentDoc()">
+            View Rendered Defense Letter
           </button>
-          <div id="representment-doc-panel" style="display:none; margin-top:10px;">
+          <div id="representment-doc-panel" style="display:none; margin-top:12px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <span style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Rendered Representment Response Letter</span>
-              <button class="btn-secondary" style="padding:2px 8px; font-size:11px;" onclick="copyRepresentmentDoc()">Copy Letter</button>
+              <span style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Official Bank Defense Letter</span>
+              <button class="btn-secondary" style="padding:3px 10px; font-size:11px;" onclick="copyRepresentmentDoc()">Copy Letter</button>
             </div>
             <pre class="code-block" style="max-height:220px; white-space:pre-wrap; font-size:11px;">${escapeHtml(responseText)}</pre>
           </div>
@@ -919,24 +983,35 @@ async function runPipeline(payload, btn) {
       `;
     }
 
-    await revealStep(stepsC, 'Step 4 — Final Recommendation',
-      `<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
-        <span style="font-size:20px;font-weight:900;color:var(--brand-navy-dark);">Win Probability: ${(wp*100).toFixed(1)}%</span>
-        <span class="chip ${chipClass}">${action}</span>
+    await revealStep(
+      stepsC,
+      'Step 4 of 4',
+      'Recommended Action & Verdict',
+      `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+        <div>
+          <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Win Likelihood</div>
+          <div style="font-size:22px; font-weight:900; color:var(--brand-navy-dark);">${(wp*100).toFixed(1)}%</div>
+        </div>
+        <div>
+          <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Expected Value</div>
+          <div style="font-size:22px; font-weight:900; color:var(--brand-emerald-text);">+₹${ev_inr.toLocaleString('en-IN')}</div>
+        </div>
+        <div>
+          <span class="chip ${chipClass}" style="font-size:12px; padding:4px 12px;">${isAuto ? 'AUTO-SUBMIT DEFENSE' : 'ROUTE TO HUMAN REVIEW'}</span>
+        </div>
       </div>
-      <div style="display:flex;gap:20px;font-size:12px;color:var(--text-secondary);margin-bottom:8px;">
-        <span>Expected Net Value: <strong style="color:var(--brand-emerald-text);">₹${ev_inr.toLocaleString('en-IN')}</strong></span>
-      </div>
-      <div class="callout" style="margin-top:8px;margin-bottom:0;">
-        <strong>Decision Explanation:</strong> ${isAuto ? 'Confidence and evidence strength both exceed threshold gates. This case has strong probability of winning, yielding positive expected recovery.' : 'Confidence or evidence strength fell below threshold gates. Case is safely routed to human review to prevent filing fee loss.'}
+      <div class="plain-explainer-card" style="background:${isAuto ? '#F0FDF4' : '#FFFBEB'}; border-color:${isAuto ? '#A7F3D0' : '#FDE68A'};">
+        <strong>${isAuto ? 'Automated Submission Approved:' : 'Manual Review Recommended:'}</strong> ${isAuto ? 'This dispute has high confidence and complete evidence. Impulse has drafted your defense letter and approved it for automated submission, saving you manual labor.' : 'Confidence or evidence fell below automated safety gates. Case is safely queued for merchant review to ensure no bank dispute fees are wasted.'}
       </div>
       ${docBtnHtml}`,
-      isAuto ? 'step-success' : 'step-warning', 250);
+      isAuto ? 'step-card-success' : 'step-card-warning',
+      250
+    );
 
     badge.innerHTML = `<span class="chip ${chipClass}">${action}</span>`;
     outPre.textContent = JSON.stringify(data, null, 2);
   } catch (err) {
-    stepsC.innerHTML += `<div class="pipeline-step revealed" style="border-left-color:var(--brand-rose);"><div class="step-label">Execution Error</div><div class="step-content">${err.message}</div></div>`;
+    stepsC.innerHTML += `<div class="pipeline-step-card revealed" style="border-left:5px solid var(--brand-rose);"><div class="pipeline-card-header"><span class="step-number-pill">Execution Error</span></div><div class="plain-text-desc">${err.message}</div></div>`;
     badge.innerHTML = '';
     outPre.textContent = 'Error: ' + err.message;
   } finally {
@@ -947,11 +1022,17 @@ async function runPipeline(payload, btn) {
   }
 }
 
-function revealStep(container, label, content, cls, delay) {
+function revealStep(container, stepNum, title, content, cls, delay) {
   return new Promise(resolve => {
     const div = document.createElement('div');
-    div.className = 'pipeline-step ' + cls;
-    div.innerHTML = `<div class="step-label">${label}</div><div class="step-content">${content}</div>`;
+    div.className = 'pipeline-step-card ' + cls;
+    div.innerHTML = `
+      <div class="pipeline-card-header">
+        <span class="step-card-title">${title}</span>
+        <span class="step-number-pill">${stepNum}</span>
+      </div>
+      ${content}
+    `;
     container.appendChild(div);
     setTimeout(() => { div.classList.add('revealed'); resolve(); }, delay);
   });
