@@ -404,27 +404,45 @@
           <p class="section-desc">Evaluated on the held-out test split (750 disputes) never seen during training.</p>
         </div>
 
-        <!-- Core Visual Charts Placed Higher Up -->
+        <!-- Core Visual Charts Placed Higher Up with Rich Highlight Cards & Detailed Explainers -->
         <div class="chart-row">
-          <div class="card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-              <span style="font-size:13px; font-weight:800; color:var(--brand-navy-dark);">Cost vs. Threshold Curve</span>
-              <span class="chip chip-success">Cost-Optimal Gate: 0.50</span>
+          <!-- Chart 1: Cost vs Threshold Curve -->
+          <div class="graph-highlight-card">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size:15px; font-weight:800; color:var(--brand-navy-dark);">Cost vs. Threshold Curve</span>
+                <span class="chip chip-success">Cost-Optimal Gate: 0.50</span>
+              </div>
+              <div class="chart-container"><canvas id="chart-cost-curve"></canvas></div>
             </div>
-            <div class="chart-container"><canvas id="chart-cost-curve"></canvas></div>
-            <div class="callout" style="margin-top:8px; margin-bottom:0;">
-              <strong>Interpretation:</strong> The green line denotes net INR recovered per dispute across all operating points. The system balances automation rate against win rate to maximize net rupee recovery.
+            <div class="graph-explainer-box">
+              <div class="graph-explainer-title">Curve Guide &amp; Financial Optimization</div>
+              <ul class="graph-explainer-list">
+                <li><strong>Net ₹ / Dispute (Green Curve):</strong> The average rupee value gained per dispute after deducting filing fees and manual review costs. Peaks at <strong>0.50 threshold (₹1,258/dispute)</strong>.</li>
+                <li><strong>Auto-Respond % (Purple Line):</strong> Percentage of disputes auto-submitted without human review. At 0.50, ~6.5% of clean, verified cases are resolved instantly.</li>
+                <li><strong>Win Rate % (Orange Line):</strong> Empirical win rate of cases submitted at this gate (~85% win rate when evidence package is complete).</li>
+                <li><strong>Takeaway:</strong> Setting higher thresholds (0.95) acts too conservatively and forfeits recoverable funds. The 0.50 gate maximizes net rupee recovery.</li>
+              </ul>
             </div>
           </div>
 
-          <div class="card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-              <span style="font-size:13px; font-weight:800; color:var(--brand-navy-dark);">Feature Importances</span>
-              <span class="chip chip-neutral">LightGBM Gini Score</span>
+          <!-- Chart 2: Feature Importances -->
+          <div class="graph-highlight-card">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size:15px; font-weight:800; color:var(--brand-navy-dark);">Feature Importances (Top Signals)</span>
+                <span class="chip chip-neutral">LightGBM Gini Score</span>
+              </div>
+              <div class="chart-container"><canvas id="chart-features"></canvas></div>
             </div>
-            <div class="chart-container"><canvas id="chart-features"></canvas></div>
-            <div class="callout" style="margin-top:8px; margin-bottom:0;">
-              <strong>Signal Breakdown:</strong> Customer account age, dispute amount, days to dispute, and order history are the most influential features distinguishing reason-code categories.
+            <div class="graph-explainer-box">
+              <div class="graph-explainer-title">Feature Signals &amp; Decision Drivers</div>
+              <ul class="graph-explainer-list">
+                <li><strong>Customer Account Age (Top Signal):</strong> Long-standing accounts rarely file first-party fraud compared to newly registered throwaway accounts.</li>
+                <li><strong>Days to Dispute:</strong> Chargebacks filed within 7 days strongly indicate unauthorized card theft, whereas 45+ days indicate merchandise or return issues.</li>
+                <li><strong>Dispute Amount &amp; Category:</strong> High-ticket Electronics and Luxury items have distinct fraud signatures compared to low-ticket Grocery orders.</li>
+                <li><strong>3DS &amp; Delivery Proof:</strong> Direct cryptographic authentication and courier signatures provide the strongest deterministic defense in representment.</li>
+              </ul>
             </div>
           </div>
         </div>

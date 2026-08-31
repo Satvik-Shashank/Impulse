@@ -366,21 +366,23 @@ function renderPerformanceCharts() {
             label: 'Net ₹ / Dispute',
             data: curve.map(c => c.net_value_per_dispute),
             borderColor: '#10B981',
-            backgroundColor: 'rgba(16, 185, 129, 0.08)',
+            backgroundColor: 'rgba(16, 185, 129, 0.12)',
             fill: true,
             tension: 0.35,
-            pointRadius: 4,
+            pointRadius: 6,
+            pointHoverRadius: 8,
             pointBackgroundColor: '#10B981',
-            borderWidth: 2
+            borderWidth: 2.5
           },
           {
             label: 'Auto-Respond %',
             data: curve.map(c => c.auto_respond_pct * 100),
             borderColor: '#6366F1',
             tension: 0.35,
-            pointRadius: 3,
+            pointRadius: 5,
+            pointHoverRadius: 7,
             pointBackgroundColor: '#6366F1',
-            borderWidth: 1.8,
+            borderWidth: 2,
             yAxisID: 'y1'
           },
           {
@@ -388,9 +390,10 @@ function renderPerformanceCharts() {
             data: curve.map(c => c.win_rate_at_threshold * 100),
             borderColor: '#F59E0B',
             tension: 0.35,
-            pointRadius: 3,
+            pointRadius: 5,
+            pointHoverRadius: 7,
             pointBackgroundColor: '#F59E0B',
-            borderWidth: 1.8,
+            borderWidth: 2,
             yAxisID: 'y1'
           }
         ]
@@ -401,23 +404,27 @@ function renderPerformanceCharts() {
         interaction: { intersect: false, mode: 'index' },
         scales: {
           y: {
-            title: { display: true, text: 'Net ₹ / Dispute', color: '#10B981', font: { weight: 'bold' } },
+            title: { display: true, text: 'Net ₹ / Dispute (INR)', color: '#10B981', font: { weight: 'bold', size: 12 } },
             grid: { color: '#F1F5F9' },
-            ticks: { callback: v => '₹' + v }
+            ticks: { callback: v => '₹' + v, font: { size: 11, weight: '600' } }
           },
           y1: {
             position: 'right',
-            title: { display: true, text: 'Percent (%)', color: '#64748B', font: { weight: 'bold' } },
+            title: { display: true, text: 'Percentage (%)', color: '#64748B', font: { weight: 'bold', size: 12 } },
             grid: { display: false },
-            ticks: { callback: v => v + '%' }
+            ticks: { callback: v => v + '%', font: { size: 11, weight: '600' } }
           },
           x: {
-            title: { display: true, text: 'Confidence Threshold Gate', color: '#64748B', font: { weight: 'bold' } },
-            grid: { color: '#F1F5F9' }
+            title: { display: true, text: 'Confidence Threshold Operating Gate (τ)', color: '#0F172A', font: { weight: 'bold', size: 12 } },
+            grid: { color: '#F1F5F9' },
+            ticks: { font: { size: 11, weight: '600' } }
           }
         },
         plugins: {
-          legend: { position: 'top', labels: { boxWidth: 10, usePointStyle: true } }
+          legend: {
+            position: 'top',
+            labels: { boxWidth: 12, usePointStyle: true, font: { weight: '700', size: 12 }, padding: 14 }
+          }
         }
       }
     });
@@ -433,12 +440,13 @@ function renderPerformanceCharts() {
       data: {
         labels: Object.keys(fi).map(l => l.replace(/_/g, ' ')),
         datasets: [{
+          label: 'Gini Gain Score',
           data: Object.values(fi),
-          backgroundColor: '#EEF2FF',
+          backgroundColor: 'rgba(99, 102, 241, 0.15)',
           borderColor: '#6366F1',
           hoverBackgroundColor: '#6366F1',
-          borderWidth: 1.2,
-          borderRadius: 3
+          borderWidth: 1.8,
+          borderRadius: 4
         }]
       },
       options: {
@@ -449,9 +457,13 @@ function renderPerformanceCharts() {
         scales: {
           x: {
             grid: { color: '#F1F5F9' },
-            title: { display: true, text: 'Gini Gain Score', color: '#64748B' }
+            title: { display: true, text: 'Gini Split Importance Score', color: '#0F172A', font: { weight: 'bold', size: 12 } },
+            ticks: { font: { size: 11, weight: '600' } }
           },
-          y: { grid: { display: false } }
+          y: {
+            grid: { display: false },
+            ticks: { font: { size: 11, weight: '600' }, color: '#1E293B' }
+          }
         }
       }
     });
