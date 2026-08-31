@@ -79,14 +79,11 @@ def build_results(test_df, model_path):
         ev = retrieve_evidence(row.to_dict(), pred_rc)
         strengths.append(ev["evidence_strength"])
 
-    results = pd.DataFrame({
-        "dispute_id": test_df["dispute_id"].values,
-        "actual": test_df["reason_code"].astype(str).values,
-        "predicted": preds["predicted"].values,
-        "confidence": preds["confidence"].values,
-        "outcome": test_df["outcome"].values,
-        "evidence_strength": strengths,
-    })
+    results = test_df.copy()
+    results["actual"] = test_df["reason_code"].astype(str).values
+    results["predicted"] = preds["predicted"].values
+    results["confidence"] = preds["confidence"].values
+    results["evidence_strength"] = strengths
     return results, clf
 
 

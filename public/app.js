@@ -128,11 +128,7 @@ function updateCardPreview() {
   
   if (elLogo) {
     if (net === 'Visa') {
-      elLogo.innerHTML = `
-        <svg viewBox="0 0 70 24" width="54" height="18" fill="#FFFFFF">
-          <path d="M27.2 2.8l-4.5 17.5h-4.3L22.9 2.8h4.3zm17.5 11.4l2.3-6.4c-.1 0 1.2-2.1 1.5-2.6l.8 3.9 1.4 5.1h-6zm7.8 6.1h3.9L53 2.8h-3.6c-.8 0-1.5.5-1.8 1.2l-6.3 16.3h4.4l.9-2.4h5.4l.5 2.4zM39.6 14.1c0-4.3-6-4.6-6-6.5 0-.6.5-1.2 1.8-1.4 1.3-.2 3.5.1 4.7.7l.8-3.8c-1.2-.4-2.8-.7-4.7-.7-4.4 0-7.5 2.3-7.5 5.7 0 2.5 2.2 3.8 3.9 4.6 1.7.9 2.3 1.4 2.3 2.2 0 1.2-1.4 1.7-2.7 1.7-2.3 0-3.6-.3-5.5-1.2l-.8 3.9c1.1.5 3.1.9 5.2.9 4.8 0 8.1-2.4 8.1-6.1zM18.8 2.8L12.7 17.1l-.6-3.2c-1.1-3.8-4.5-7.9-8.4-10l5.4 16.4h4.5l6.7-17.5h-4.5z"/>
-        </svg>
-      `;
+      elLogo.innerHTML = `<span style="font-size:22px; font-weight:800; font-style:italic; color:#FFFFFF; letter-spacing:2px; font-family:'Inter',sans-serif;">VISA</span>`;
     } else {
       elLogo.innerHTML = `
         <svg viewBox="0 0 36 24" width="38" height="24">
@@ -260,11 +256,17 @@ function setAnalyzerMode(mode, btn) {
 
 // ── Health Check ────────────────────────────────────────────────
 async function checkApiHealth() {
+  const el = document.getElementById('api-status');
+  if (!el) return;
   try {
     const res = await fetch('/api/health');
-    document.getElementById('api-status').textContent = res.ok ? 'API Online' : 'API Error';
+    if (res.ok) {
+      el.textContent = 'API Online (FastAPI :8000)';
+    } else {
+      el.textContent = 'API Error';
+    }
   } catch {
-    document.getElementById('api-status').textContent = 'API Offline';
+    el.textContent = 'API Offline';
   }
 }
 
@@ -631,29 +633,84 @@ function loadSelectedCaseIntoAnalyzer() {
   if (!selectedCaseRecord) return;
   const p = selectedCaseRecord;
 
-  // Fill form
-  document.getElementById('f-amount').value = p.dispute_amount || 12499;
-  document.getElementById('f-network').value = p.card_network || 'Visa';
-  document.getElementById('f-days').value = p.days_to_dispute || 35;
-  document.getElementById('f-category').value = p.product_category || 'electronics';
-  document.getElementById('f-shipping').value = p.shipping_method || 'express';
-  document.getElementById('f-acct-age').value = p.customer_account_age_days || 45;
-  document.getElementById('f-delivery').checked = p.evidence_strength >= 0.5;
-  document.getElementById('f-proof').checked = p.evidence_strength >= 0.6;
-  document.getElementById('f-ip').checked = p.evidence_strength >= 0.4;
-  document.getElementById('f-3ds').checked = p.evidence_strength >= 0.7;
+  // Fill form with exact values from the selected dispute
+  if (document.getElementById('f-amount')) {
+    document.getElementById('f-amount').value = p.dispute_amount !== undefined ? p.dispute_amount : 12499;
+  }
+  if (document.getElementById('f-network')) {
+    document.getElementById('f-network').value = p.card_network || 'Visa';
+  }
+  if (document.getElementById('f-days')) {
+    document.getElementById('f-days').value = p.days_to_dispute !== undefined ? p.days_to_dispute : 35;
+  }
+  if (document.getElementById('f-category')) {
+    document.getElementById('f-category').value = p.product_category || 'electronics';
+  }
+  if (document.getElementById('f-shipping')) {
+    document.getElementById('f-shipping').value = p.shipping_method || 'express';
+  }
+  if (document.getElementById('f-acct-age')) {
+    document.getElementById('f-acct-age').value = p.customer_account_age_days !== undefined ? p.customer_account_age_days : 45;
+  }
+  
+  // Evidence checkboxes
+  if (document.getElementById('f-delivery')) {
+    document.getElementById('f-delivery').checked = p.delivery_confirmed === true || p.delivery_confirmed === 'True' || p.delivery_confirmed === 1;
+  }
+  if (document.getElementById('f-proof')) {
+    document.getElementById('f-proof').checked = p.has_delivery_proof === true || p.has_delivery_proof === 'True' || p.has_delivery_proof === 1;
+  }
+  if (document.getElementById('f-ip')) {
+    document.getElementById('f-ip').checked = p.ip_geolocation_match === true || p.ip_geolocation_match === 'True' || p.ip_geolocation_match === 1;
+  }
+  if (document.getElementById('f-3ds')) {
+    document.getElementById('f-3ds').checked = p.has_3ds_authentication === true || p.has_3ds_authentication === 'True' || p.has_3ds_authentication === 1;
+  }
+  if (document.getElementById('f-correspondence')) {
+    document.getElementById('f-correspondence').checked = p.has_customer_correspondence === true || p.has_customer_correspondence === 'True' || p.has_customer_correspondence === 1;
+  }
+
+  // Customer account stats
+  if (document.getElementById('f-prior-disputes')) {
+    document.getElementById('f-prior-disputes').value = p.customer_prior_disputes !== undefined ? p.customer_prior_disputes : 0;
+  }
+  if (document.getElementById('f-prior-orders')) {
+    document.getElementById('f-prior-orders').value = p.customer_prior_orders !== undefined ? p.customer_prior_orders : 0;
+  }
+
+  // AVS / CVV verification match
+  const avsVal = p.avs_cvv_match || 'neither';
+  document.querySelectorAll('input[name="avs"]').forEach(r => {
+    r.checked = r.value === avsVal;
+  });
+
+  // Track the loaded dispute ID
+  window.currentLoadedDisputeId = p.dispute_id;
+  window.currentLoadedReasonCode = p.reason_code_label || `Reason Code ${p.actual || ''}`;
+
+  // Update JSON payload textarea as well
+  const jsonInput = document.getElementById('dispute-json-input');
+  if (jsonInput) {
+    const payload = buildPayloadFromForm();
+    jsonInput.value = JSON.stringify(payload, null, 2);
+  }
 
   updateCardPreview();
 
-  // Switch to Home tab and run
-  switchTab('home', document.querySelector('.tabs-nav button:first-child'));
-  analyzeFromForm();
+  // Switch to Home tab and scroll to live analyzer
+  const homeBtn = document.querySelector('.tabs-nav button:first-child');
+  switchTab('home', homeBtn);
+  
+  setTimeout(() => {
+    scrollToAnalyzer();
+    analyzeFromForm();
+  }, 100);
 }
 
 function scrollToAnalyzer() {
   const el = document.getElementById('live-analyzer-section');
   if (el) {
-    el.scrollIntoView({ behavior: 'smooth' });
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 
@@ -758,6 +815,8 @@ function renderMonitoring(d) {
 
 // ── Presets ──────────────────────────────────────────────────────
 function loadPreset(type) {
+  window.currentLoadedDisputeId = null;
+  window.currentLoadedReasonCode = null;
   const p = type === 'strong' ? PRESET_STRONG : PRESET_WEAK;
   document.getElementById('f-amount').value = p.dispute_amount;
   document.getElementById('f-network').value = p.card_network;
@@ -782,9 +841,10 @@ function loadPreset(type) {
 // ── Build Payload From Form ─────────────────────────────────────
 function buildPayloadFromForm() {
   const avs = document.querySelector('input[name="avs"]:checked');
+  const disputeId = window.currentLoadedDisputeId || ("DSP-LIVE-" + Date.now().toString(36).toUpperCase());
   return {
-    dispute_id: "DSP-LIVE-" + Date.now().toString(36).toUpperCase(),
-    reason_code_label: "Other Fraud - Card Absent Environment",
+    dispute_id: disputeId,
+    reason_code_label: window.currentLoadedReasonCode || "Dispute Claim",
     card_network: document.getElementById('f-network').value,
     dispute_amount: parseFloat(document.getElementById('f-amount').value) || 0,
     currency: "INR",
