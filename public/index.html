@@ -26,11 +26,6 @@
         <button class="tab-btn" onclick="switchTab('monitoring', this)">Monitoring</button>
         <button class="tab-btn" onclick="switchTab('guardrails', this)">Guardrails</button>
       </nav>
-
-      <div class="nav-status-pill" title="Connected to Impulse FastAPI backend at localhost:8000">
-        <span class="dot"></span>
-        <span id="api-status">Backend Connected</span>
-      </div>
     </header>
 
     <!-- ═══════════════════════════════════════════════════════════════
@@ -103,40 +98,53 @@
 
       <!-- Stripe-Inspired Centered Hero Showcase (Realistic Card + Live Inspector) -->
       <div class="hero-showcase-container" id="hero-showcase-box">
-        <!-- Left: Ultra-Realistic 3D Interactive Credit Card -->
+        <!-- Left: 5-at-a-time Moving Payment Schemes & Apps Carousel Card -->
         <div>
-          <div class="interactive-credit-card" id="sim-credit-card">
-            <!-- Card Top Row: EMV Chip + Contactless Wave + Network Logo -->
-            <div class="card-top-row">
-              <div class="card-chip-wrap">
-                <div class="card-emv-chip"></div>
-                <svg class="contactless-wave-icon" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M8.5 16.5a5 5 0 0 1 0-9"></path>
-                  <path d="M12 19a9 9 0 0 0 0-14"></path>
-                  <path d="M15.5 21.5a13 13 0 0 0 0-19"></path>
-                </svg>
+          <div class="payment-carousel-card" id="sim-credit-card">
+            <!-- Top Header -->
+            <div class="carousel-card-top">
+              <div class="carousel-badge-tag">
+                <span class="carousel-live-dot"></span>
+                <span>Payment Schemes Active</span>
               </div>
-              <div class="card-network-logo-box" id="sim-card-logo">
-                <!-- Cleaner Visa text logo -->
-                <span style="font-size:22px; font-weight:800; font-style:italic; color:#FFFFFF; letter-spacing:2px; font-family:'Inter',sans-serif;">VISA</span>
+              <div class="carousel-amount-pill" id="sim-card-amount">₹12,499.00</div>
+            </div>
+
+            <!-- 5-at-a-time Moving Payment Badges Carousel Viewport -->
+            <div class="payment-badges-slider-viewport">
+              <div class="payment-badges-track" id="payment-badges-track">
+                <!-- Group 1: 5 Payment Badges -->
+                <div class="pay-badge-tile"><span class="pay-badge-icon badge-visa">VISA</span></div>
+                <div class="pay-badge-tile"><span class="pay-badge-icon badge-mc"><span class="mc-c1"></span><span class="mc-c2"></span>mastercard</span></div>
+                <div class="pay-badge-tile"><span class="pay-badge-icon badge-paypal"><i>Pay</i><i>Pal</i></span></div>
+                <div class="pay-badge-tile"><span class="pay-badge-icon badge-apple"> Pay</span></div>
+                <div class="pay-badge-tile"><span class="pay-badge-icon badge-gpay"><span style="color:#4285F4">G</span> <span style="color:#5F6368">Pay</span></span></div>
+                
+                <!-- Group 2: 5 Payment Badges -->
+                <div class="pay-badge-tile"><span class="pay-badge-icon badge-stripe">stripe</span></div>
+                <div class="pay-badge-tile"><span class="pay-badge-icon badge-amex">AMEX</span></div>
+                <div class="pay-badge-tile"><span class="pay-badge-icon badge-discover">DISCOVER</span></div>
+                <div class="pay-badge-tile"><span class="pay-badge-icon badge-alipay">Alipay</span></div>
+                <div class="pay-badge-tile"><span class="pay-badge-icon badge-payoneer">Payoneer</span></div>
+
+                <!-- Duplicate for seamless continuous 60fps loop -->
+                <div class="pay-badge-tile"><span class="pay-badge-icon badge-visa">VISA</span></div>
+                <div class="pay-badge-tile"><span class="pay-badge-icon badge-mc"><span class="mc-c1"></span><span class="mc-c2"></span>mastercard</span></div>
+                <div class="pay-badge-tile"><span class="pay-badge-icon badge-paypal"><i>Pay</i><i>Pal</i></span></div>
+                <div class="pay-badge-tile"><span class="pay-badge-icon badge-apple"> Pay</span></div>
+                <div class="pay-badge-tile"><span class="pay-badge-icon badge-gpay"><span style="color:#4285F4">G</span> <span style="color:#5F6368">Pay</span></span></div>
               </div>
             </div>
 
-            <!-- Embossed Card Number -->
-            <div class="card-number-display" id="sim-card-number">4111 •••• •••• 4242</div>
-
-            <!-- Cardholder Name -->
-            <div style="font-size:13px; font-weight:700; letter-spacing:2.5px; color:rgba(255,255,255,0.85); text-transform:uppercase; margin-top:6px;">KISHORE KUMAR</div>
-
-            <!-- Card Bottom Row: Holder + Category + Expiry + Amount -->
-            <div class="card-bottom-row">
+            <!-- Bottom Active Ingestion Status -->
+            <div class="carousel-card-bottom">
               <div>
                 <div class="card-holder-label">Dispute ID / Category</div>
                 <div class="card-holder-val" id="sim-card-id">DSP-LIVE · ELECTRONICS</div>
               </div>
-              <div class="card-meta-right">
-                <div class="card-expiry-tag">EXP 08/29</div>
-                <div class="card-amount-tag" id="sim-card-amount">₹12,499.00</div>
+              <div style="text-align:right;">
+                <div class="card-holder-label">Disputed Network</div>
+                <div class="card-holder-val" id="sim-card-network" style="color:var(--brand-emerald-text);">Visa Network</div>
               </div>
             </div>
           </div>
@@ -168,33 +176,6 @@
               <button class="btn-secondary" style="padding:5px 10px; font-size:11px;" onclick="stepSimulation(-1)">Prev</button>
               <button class="btn-secondary" style="padding:5px 10px; font-size:11px;" onclick="stepSimulation(1)">Next</button>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ═══ Muted Card Networks & Financial Rails Logo Marquee Strip ═══ -->
-      <div class="logo-strip-section">
-        <div class="logo-strip-label">Supported Card Schemes &amp; Payment Rails</div>
-        <div class="logo-marquee-track">
-          <div class="logo-marquee-content">
-            <div class="logo-item"><span class="network-badge-text">VISA SCHEME</span></div>
-            <div class="logo-item"><span class="network-badge-text">MASTERCARD CORE</span></div>
-            <div class="logo-item"><span class="network-badge-text">RUPAY NETWORK</span></div>
-            <div class="logo-item"><span class="network-badge-text">AMERICAN EXPRESS</span></div>
-            <div class="logo-item"><span class="network-badge-text">HDFC BANK GATEWAY</span></div>
-            <div class="logo-item"><span class="network-badge-text">ICICI BANK BFSI</span></div>
-            <div class="logo-item"><span class="network-badge-text">AXIS PAYMENTS</span></div>
-            <div class="logo-item"><span class="network-badge-text">STRIPE CONNECT</span></div>
-          </div>
-          <div class="logo-marquee-content" aria-hidden="true">
-            <div class="logo-item"><span class="network-badge-text">VISA SCHEME</span></div>
-            <div class="logo-item"><span class="network-badge-text">MASTERCARD CORE</span></div>
-            <div class="logo-item"><span class="network-badge-text">RUPAY NETWORK</span></div>
-            <div class="logo-item"><span class="network-badge-text">AMERICAN EXPRESS</span></div>
-            <div class="logo-item"><span class="network-badge-text">HDFC BANK GATEWAY</span></div>
-            <div class="logo-item"><span class="network-badge-text">ICICI BANK BFSI</span></div>
-            <div class="logo-item"><span class="network-badge-text">AXIS PAYMENTS</span></div>
-            <div class="logo-item"><span class="network-badge-text">STRIPE CONNECT</span></div>
           </div>
         </div>
       </div>

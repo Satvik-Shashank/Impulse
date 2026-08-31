@@ -134,36 +134,19 @@ document.addEventListener('mousemove', (e) => {
   }
 });
 
-// ── Interactive Credit Card Preview Sync ──────────────────────────
+// ── Interactive Payment Carousel Preview Sync ──────────────────────
 function updateCardPreview() {
   const amt = parseFloat(document.getElementById('f-amount').value) || 0;
   const net = document.getElementById('f-network').value;
   const cat = document.getElementById('f-category').value;
   
   const elAmt = document.getElementById('sim-card-amount');
-  const elLogo = document.getElementById('sim-card-logo');
   const elId = document.getElementById('sim-card-id');
-  const elNum = document.getElementById('sim-card-number');
+  const elNet = document.getElementById('sim-card-network');
 
   if (elAmt) elAmt.textContent = '₹' + amt.toLocaleString('en-IN', { minimumFractionDigits: 2 });
   if (elId) elId.textContent = `DSP-LIVE · ${cat.toUpperCase()}`;
-  
-  if (elLogo) {
-    if (net === 'Visa') {
-      elLogo.innerHTML = `<span style="font-size:22px; font-weight:800; font-style:italic; color:#FFFFFF; letter-spacing:2px; font-family:'Inter',sans-serif;">VISA</span>`;
-    } else {
-      elLogo.innerHTML = `
-        <svg viewBox="0 0 36 24" width="38" height="24">
-          <circle cx="12" cy="12" r="10" fill="#EB001B"/>
-          <circle cx="24" cy="12" r="10" fill="#F79E1B" fill-opacity="0.88"/>
-        </svg>
-      `;
-    }
-  }
-
-  if (elNum) {
-    elNum.textContent = net === 'Visa' ? '4111 •••• •••• 4242' : '5500 •••• •••• 8899';
-  }
+  if (elNet) elNet.textContent = `${net} Network`;
 }
 
 // ── Paced Live Tour Simulation with Zoom & Slide Transitions ─────
