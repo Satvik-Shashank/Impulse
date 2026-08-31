@@ -1,7 +1,7 @@
 /* ════════════════════════════════════════════════════════════════════
    IMPULSE — Autonomous Dispute Defense Platform
    Stripe-Inspired Solid Theme, Crystal Clear Typography,
-   Floating 3D Card Simulator, Dynamic Slanted Accent Ribbon
+   Pulsing Dynamic Slanted Gradient Stripe, 3D Floating Card
    ════════════════════════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
@@ -29,7 +29,7 @@
   --brand-rose-border: #FECACA;
   --brand-rose-text: #991B1B;
 
-  /* Surfaces & Backgrounds (Clean Solid Canvas) */
+  /* Surfaces & Backgrounds (Clean Solid Canvas - No Grids) */
   --bg-page: #F8FAFC;
   --bg-surface: #FFFFFF;
   --bg-surface-sunken: #F1F5F9;
@@ -38,7 +38,7 @@
   --border-color-strong: #CBD5E1;
   --border-color-focus: #6366F1;
 
-  /* Text Colors (High Contrast) */
+  /* Text Colors (High Contrast - 100% Legible) */
   --text-primary: #0F172A;
   --text-secondary: #475569;
   --text-tertiary: #94A3B8;
@@ -48,7 +48,7 @@
   --shadow-subtle: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
   --shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
   --shadow-card-hover: 0 16px 36px -4px rgba(99, 102, 241, 0.16), 0 4px 12px -2px rgba(15, 23, 42, 0.05);
-  --shadow-showcase: 0 24px 60px -12px rgba(15, 23, 42, 0.14), 0 2px 8px rgba(15, 23, 42, 0.04);
+  --shadow-showcase: 0 24px 60px -12px rgba(15, 23, 42, 0.15), 0 2px 8px rgba(15, 23, 42, 0.04);
 
   /* Radii */
   --radius-sm: 6px;
@@ -85,38 +85,57 @@ body {
   overflow-x: hidden;
 }
 
-/* ── Stripe Slanted Accent Ribbon (Positioned Behind Showcase) ──── */
-.stripe-slanted-ribbon {
+/* ── Signature Dynamic Pulsing Slanted Stripe Ribbon ────────────── */
+.stripe-pulsing-ribbon {
   position: absolute;
-  top: 240px;
-  left: -20%;
-  width: 140%;
-  height: 280px;
+  top: 210px;
+  left: -25%;
+  width: 150%;
+  height: 340px;
   background: linear-gradient(
     105deg,
     #06B6D4 0%,
-    #3B82F6 25%,
-    #6366F1 50%,
-    #8B5CF6 75%,
+    #3B82F6 22%,
+    #6366F1 48%,
+    #8B5CF6 72%,
     #EC4899 100%
   );
   transform: skewY(-6deg);
   pointer-events: none;
   z-index: 0;
   opacity: 0.95;
-  box-shadow: 0 20px 60px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 24px 70px rgba(99, 102, 241, 0.28);
+  animation: stripePulse 7s ease-in-out infinite alternate;
 }
 
-.stripe-slanted-ribbon::after {
+.stripe-pulsing-ribbon::after {
   content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.2) 0%,
     transparent 50%,
-    rgba(15, 23, 42, 0.12) 100%
+    rgba(15, 23, 42, 0.15) 100%
   );
+}
+
+@keyframes stripePulse {
+  0% {
+    filter: hue-rotate(0deg) brightness(1);
+    transform: skewY(-6deg) scaleY(1);
+    box-shadow: 0 20px 60px rgba(99, 102, 241, 0.25);
+  }
+  50% {
+    filter: hue-rotate(18deg) brightness(1.08);
+    transform: skewY(-6deg) scaleY(1.03);
+    box-shadow: 0 28px 80px rgba(139, 92, 246, 0.35);
+  }
+  100% {
+    filter: hue-rotate(-10deg) brightness(1.02);
+    transform: skewY(-6deg) scaleY(1);
+    box-shadow: 0 20px 60px rgba(99, 102, 241, 0.25);
+  }
 }
 
 .app-wrapper {
@@ -127,7 +146,7 @@ body {
   padding: 0 24px 72px;
 }
 
-/* ── Navbar ─────────────────────────────────────────────────────── */
+/* ── Navbar (Clean Impulse - No AI, No Logo Box) ─────────────────── */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -136,11 +155,11 @@ body {
   border-radius: var(--radius-lg);
   background: #FFFFFF;
   border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-card);
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
   position: sticky;
   top: 14px;
   z-index: 100;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
 }
 
 .nav-brand {
@@ -250,14 +269,14 @@ body {
   z-index: 2;
 }
 
-/* ── Hero Section (Home Tab) ────────────────────────────────────── */
+/* ── Hero Section (Home Tab — Crystal Clear Contrast) ────────────── */
 .hero-header {
-  margin-bottom: 28px;
+  margin-bottom: 24px;
   text-align: center;
   max-width: 920px;
   margin-left: auto;
   margin-right: auto;
-  padding-top: 10px;
+  padding-top: 6px;
   position: relative;
   z-index: 2;
 }
@@ -275,16 +294,16 @@ body {
   padding: 5px 14px;
   border-radius: var(--radius-pill);
   border: 1px solid rgba(99, 102, 241, 0.25);
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .hero-header h1 {
   font-size: 44px;
   font-weight: 900;
   letter-spacing: -0.04em;
-  color: var(--brand-navy-dark);
+  color: #0F172A !important;
   line-height: 1.15;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .hero-header h1 .accent-indigo {
@@ -305,10 +324,10 @@ body {
 
 .hero-header p {
   font-size: 16px;
-  color: var(--text-secondary);
+  color: #475569 !important;
   line-height: 1.6;
   max-width: 740px;
-  margin: 0 auto 26px;
+  margin: 0 auto 24px;
   font-weight: 500;
 }
 
@@ -318,7 +337,7 @@ body {
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 32px;
+  margin-bottom: 30px;
 }
 
 .btn-hero-primary {
@@ -326,7 +345,7 @@ body {
   align-items: center;
   gap: 8px;
   background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
-  color: #FFFFFF;
+  color: #FFFFFF !important;
   font-weight: 700;
   font-size: 13px;
   padding: 11px 24px;
@@ -347,7 +366,7 @@ body {
   align-items: center;
   gap: 8px;
   background: #FFFFFF;
-  color: var(--brand-navy-dark);
+  color: #0F172A !important;
   font-weight: 700;
   font-size: 13px;
   padding: 10px 22px;
@@ -361,7 +380,7 @@ body {
 .btn-hero-secondary:hover {
   background: var(--bg-surface-sunken);
   border-color: var(--brand-indigo);
-  color: var(--brand-indigo);
+  color: var(--brand-indigo) !important;
 }
 
 /* ── Hero Interactive Showcase Container (Card + Live Inspector) ── */
