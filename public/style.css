@@ -460,138 +460,118 @@ body {
   .hero-showcase-container { grid-template-columns: 1fr; }
 }
 
-/* ── Payment Schemes & Apps Carousel Card (Replacing single credit card) ── */
+/* ── 2-Layered Payment Apps Card (Clean White Background, 3 Top / 3 Bottom) ── */
 .payment-carousel-card {
   width: 100%;
   height: 215px;
-  border-radius: 14px;
-  background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%);
-  color: #FFFFFF;
-  padding: 18px 20px;
+  border-radius: 16px;
+  background: #FFFFFF;
+  padding: 16px 14px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  box-shadow:
-    0 20px 40px -8px rgba(15, 23, 42, 0.4),
-    0 1px 2px 0 rgba(255, 255, 255, 0.15) inset;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+  border: 1px solid #E2E8F0;
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.carousel-card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.carousel-badge-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #94A3B8;
-}
-
-.carousel-live-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #10B981;
-  box-shadow: 0 0 8px #10B981;
-}
-
-.carousel-amount-pill {
-  background: rgba(56, 189, 248, 0.12);
-  border: 1px solid rgba(56, 189, 248, 0.35);
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  font-weight: 800;
-  color: #38BDF8;
-  font-variant-numeric: tabular-nums;
-}
-
-/* 5-at-a-time Moving Payment Badges Slider */
-.payment-badges-slider-viewport {
+.payment-row-slider-viewport {
   width: 100%;
   overflow: hidden;
-  margin: 12px 0;
-  mask-image: linear-gradient(90deg, transparent 0%, #000000 10%, #000000 90%, transparent 100%);
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000000 10%, #000000 90%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000000 8%, #000000 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000000 8%, #000000 92%, transparent 100%);
 }
 
-.payment-badges-track {
+.payment-row-track {
   display: flex;
   gap: 10px;
   width: max-content;
-  animation: badgeCarouselScroll 16s linear infinite;
   will-change: transform;
 }
 
-.payment-badges-track:hover {
+.payment-row-track.track-top {
+  animation: rowScrollLeft 16s linear infinite;
+}
+
+.payment-row-track.track-bottom {
+  animation: rowScrollRight 18s linear infinite;
+}
+
+.payment-row-track:hover {
   animation-play-state: paused;
 }
 
-@keyframes badgeCarouselScroll {
+@keyframes rowScrollLeft {
   0% { transform: translate3d(0, 0, 0); }
   100% { transform: translate3d(-50%, 0, 0); }
 }
 
+@keyframes rowScrollRight {
+  0% { transform: translate3d(-50%, 0, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
 .pay-badge-tile {
-  background: #FFFFFF;
-  border-radius: 8px;
-  padding: 6px 12px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 8px 16px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 68px;
-  height: 38px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  min-width: 92px;
+  height: 64px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
   user-select: none;
   flex-shrink: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pay-badge-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  background: #FFFFFF;
 }
 
 .pay-badge-icon {
   font-family: var(--font-sans);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 800;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   color: #0F172A;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .pay-badge-icon.badge-visa {
   font-style: italic;
   font-weight: 900;
   color: #1A1F71;
-  letter-spacing: 1px;
-  font-size: 13px;
+  letter-spacing: 1.5px;
+  font-size: 18px;
 }
 
 .pay-badge-icon.badge-mc {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
-  color: #222222;
+  color: #1E293B;
 }
 
 .pay-badge-icon .mc-c1 {
-  width: 12px;
-  height: 12px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: #EB001B;
   display: inline-block;
-  margin-right: -5px;
+  margin-right: -7px;
 }
 
 .pay-badge-icon .mc-c2 {
-  width: 12px;
-  height: 12px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: #F79E1B;
   display: inline-block;
@@ -601,6 +581,7 @@ body {
 .pay-badge-icon.badge-paypal {
   color: #003087;
   font-weight: 900;
+  font-size: 15px;
 }
 .pay-badge-icon.badge-paypal i:last-child {
   color: #0079C1;
@@ -609,51 +590,55 @@ body {
 .pay-badge-icon.badge-apple {
   color: #000000;
   font-weight: 700;
-  font-size: 12px;
+  font-size: 15px;
+}
+
+.pay-badge-icon.badge-gpay {
+  font-weight: 700;
+  font-size: 14px;
 }
 
 .pay-badge-icon.badge-stripe {
   color: #635BFF;
   font-weight: 800;
-  font-size: 13px;
+  font-size: 16px;
 }
 
 .pay-badge-icon.badge-amex {
   color: #006FCF;
   font-weight: 900;
-  font-size: 11px;
+  font-size: 14px;
+  letter-spacing: 1px;
 }
 
 .pay-badge-icon.badge-discover {
   color: #FF6000;
   font-weight: 800;
-  font-size: 10px;
+  font-size: 12px;
 }
 
-.carousel-card-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding-top: 10px;
+.pay-badge-icon.badge-alipay {
+  color: #1677FF;
+  font-weight: 800;
+  font-size: 14px;
 }
 
-.card-holder-label {
-  font-size: 8px;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: #94A3B8;
-  letter-spacing: 0.08em;
-  margin-bottom: 2px;
+.pay-badge-icon.badge-payoneer {
+  color: #FF4800;
+  font-weight: 800;
+  font-size: 13px;
 }
 
-.card-holder-val {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  color: #F1F5F9;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+.pay-badge-icon.badge-amazon {
+  color: #111111;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.pay-badge-icon.badge-bitcoin {
+  color: #F7931A;
+  font-weight: 800;
+  font-size: 13px;
 }
 
 .card-meta-right {
