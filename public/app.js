@@ -112,6 +112,28 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(checkApiHealth, 30000);
 });
 
+// ── Subtle Mouse Parallax on Flowing Silk Ribbon & Hero Card ─────────
+let parallaxTicking = false;
+document.addEventListener('mousemove', (e) => {
+  if (!parallaxTicking) {
+    window.requestAnimationFrame(() => {
+      const silk = document.getElementById('flowing-silk-canvas');
+      const card = document.getElementById('sim-credit-card');
+      const nx = (e.clientX / window.innerWidth - 0.5) * 2;
+      const ny = (e.clientY / window.innerHeight - 0.5) * 2;
+
+      if (silk) {
+        silk.style.transform = `translate3d(${nx * 15}px, ${ny * 9}px, 0)`;
+      }
+      if (card) {
+        card.style.transform = `translate3d(${nx * -6}px, ${ny * -6}px, 0) rotate(${nx * 0.8}deg)`;
+      }
+      parallaxTicking = false;
+    });
+    parallaxTicking = true;
+  }
+});
+
 // ── Interactive Credit Card Preview Sync ──────────────────────────
 function updateCardPreview() {
   const amt = parseFloat(document.getElementById('f-amount').value) || 0;

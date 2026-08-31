@@ -37,10 +37,54 @@
          TAB 1: HOME (HERO + SPECIFICATION BOX + LIVE ANALYZER)
          ═══════════════════════════════════════════════════════════════ -->
     <main id="tab-home" class="tab-panel active">
-      <!-- Signature Stripe Slanted Pulsing Ribbon (Elevated Behind Hero) -->
-      <div class="stripe-pulsing-ribbon"></div>
+      <!-- Signature Dynamic Flowing Silk Stripe Ribbon (Organic Curved Geometry) -->
+      <div class="stripe-pulsing-ribbon" id="stripe-flowing-ribbon">
+        <svg class="flowing-silk-svg" id="flowing-silk-canvas" viewBox="0 0 1600 700" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- Gradient 1: Lilac to Lavender -->
+            <linearGradient id="silk-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#7B73FE" stop-opacity="0.9" />
+              <stop offset="35%" stop-color="#A855F7" stop-opacity="0.95" />
+              <stop offset="100%" stop-color="#EC4899" stop-opacity="0.8" />
+            </linearGradient>
+            <!-- Gradient 2: Hot Pink to Sunset Coral -->
+            <linearGradient id="silk-grad-2" x1="10%" y1="10%" x2="90%" y2="90%">
+              <stop offset="0%" stop-color="#EC4899" stop-opacity="0.95" />
+              <stop offset="50%" stop-color="#FF5436" stop-opacity="0.98" />
+              <stop offset="100%" stop-color="#FF8800" stop-opacity="0.9" />
+            </linearGradient>
+            <!-- Gradient 3: Radiant Orange to Warm Amber -->
+            <linearGradient id="silk-grad-3" x1="20%" y1="0%" x2="80%" y2="100%">
+              <stop offset="0%" stop-color="#FF5436" stop-opacity="0.95" />
+              <stop offset="45%" stop-color="#FF8800" stop-opacity="0.98" />
+              <stop offset="100%" stop-color="#FFAE19" stop-opacity="0.85" />
+            </linearGradient>
+            <!-- Gradient 4: Translucent White Luminous Sheen -->
+            <linearGradient id="silk-grad-sheen" x1="0%" y1="0%" x2="100%" y2="50%">
+              <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.4" />
+              <stop offset="40%" stop-color="#FFE4D6" stop-opacity="0.18" />
+              <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.0" />
+            </linearGradient>
+          </defs>
+
+          <!-- Base Ambient Mesh Layer -->
+          <rect width="1600" height="700" fill="url(#silk-grad-1)" opacity="0.9" />
+
+          <!-- Curved Layer 1: Flowing Lavender/Purple Silk Fold -->
+          <path class="silk-wave-layer layer-1" d="M0,0 L1600,0 L1600,480 C1350,560 1100,380 850,520 C600,660 300,420 0,550 Z" fill="url(#silk-grad-1)" opacity="0.8" />
+
+          <!-- Curved Layer 2: Folded Magenta/Pink Translucent Silk -->
+          <path class="silk-wave-layer layer-2" d="M0,120 C350,80 650,340 950,220 C1250,100 1450,290 1600,240 L1600,680 C1320,620 1020,480 720,600 C420,720 180,520 0,640 Z" fill="url(#silk-grad-2)" opacity="0.88" />
+
+          <!-- Curved Layer 3: Radiant Sunset Orange & Amber Silk Crest -->
+          <path class="silk-wave-layer layer-3" d="M200,60 C550,20 850,240 1180,140 C1400,70 1520,180 1600,160 L1600,650 C1380,570 1150,440 900,530 C650,620 400,480 200,560 Z" fill="url(#silk-grad-3)" opacity="0.85" />
+
+          <!-- Curved Layer 4: Luminous Sheen Highlight Fold -->
+          <path class="silk-wave-layer layer-sheen" d="M100,80 C400,40 750,280 1100,170 C1350,90 1500,210 1600,190 L1600,320 C1420,280 1200,180 980,260 C700,360 400,160 100,220 Z" fill="url(#silk-grad-sheen)" />
+        </svg>
+      </div>
       
-      <!-- Hero Header -->
+      <!-- Hero Header (Editorial Modern Grotesk) -->
       <div class="hero-header">
         <div class="hero-tag">Autonomous Dispute Intelligence</div>
         <h1>Automate <span class="accent-white-glow">chargeback defense</span> with <span class="accent-white-glow">calibrated intelligence</span></h1>
@@ -124,6 +168,33 @@
               <button class="btn-secondary" style="padding:5px 10px; font-size:11px;" onclick="stepSimulation(-1)">Prev</button>
               <button class="btn-secondary" style="padding:5px 10px; font-size:11px;" onclick="stepSimulation(1)">Next</button>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ Muted Card Networks & Financial Rails Logo Marquee Strip ═══ -->
+      <div class="logo-strip-section">
+        <div class="logo-strip-label">Supported Card Schemes &amp; Payment Rails</div>
+        <div class="logo-marquee-track">
+          <div class="logo-marquee-content">
+            <div class="logo-item"><span class="network-badge-text">VISA SCHEME</span></div>
+            <div class="logo-item"><span class="network-badge-text">MASTERCARD CORE</span></div>
+            <div class="logo-item"><span class="network-badge-text">RUPAY NETWORK</span></div>
+            <div class="logo-item"><span class="network-badge-text">AMERICAN EXPRESS</span></div>
+            <div class="logo-item"><span class="network-badge-text">HDFC BANK GATEWAY</span></div>
+            <div class="logo-item"><span class="network-badge-text">ICICI BANK BFSI</span></div>
+            <div class="logo-item"><span class="network-badge-text">AXIS PAYMENTS</span></div>
+            <div class="logo-item"><span class="network-badge-text">STRIPE CONNECT</span></div>
+          </div>
+          <div class="logo-marquee-content" aria-hidden="true">
+            <div class="logo-item"><span class="network-badge-text">VISA SCHEME</span></div>
+            <div class="logo-item"><span class="network-badge-text">MASTERCARD CORE</span></div>
+            <div class="logo-item"><span class="network-badge-text">RUPAY NETWORK</span></div>
+            <div class="logo-item"><span class="network-badge-text">AMERICAN EXPRESS</span></div>
+            <div class="logo-item"><span class="network-badge-text">HDFC BANK GATEWAY</span></div>
+            <div class="logo-item"><span class="network-badge-text">ICICI BANK BFSI</span></div>
+            <div class="logo-item"><span class="network-badge-text">AXIS PAYMENTS</span></div>
+            <div class="logo-item"><span class="network-badge-text">STRIPE CONNECT</span></div>
           </div>
         </div>
       </div>
