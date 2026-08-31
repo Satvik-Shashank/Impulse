@@ -1,6 +1,6 @@
 // ════════════════════════════════════════════════════════════════════
 // Chargeback Intelligence Platform — Client Controller
-// Rich Case Audit Workspace, Credit Card Simulator, Guided Tour
+// Centered Hero Showcase, Rich Case Audit Workspace, Paced Live Tour
 // ════════════════════════════════════════════════════════════════════
 
 let globalMetrics = null;
@@ -9,7 +9,8 @@ let filteredPredictions = [];
 let selectedCaseRecord = null;
 let currentCaseFilter = 'all';
 let chartInstances = {};
-let floatingWindowTimer = null;
+let simCurrentStep = 0;
+let simTimer = null;
 
 // ── Chart.js Defaults ─────────────────────────────────────────────
 Chart.defaults.color = '#475569';
@@ -65,6 +66,42 @@ const PRESET_WEAK = {
   has_3ds_authentication: false
 };
 
+// ── Simulation Steps Definitions ──────────────────────────────────
+const SIM_STEPS = [
+  {
+    stepBadge: "Step 1 of 4: Ingestion",
+    stepCounter: "25%",
+    progressPct: 25,
+    title: "Dispute Ingestion & Scheme Webhook",
+    desc: "A chargeback webhook is received from the Visa payment network for ₹12,499.00 on an Electronics purchase. Transaction token & customer order logs are retrieved.",
+    preset: "strong"
+  },
+  {
+    stepBadge: "Step 2 of 4: Classification",
+    stepCounter: "50%",
+    progressPct: 50,
+    title: "LightGBM Reason Code Classification",
+    desc: "The multi-class ML model extracts 14 transaction features (AVS/CVV signals, 3DS authentication, account age) and predicts Reason Code 10.4 with 94.2% Platt-calibrated confidence.",
+    preset: "strong"
+  },
+  {
+    stepBadge: "Step 3 of 4: Evidence",
+    stepCounter: "75%",
+    progressPct: 75,
+    title: "Deterministic Rule Table Verification",
+    desc: "Evaluating merchant evidence against Visa Scheme representment specs: Proof of Delivery signature, IP match, and 3DS authentication are confirmed on file (5/6 items present).",
+    preset: "strong"
+  },
+  {
+    stepBadge: "Step 4 of 4: Decision",
+    stepCounter: "100%",
+    progressPct: 100,
+    title: "Cost Optimization & AUTO_SUBMIT Verdict",
+    desc: "Calibrated probability exceeds the 70% threshold. System generates formal representment response document with ₹11,624 net expected recovery.",
+    preset: "strong"
+  }
+];
+
 // ── Initialization ───────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   fetchMetrics();
@@ -94,52 +131,51 @@ function updateCardPreview() {
   }
 }
 
-// ── Guided Live Simulation (Stripe-Style Animated Tour) ──────────
-async function runGuidedSimulation() {
-  // Step 1: Switch to Home tab and scroll to top
-  switchTab('home', document.querySelector('.tabs-nav button:first-child'));
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+// ── Paced Live Tour Simulation (Centered Showcase) ────────────────
+function renderSimStep(idx) {
+  simCurrentStep = Math.max(0, Math.min(idx, SIM_STEPS.length - 1));
+  const step = SIM_STEPS[simCurrentStep];
 
-  // Pop up floating window Step 1
-  showFloatingWindow('Transaction Ingested', 'A new dispute webhook is received from the Visa payment network for ₹12,499.00.');
-  loadPreset('strong');
+  setText('insp-step-badge', step.stepBadge);
+  setText('insp-step-counter', step.stepCounter);
+  setText('insp-title', step.title);
+  setText('insp-desc', step.desc);
+
+  const fill = document.getElementById('insp-progress-fill');
+  if (fill) fill.style.width = step.progressPct + '%';
+
+  loadPreset(step.preset);
   updateCardPreview();
+}
 
-  await sleep(1400);
+async function startGuidedSimulation() {
+  if (simTimer) clearTimeout(simTimer);
+  const btn = document.getElementById('btn-run-sim');
+  if (btn) btn.textContent = 'Simulating...';
 
-  // Pop up floating window Step 2
-  showFloatingWindow('AI Multi-Class Classification', 'The LightGBM classifier analyzes transaction metadata and predicts Reason Code 10.4 with 94.2% Platt-scaled confidence.');
-  
-  await sleep(1400);
+  // Step 1
+  renderSimStep(0);
+  await sleep(2600);
 
-  // Pop up floating window Step 3
-  showFloatingWindow('Deterministic Evidence Retrieval', 'Checking Visa rule table: 5 of 6 compelling representment documents are verified on file.');
+  // Step 2
+  renderSimStep(1);
+  await sleep(2600);
 
-  await sleep(1400);
+  // Step 3
+  renderSimStep(2);
+  await sleep(2600);
 
-  // Pop up floating window Step 4 & Run pipeline
-  showFloatingWindow('Cost-Optimal Recommendation', 'Decision engine determines AUTO_SUBMIT with ₹11,624 expected recovery. Generating formal representment document...');
+  // Step 4
+  renderSimStep(3);
   analyzeFromForm();
+  await sleep(1500);
 
-  await sleep(4000);
-  closeFloatingWindow();
+  if (btn) btn.textContent = 'Replay Simulation';
 }
 
-function showFloatingWindow(title, body) {
-  const win = document.getElementById('floating-status-window');
-  const winTitle = document.getElementById('floating-window-title');
-  const winBody = document.getElementById('floating-window-body');
-  
-  if (win && winTitle && winBody) {
-    winTitle.textContent = title;
-    winBody.textContent = body;
-    win.classList.add('active');
-  }
-}
-
-function closeFloatingWindow() {
-  const win = document.getElementById('floating-status-window');
-  if (win) win.classList.remove('active');
+function stepSimulation(delta) {
+  if (simTimer) clearTimeout(simTimer);
+  renderSimStep(simCurrentStep + delta);
 }
 
 function sleep(ms) {
@@ -394,7 +430,7 @@ function renderPerformanceCharts() {
         <td><strong>${code}</strong></td>
         <td>${pct(d.precision)}</td>
         <td>${pct(d.recall)}</td>
-        <td><strong style="color:var(--brand-blue);">${pct(d['f1-score'])}</strong></td>
+        <td><strong style="color:var(--brand-indigo);">${pct(d['f1-score'])}</strong></td>
         <td>${d.support}</td>
       `;
       tbody.appendChild(tr);
@@ -742,7 +778,7 @@ async function runPipeline(payload, btn) {
     const clf = data.classification || {};
     const topK = (clf.top_k_predictions || []).map((t, i) => {
       const p = (t.confidence * 100).toFixed(1);
-      return `<div style="margin-top:4px;"><span style="color:var(--text-muted);font-size:11px;">#${i+1}</span> <strong>Code ${t.reason_code}</strong> <span style="color:var(--brand-blue);">${p}%</span><div class="conf-bar-track"><div class="conf-bar-fill" style="width:${p}%"></div></div></div>`;
+      return `<div style="margin-top:4px;"><span style="color:var(--text-muted);font-size:11px;">#${i+1}</span> <strong>Code ${t.reason_code}</strong> <span style="color:var(--brand-indigo);">${p}%</span><div class="conf-bar-track"><div class="conf-bar-fill" style="width:${p}%"></div></div></div>`;
     }).join('');
     
     await revealStep(stepsC, 'Step 2 — Reason Code Classification',

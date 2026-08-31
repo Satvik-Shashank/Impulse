@@ -46,15 +46,12 @@
         <div class="hero-tag">Decision Optimization Engine</div>
         <h1>Automate <span class="accent-blue">chargeback defense</span> with <span class="accent-emerald">calibrated intelligence</span></h1>
         <p>Evaluates incoming transaction disputes against card-network representment rules, predicts empirical win likelihood, and routes cases using a rupee-denominated cost optimization model.</p>
-        
-        <div class="hero-btn-row">
-          <button class="btn-secondary" style="background:#FFFFFF; font-weight:700; padding:8px 16px;" onclick="runGuidedSimulation()">
-            Run Guided Live Simulation
-          </button>
-        </div>
+      </div>
 
-        <!-- Stripe-Inspired Interactive Credit Card Visualizer -->
-        <div class="card-simulator-wrap">
+      <!-- Stripe-Inspired Centered Hero Showcase (Credit Card + Live Inspector) -->
+      <div class="hero-showcase-container">
+        <!-- Left: 3D Credit Card Simulator -->
+        <div>
           <div class="interactive-credit-card" id="sim-credit-card">
             <div class="card-top-row">
               <div class="card-chip-icon"></div>
@@ -64,9 +61,35 @@
             <div class="card-bottom-row">
               <div>
                 <div class="card-holder-label">Dispute ID / Category</div>
-                <div class="card-holder-val" id="sim-card-id">DSP-2026-00142 · Electronics</div>
+                <div class="card-holder-val" id="sim-card-id">DSP-LIVE · ELECTRONICS</div>
               </div>
               <div class="card-amount-tag" id="sim-card-amount">₹12,499.00</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Live Pipeline Inspector Panel (Centered next to Card) -->
+        <div class="showcase-inspector-panel">
+          <div>
+            <div class="inspector-header-row">
+              <span class="inspector-step-badge" id="insp-step-badge">Interactive Pipeline Demo</span>
+              <span style="font-size:11px; font-weight:700; color:var(--text-muted);" id="insp-step-counter">Ready</span>
+            </div>
+            <div class="inspector-title" id="insp-title">Live Transaction Simulation</div>
+            <div class="inspector-desc" id="insp-desc">Click "Run Live Simulation" to watch the AI risk engine ingest dispute webhooks, execute calibrated classification, and verify representment rules in real time.</div>
+            
+            <div class="inspector-progress-bar-track">
+              <div class="inspector-progress-bar-fill" id="insp-progress-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <div class="inspector-actions-row">
+            <button class="btn-inspector-action" id="btn-run-sim" onclick="startGuidedSimulation()">
+              Run Live Simulation
+            </button>
+            <div style="display:flex; gap:6px;">
+              <button class="btn-secondary" style="padding:5px 10px; font-size:11px;" onclick="stepSimulation(-1)">Prev</button>
+              <button class="btn-secondary" style="padding:5px 10px; font-size:11px;" onclick="stepSimulation(1)">Next</button>
             </div>
           </div>
         </div>
@@ -348,7 +371,7 @@
             <h3 style="font-size:14px; font-weight:800; color:var(--brand-navy-dark);">Interactive Confidence Gate Slider</h3>
             <p style="font-size:12px; color:var(--text-secondary);">Adjust threshold to observe how strict or relaxed auto-resolution routing affects volume and financial yield:</p>
           </div>
-          <div style="font-size:12px; font-weight:700; color:var(--brand-blue); background:var(--brand-blue-light); padding:4px 10px; border-radius:var(--radius-sm);">
+          <div style="font-size:12px; font-weight:700; color:var(--brand-indigo); background:var(--brand-blue-light); padding:4px 10px; border-radius:var(--radius-sm);">
             Confidence Threshold: <span id="threshold-val">0.50</span>
           </div>
         </div>
@@ -549,17 +572,6 @@
         </div>
       </div>
     </section>
-
-    <!-- ═══ Floating Guided Status Window (Stripe-Style Animated Popup) ═══ -->
-    <div id="floating-status-window" class="floating-status-window">
-      <div class="floating-header">
-        <span class="floating-title" id="floating-window-title">AI Decision Engine</span>
-        <button onclick="closeFloatingWindow()" style="background:none; border:none; color:#94A3B8; font-size:16px; cursor:pointer;">&times;</button>
-      </div>
-      <div class="floating-body" id="floating-window-body">
-        Initializing transaction stream analysis...
-      </div>
-    </div>
 
     <!-- ═══ Footer ═══ -->
     <footer class="footer">
