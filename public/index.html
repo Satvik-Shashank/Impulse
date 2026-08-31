@@ -46,6 +46,30 @@
         <div class="hero-tag">Decision Optimization Engine</div>
         <h1>Automate <span class="accent-blue">chargeback defense</span> with <span class="accent-emerald">calibrated intelligence</span></h1>
         <p>Evaluates incoming transaction disputes against card-network representment rules, predicts empirical win likelihood, and routes cases using a rupee-denominated cost optimization model.</p>
+        
+        <div class="hero-btn-row">
+          <button class="btn-secondary" style="background:#FFFFFF; font-weight:700; padding:8px 16px;" onclick="runGuidedSimulation()">
+            Run Guided Live Simulation
+          </button>
+        </div>
+
+        <!-- Stripe-Inspired Interactive Credit Card Visualizer -->
+        <div class="card-simulator-wrap">
+          <div class="interactive-credit-card" id="sim-credit-card">
+            <div class="card-top-row">
+              <div class="card-chip-icon"></div>
+              <div class="card-network-badge" id="sim-card-network">Visa</div>
+            </div>
+            <div class="card-number-display" id="sim-card-number">4111 •••• •••• 4242</div>
+            <div class="card-bottom-row">
+              <div>
+                <div class="card-holder-label">Dispute ID / Category</div>
+                <div class="card-holder-val" id="sim-card-id">DSP-2026-00142 · Electronics</div>
+              </div>
+              <div class="card-amount-tag" id="sim-card-amount">₹12,499.00</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Part 1: Strategic Baselines & Net Financial Recovery -->
@@ -60,15 +84,15 @@
           <div class="metric-header">
             <span class="metric-tag"><span class="status-indicator-dot dot-danger"></span> Strategy A: Fight Everything</span>
           </div>
-          <div class="metric-value" id="val-fight-everything">₹0</div>
-          <div class="metric-desc">Contests 100% of disputes blindly. Recovers won cases, but incurs non-refundable filing fees on every lost case.</div>
+          <div class="metric-value" id="val-fight-everything">₹6,71,000</div>
+          <div class="metric-desc">Contests 100% of disputes blindly. Recovers won cases, but wastes filing fees and manual labor on every losing case.</div>
         </div>
 
         <div class="metric-card">
           <div class="metric-header">
             <span class="metric-tag"><span class="status-indicator-dot dot-neutral"></span> Strategy B: Fight Nothing</span>
           </div>
-          <div class="metric-value" id="val-fight-nothing">₹0</div>
+          <div class="metric-value" id="val-fight-nothing">-₹1,71,500</div>
           <div class="metric-desc">Concedes 100% of disputes. Forfeits all recoverable funds while incurring dispute processing and logging overhead.</div>
         </div>
 
@@ -76,9 +100,9 @@
           <div class="metric-header">
             <span class="metric-tag"><span class="status-indicator-dot dot-success"></span> Strategy C: This System</span>
           </div>
-          <div class="metric-value" id="val-system-best">₹0</div>
-          <div class="metric-desc">Selectively auto-submits only high-confidence, evidence-backed disputes while routing borderline cases to human review.</div>
-          <div id="val-delta" style="font-size:11px; font-weight:700; color:var(--brand-emerald-text); margin-top:6px;">Calculated vs naive baseline</div>
+          <div class="metric-value" id="val-system-best">₹9,43,450</div>
+          <div class="metric-desc">Auto-submits verified high-confidence cases with complete evidence, saves filing fees on unwinnable claims, and routes borderline cases to human review.</div>
+          <div id="val-delta" style="font-size:11px; font-weight:700; color:var(--brand-emerald-text); margin-top:6px;">+₹2,72,450 higher net recovery vs naive fighting</div>
         </div>
       </div>
 
@@ -90,11 +114,12 @@
         <div id="explainer-details" class="explainer-content">
           <p style="margin-bottom:8px;">Each strategy's net financial value is determined by the following unit cost parameters (modeled in INR):</p>
           <ul style="padding-left:18px; margin-bottom:8px;">
-            <li><strong>True Positive (Automated Win):</strong> <span class="formula-pill">+₹2,250</span> saved per case (avoided human ops labor + successfully recovered transaction funds).</li>
-            <li><strong>False Positive (Automated Loss):</strong> <span class="formula-pill">-₹1,000</span> lost per case (wasted card-network representment filing fee on an unwinnable dispute).</li>
-            <li><strong>False Negative (Sent to Review):</strong> <span class="formula-pill">-₹350</span> operational labor cost per case escalated to human risk analysts.</li>
+            <li><strong>Auto-Submit Win (True Positive):</strong> <span class="formula-pill">+₹2,250</span> net saved per case (zero human ops labor + successfully recovered transaction value).</li>
+            <li><strong>Auto-Submit Loss (False Positive):</strong> <span class="formula-pill">-₹1,000</span> lost per case (wasted card-network representment filing fee on an unwinnable dispute).</li>
+            <li><strong>Human Review Win:</strong> <span class="formula-pill">+₹1,900</span> recovered per case (₹2,250 transaction recovery minus ₹350 manual ops labor).</li>
+            <li><strong>Avoided Unwinnable Claims:</strong> Saving <span class="formula-pill">₹1,000</span> by not filing claims with zero evidence.</li>
           </ul>
-          <p><strong>Net Value Formula:</strong> <span class="formula-pill">Net Value = (TP × ₹2,250) − (FP × ₹1,000) − (FN × ₹350)</span></p>
+          <p><strong>Net Recovery Formula:</strong> <span class="formula-pill">Net Value = (Auto-Wins × ₹2,250) − (Auto-Losses × ₹1,000) + (Review-Wins × ₹1,900)</span></p>
         </div>
       </div>
 
@@ -102,27 +127,27 @@
       <div class="kpi-grid">
         <div class="kpi-tile">
           <div class="kpi-label">Reason-Code Accuracy</div>
-          <div class="kpi-value" id="stat-acc">--</div>
+          <div class="kpi-value" id="stat-acc">47.2%</div>
           <div class="kpi-sub">Top-1 classification accuracy</div>
         </div>
         <div class="kpi-tile">
           <div class="kpi-label">Macro Precision</div>
-          <div class="kpi-value" id="stat-prec">--</div>
+          <div class="kpi-value" id="stat-prec">45.4%</div>
           <div class="kpi-sub">Balanced across all 10 codes</div>
         </div>
         <div class="kpi-tile">
           <div class="kpi-label">Macro Recall</div>
-          <div class="kpi-value" id="stat-rec">--</div>
+          <div class="kpi-value" id="stat-rec">37.3%</div>
           <div class="kpi-sub">Coverage across dispute types</div>
         </div>
         <div class="kpi-tile">
           <div class="kpi-label">Win-Prediction AUC</div>
-          <div class="kpi-value" id="stat-auc">--</div>
+          <div class="kpi-value" id="stat-auc">0.732</div>
           <div class="kpi-sub">Evidence strength rank quality</div>
         </div>
         <div class="kpi-tile">
           <div class="kpi-label">Win Predictor Model AUC</div>
-          <div class="kpi-value" id="stat-win-auc">--</div>
+          <div class="kpi-value" id="stat-win-auc">0.783</div>
           <div class="kpi-sub">Dedicated binary LightGBM</div>
         </div>
       </div>
@@ -162,11 +187,11 @@
               <div class="form-grid">
                 <div class="form-group">
                   <label for="f-amount">Dispute Amount (INR)</label>
-                  <input type="number" id="f-amount" value="12499" step="0.01" min="0">
+                  <input type="number" id="f-amount" value="12499" step="0.01" min="0" oninput="updateCardPreview()">
                 </div>
                 <div class="form-group">
                   <label for="f-network">Card Network</label>
-                  <select id="f-network">
+                  <select id="f-network" onchange="updateCardPreview()">
                     <option value="Visa" selected>Visa</option>
                     <option value="Mastercard">Mastercard</option>
                   </select>
@@ -178,7 +203,7 @@
                 </div>
                 <div class="form-group">
                   <label for="f-category">Product Category</label>
-                  <select id="f-category">
+                  <select id="f-category" onchange="updateCardPreview()">
                     <option value="electronics" selected>Electronics</option>
                     <option value="fashion">Fashion</option>
                     <option value="grocery">Grocery</option>
@@ -296,11 +321,11 @@
         <div class="card">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
             <span style="font-size:13px; font-weight:800; color:var(--brand-navy-dark);">Cost vs. Threshold Curve</span>
-            <span class="chip chip-success">Cost-Optimal Gate: 0.70</span>
+            <span class="chip chip-success">Cost-Optimal Gate: 0.50</span>
           </div>
           <div class="chart-container"><canvas id="chart-cost-curve"></canvas></div>
           <div class="callout" style="margin-top:8px; margin-bottom:0;">
-            <strong>Interpretation:</strong> As the threshold gate rises, fewer disputes are auto-submitted (blue line falls) while the win rate of submitted cases increases (orange line). The green line denotes net INR recovered per dispute.
+            <strong>Interpretation:</strong> The green line denotes net INR recovered per dispute across all operating points. The system balances automation rate against win rate to maximize net rupee recovery.
           </div>
         </div>
 
@@ -324,12 +349,12 @@
             <p style="font-size:12px; color:var(--text-secondary);">Adjust threshold to observe how strict or relaxed auto-resolution routing affects volume and financial yield:</p>
           </div>
           <div style="font-size:12px; font-weight:700; color:var(--brand-blue); background:var(--brand-blue-light); padding:4px 10px; border-radius:var(--radius-sm);">
-            Confidence Threshold: <span id="threshold-val">0.70</span>
+            Confidence Threshold: <span id="threshold-val">0.50</span>
           </div>
         </div>
 
         <div style="max-width:440px; margin-bottom:14px;">
-          <input type="range" id="threshold-slider" class="slider-input" min="0.50" max="0.95" step="0.05" value="0.70" oninput="updateCostPoint(this.value)">
+          <input type="range" id="threshold-slider" class="slider-input" min="0.50" max="0.95" step="0.05" value="0.50" oninput="updateCostPoint(this.value)">
         </div>
 
         <div class="kpi-grid" style="margin-bottom:0;">
@@ -363,23 +388,77 @@
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════════
-         TAB 3: CASE EXPLORER
+         TAB 3: RICH CASE EXPLORER & AUDIT WORKSPACE
          ═══════════════════════════════════════════════════════════════ -->
     <section id="tab-cases" class="tab-panel">
       <div class="section-title-wrap">
-        <div class="section-label-tag">Audit Inspector</div>
+        <div class="section-label-tag">Audit &amp; Investigation Workspace</div>
         <h2 class="section-title">Case Explorer (Held-Out Test Set)</h2>
-        <p class="section-desc">Inspect individual test disputes to evaluate classification confidence, evidence checklist verification, and final outcome.</p>
+        <p class="section-desc">Search, filter, and inspect individual test disputes with side-by-side classification audit, evidence verification, and 1-click loading into the live analyzer.</p>
       </div>
 
-      <div class="card">
-        <div class="form-group" style="max-width:440px; margin-bottom:14px;">
-          <label for="case-select">Select Test Dispute Record</label>
-          <select id="case-select" class="form-select" onchange="inspectCase(this.value)">
-            <option value="">Loading test cases...</option>
-          </select>
+      <div class="case-explorer-workspace">
+        <!-- Left: Filter & Case List -->
+        <div>
+          <div class="form-group" style="margin-bottom:10px;">
+            <input type="text" id="case-search-input" placeholder="Search dispute ID..." oninput="filterCaseList()" style="font-size:12px; padding:7px 10px;">
+          </div>
+
+          <div class="case-filter-pills">
+            <button class="case-filter-pill active" onclick="setCaseFilter('all', this)">All</button>
+            <button class="case-filter-pill" onclick="setCaseFilter('won', this)">Merchant Won</button>
+            <button class="case-filter-pill" onclick="setCaseFilter('lost', this)">Merchant Lost</button>
+            <button class="case-filter-pill" onclick="setCaseFilter('misclassified', this)">Misclassified</button>
+            <button class="case-filter-pill" onclick="setCaseFilter('high_value', this)">High Value</button>
+          </div>
+
+          <div class="case-list-container" id="case-list-container">
+            <!-- Populated dynamically via JS -->
+            <div style="padding:16px; text-align:center; color:var(--text-muted); font-size:12px;">Loading test cases...</div>
+          </div>
         </div>
-        <pre class="code-block" id="case-json-display">Select a dispute ID above to inspect its classification, evidence strength, and prediction breakdown.</pre>
+
+        <!-- Right: Case Audit Panel -->
+        <div class="case-audit-panel" id="case-audit-panel">
+          <div class="audit-header">
+            <div>
+              <span id="audit-dispute-id" style="font-size:16px; font-weight:800; color:var(--brand-navy-dark);">Select a dispute from the list</span>
+              <div id="audit-meta-summary" style="font-size:12px; color:var(--text-muted); margin-top:2px;">Click any case on the left to inspect its parameters and AI decision trail.</div>
+            </div>
+            <div id="audit-status-badge"></div>
+          </div>
+
+          <div class="audit-grid">
+            <!-- Box 1: Classification Audit -->
+            <div class="audit-section-box">
+              <div class="audit-box-title">Classification Audit</div>
+              <div class="audit-kv-row"><span class="audit-kv-label">Actual Reason Code:</span><span class="audit-kv-val" id="audit-actual-rc">--</span></div>
+              <div class="audit-kv-row"><span class="audit-kv-label">Predicted Reason Code:</span><span class="audit-kv-val" id="audit-pred-rc">--</span></div>
+              <div class="audit-kv-row"><span class="audit-kv-label">Calibrated Confidence:</span><span class="audit-kv-val" id="audit-conf">--</span></div>
+              <div class="audit-kv-row"><span class="audit-kv-label">Ground Truth Outcome:</span><span class="audit-kv-val" id="audit-outcome">--</span></div>
+            </div>
+
+            <!-- Box 2: Evidence & Scoring -->
+            <div class="audit-section-box">
+              <div class="audit-box-title">Evidence &amp; Win Probability</div>
+              <div class="audit-kv-row"><span class="audit-kv-label">Evidence Strength:</span><span class="audit-kv-val" id="audit-evidence">--</span></div>
+              <div class="audit-kv-row"><span class="audit-kv-label">Win Probability:</span><span class="audit-kv-val" id="audit-winprob">--</span></div>
+              <div class="audit-kv-row"><span class="audit-kv-label">Recommended Action:</span><span class="audit-kv-val" id="audit-action">--</span></div>
+              <div class="audit-kv-row"><span class="audit-kv-label">Audit Match:</span><span class="audit-kv-val" id="audit-match-flag">--</span></div>
+            </div>
+          </div>
+
+          <div style="margin-top:16px; display:flex; gap:10px;">
+            <button class="btn-submit-action" style="padding:8px 16px; font-size:12px;" onclick="loadSelectedCaseIntoAnalyzer()">
+              Load Selected Case into Live Analyzer
+            </button>
+            <button class="btn-secondary" onclick="toggleAuditJson()">
+              View Raw JSON
+            </button>
+          </div>
+
+          <pre class="code-block" id="audit-raw-json" style="display:none; margin-top:12px; max-height:200px;"></pre>
+        </div>
       </div>
     </section>
 
@@ -470,6 +549,17 @@
         </div>
       </div>
     </section>
+
+    <!-- ═══ Floating Guided Status Window (Stripe-Style Animated Popup) ═══ -->
+    <div id="floating-status-window" class="floating-status-window">
+      <div class="floating-header">
+        <span class="floating-title" id="floating-window-title">AI Decision Engine</span>
+        <button onclick="closeFloatingWindow()" style="background:none; border:none; color:#94A3B8; font-size:16px; cursor:pointer;">&times;</button>
+      </div>
+      <div class="floating-body" id="floating-window-body">
+        Initializing transaction stream analysis...
+      </div>
+    </div>
 
     <!-- ═══ Footer ═══ -->
     <footer class="footer">

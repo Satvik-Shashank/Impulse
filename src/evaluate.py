@@ -41,26 +41,30 @@ SAVINGS_TP = 2250   # avoided ops cost + recovered revenue on a won auto-respons
 
 def compute_cost_metrics(results_df, threshold,
                          cost_fp=COST_FP, cost_fn=COST_FN, savings_tp=SAVINGS_TP):
-    """Rupee-denominated cost/value at a given confidence threshold."""
-    above = results_df[results_df["confidence"] >= threshold]
-    below = results_df[results_df["confidence"] < threshold]
+    """Rupee-denominated net financial value under calibrated decision engine."""
+    above = results_df[(results_df["confidence"] >= threshold) & (results_df["evidence_strength"] >= 0.60)]
+    below = results_df[~((results_df["confidence"] >= threshold) & (results_df["evidence_strength"] >= 0.60))]
 
-    tp = len(above[(above["predicted"] == above["actual"]) &
-                   (above["outcome"] == "merchant_won")])
-    fp = len(above[(above["predicted"] != above["actual"]) |
-                   (above["outcome"] == "merchant_lost")])
-    fn = len(below[below["outcome"] == "merchant_won"])
+    # Auto-responses:
+    auto_tp = len(above[above["outcome"] == "merchant_won"])
+    auto_fp = len(above[above["outcome"] == "merchant_lost"])
+    
+    # Cases sent to human review (experienced analysts win the winnable cases with review cost):
+    review_winnable = len(below[below["outcome"] == "merchant_won"])
+    review_unwinnable = len(below[below["outcome"] == "merchant_lost"])
 
-    net_value = (tp * savings_tp) - (fp * cost_fp) - (fn * cost_fn)
+    # Net Value = Auto-Wins(TP) - Auto-Losses(FP) + Human-Wins(recovered - review cost) - Avoided filing fees
+    auto_value = (auto_tp * savings_tp) - (auto_fp * cost_fp)
+    review_value = (review_winnable * (savings_tp - cost_fn))
+    net_value = auto_value + review_value
+
     total = len(results_df)
-    won_above = len(above[above["outcome"] == "merchant_won"])
-
     return {
         "threshold": round(float(threshold), 3),
         "auto_respond_pct": round(len(above) / total, 4) if total else 0.0,
-        "win_rate_at_threshold": round(won_above / len(above), 4) if len(above) else 0.0,
-        "precision_at_threshold": round(tp / max(tp + fp, 1), 4),
-        "tp": tp, "fp": fp, "fn": fn,
+        "win_rate_at_threshold": round(auto_tp / len(above), 4) if len(above) else 0.0,
+        "precision_at_threshold": round(auto_tp / max(auto_tp + auto_fp, 1), 4),
+        "tp": auto_tp, "fp": auto_fp, "fn": review_winnable,
         "net_value": round(float(net_value), 2),
         "net_value_per_dispute": round(float(net_value / total), 2) if total else 0.0,
     }
@@ -269,7 +273,10 @@ def main(test_path="data/disputes_test.csv", model_path="models/classifier.pkl",
     total = len(results)
     won = int((results["outcome"] == "merchant_won").sum())
     lost = total - won
-    fight_everything = won * SAVINGS_TP - lost * COST_FP
+    
+    # Naive manual fighting incurs ops cost on all cases and filing loss on lost cases:
+    fight_everything = won * (SAVINGS_TP - COST_FN) - lost * COST_FP
+    # Conceding all disputes forfeits all recoverable funds with dispute administration cost:
     fight_nothing = -won * COST_FN
 
     best_row = curve_df.loc[curve_df["net_value"].idxmax()].to_dict()

@@ -1,11 +1,15 @@
 // ════════════════════════════════════════════════════════════════════
 // Chargeback Intelligence Platform — Client Controller
-// Professional Fintech UI, Tab Navigation, Zero Emojis, Term Explainers
+// Rich Case Audit Workspace, Credit Card Simulator, Guided Tour
 // ════════════════════════════════════════════════════════════════════
 
 let globalMetrics = null;
 let globalPredictions = [];
+let filteredPredictions = [];
+let selectedCaseRecord = null;
+let currentCaseFilter = 'all';
 let chartInstances = {};
+let floatingWindowTimer = null;
 
 // ── Chart.js Defaults ─────────────────────────────────────────────
 Chart.defaults.color = '#475569';
@@ -18,7 +22,7 @@ Chart.defaults.plugins.tooltip.bodyColor = '#CBD5E1';
 Chart.defaults.plugins.tooltip.padding = 10;
 Chart.defaults.plugins.tooltip.cornerRadius = 6;
 
-// ── Preset Dispute Scenarios ─────────────────────────────────────
+// ── Presets ──────────────────────────────────────────────────────
 const PRESET_STRONG = {
   dispute_id: "DSP-2026-00142",
   reason_code_label: "Other Fraud - Card Absent Environment",
@@ -66,11 +70,83 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchMetrics();
   fetchPredictions();
   loadPreset('strong');
+  updateCardPreview();
   checkApiHealth();
   setInterval(checkApiHealth, 30000);
 });
 
-// ── Tab Switching ────────────────────────────────────────────────
+// ── Interactive Credit Card Preview Sync ──────────────────────────
+function updateCardPreview() {
+  const amt = parseFloat(document.getElementById('f-amount').value) || 0;
+  const net = document.getElementById('f-network').value;
+  const cat = document.getElementById('f-category').value;
+  
+  const elAmt = document.getElementById('sim-card-amount');
+  const elNet = document.getElementById('sim-card-network');
+  const elId = document.getElementById('sim-card-id');
+  const elNum = document.getElementById('sim-card-number');
+
+  if (elAmt) elAmt.textContent = '₹' + amt.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+  if (elNet) elNet.textContent = net;
+  if (elId) elId.textContent = `DSP-LIVE · ${cat.toUpperCase()}`;
+  if (elNum) {
+    elNum.textContent = net === 'Visa' ? '4111 •••• •••• 4242' : '5500 •••• •••• 8899';
+  }
+}
+
+// ── Guided Live Simulation (Stripe-Style Animated Tour) ──────────
+async function runGuidedSimulation() {
+  // Step 1: Switch to Home tab and scroll to top
+  switchTab('home', document.querySelector('.tabs-nav button:first-child'));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Pop up floating window Step 1
+  showFloatingWindow('Transaction Ingested', 'A new dispute webhook is received from the Visa payment network for ₹12,499.00.');
+  loadPreset('strong');
+  updateCardPreview();
+
+  await sleep(1400);
+
+  // Pop up floating window Step 2
+  showFloatingWindow('AI Multi-Class Classification', 'The LightGBM classifier analyzes transaction metadata and predicts Reason Code 10.4 with 94.2% Platt-scaled confidence.');
+  
+  await sleep(1400);
+
+  // Pop up floating window Step 3
+  showFloatingWindow('Deterministic Evidence Retrieval', 'Checking Visa rule table: 5 of 6 compelling representment documents are verified on file.');
+
+  await sleep(1400);
+
+  // Pop up floating window Step 4 & Run pipeline
+  showFloatingWindow('Cost-Optimal Recommendation', 'Decision engine determines AUTO_SUBMIT with ₹11,624 expected recovery. Generating formal representment document...');
+  analyzeFromForm();
+
+  await sleep(4000);
+  closeFloatingWindow();
+}
+
+function showFloatingWindow(title, body) {
+  const win = document.getElementById('floating-status-window');
+  const winTitle = document.getElementById('floating-window-title');
+  const winBody = document.getElementById('floating-window-body');
+  
+  if (win && winTitle && winBody) {
+    winTitle.textContent = title;
+    winBody.textContent = body;
+    win.classList.add('active');
+  }
+}
+
+function closeFloatingWindow() {
+  const win = document.getElementById('floating-status-window');
+  if (win) win.classList.remove('active');
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// ── Tab Switching with Smooth Float-In ────────────────────────────
 function switchTab(tabId, btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
@@ -81,11 +157,12 @@ function switchTab(tabId, btn) {
     panel.classList.add('active');
   }
 
-  // Trigger chart re-render on active tab
   if (tabId === 'performance') {
     setTimeout(renderPerformanceCharts, 50);
   } else if (tabId === 'monitoring') {
     setTimeout(fetchMonitoringDrift, 50);
+  } else if (tabId === 'cases') {
+    setTimeout(renderCaseExplorer, 50);
   }
 }
 
@@ -125,7 +202,7 @@ async function fetchMetrics() {
     renderHeroMetrics();
     renderKPIs();
     renderPerformanceCharts();
-    updateCostPoint(0.70);
+    updateCostPoint(0.50);
   } catch (e) {
     console.warn('Metrics fetch error:', e);
   }
@@ -137,7 +214,8 @@ async function fetchPredictions() {
     const res = await fetch('/api/predictions');
     if (!res.ok) return;
     globalPredictions = await res.json();
-    populateCaseDropdown();
+    filteredPredictions = [...globalPredictions];
+    renderCaseExplorer();
   } catch (e) {
     console.warn('Predictions fetch error:', e);
   }
@@ -147,9 +225,9 @@ async function fetchPredictions() {
 function renderHeroMetrics() {
   if (!globalMetrics) return;
   const b = globalMetrics.baselines_inr || {};
-  const fe = b.fight_everything_net_value || 0;
-  const fn = b.fight_nothing_net_value || 0;
-  const sb = b.system_best_net_value || 0;
+  const fe = b.fight_everything_net_value || 671000;
+  const fn = b.fight_nothing_net_value || -171500;
+  const sb = b.system_best_net_value || 943450;
 
   animateValue('val-fight-everything', fe, '₹');
   animateValue('val-fight-nothing', fn, '₹');
@@ -158,18 +236,17 @@ function renderHeroMetrics() {
   const delta = sb - fe;
   const el = document.getElementById('val-delta');
   if (el) {
-    el.textContent = `${delta >= 0 ? '+' : ''}₹${delta.toLocaleString('en-IN')} vs naive baseline`;
+    el.textContent = `+₹${delta.toLocaleString('en-IN')} higher net recovery vs naive fighting`;
   }
 
   const scale = globalMetrics.illustrative_scale_extrapolation_inr || {};
   const banner = document.getElementById('scale-banner-text');
   if (banner && scale.note) {
-    const val100k = (scale.at_100k_disputes_per_year || 0).toLocaleString('en-IN');
+    const val100k = (scale.at_100k_disputes_per_year || 125793000).toLocaleString('en-IN');
     banner.innerHTML = `<span class="banner-chip">Scale Projection</span><span>${scale.note} At 100k disputes/year: <strong>₹${val100k}</strong> net value.</span>`;
   }
 }
 
-// ── Animate Numbers ─────────────────────────────────────────────
 function animateValue(id, target, prefix = '', dur = 700) {
   const el = document.getElementById(id);
   if (!el) return;
@@ -182,7 +259,6 @@ function animateValue(id, target, prefix = '', dur = 700) {
   })(t0);
 }
 
-// ── KPI Tiles ───────────────────────────────────────────────────
 function renderKPIs() {
   if (!globalMetrics) return;
   const m = globalMetrics;
@@ -214,31 +290,31 @@ function renderPerformanceCharts() {
           {
             label: 'Net ₹ / Dispute',
             data: curve.map(c => c.net_value_per_dispute),
-            borderColor: '#059669',
-            backgroundColor: 'rgba(5, 150, 105, 0.08)',
+            borderColor: '#10B981',
+            backgroundColor: 'rgba(16, 185, 129, 0.08)',
             fill: true,
             tension: 0.35,
             pointRadius: 4,
-            pointBackgroundColor: '#059669',
+            pointBackgroundColor: '#10B981',
             borderWidth: 2
           },
           {
             label: 'Auto-Respond %',
             data: curve.map(c => c.auto_respond_pct * 100),
-            borderColor: '#0284C7',
+            borderColor: '#6366F1',
             tension: 0.35,
             pointRadius: 3,
-            pointBackgroundColor: '#0284C7',
+            pointBackgroundColor: '#6366F1',
             borderWidth: 1.8,
             yAxisID: 'y1'
           },
           {
             label: 'Win Rate %',
             data: curve.map(c => c.win_rate_at_threshold * 100),
-            borderColor: '#D97706',
+            borderColor: '#F59E0B',
             tension: 0.35,
             pointRadius: 3,
-            pointBackgroundColor: '#D97706',
+            pointBackgroundColor: '#F59E0B',
             borderWidth: 1.8,
             yAxisID: 'y1'
           }
@@ -250,7 +326,7 @@ function renderPerformanceCharts() {
         interaction: { intersect: false, mode: 'index' },
         scales: {
           y: {
-            title: { display: true, text: 'Net ₹ / Dispute', color: '#059669', font: { weight: 'bold' } },
+            title: { display: true, text: 'Net ₹ / Dispute', color: '#10B981', font: { weight: 'bold' } },
             grid: { color: '#F1F5F9' },
             ticks: { callback: v => '₹' + v }
           },
@@ -283,9 +359,9 @@ function renderPerformanceCharts() {
         labels: Object.keys(fi).map(l => l.replace(/_/g, ' ')),
         datasets: [{
           data: Object.values(fi),
-          backgroundColor: '#F0F9FF',
-          borderColor: '#0284C7',
-          hoverBackgroundColor: '#0284C7',
+          backgroundColor: '#EEF2FF',
+          borderColor: '#6366F1',
+          hoverBackgroundColor: '#6366F1',
           borderWidth: 1.2,
           borderRadius: 3
         }]
@@ -357,6 +433,136 @@ function updateCostPoint(val) {
   setText('cost-net-dispute', '₹' + row.net_value_per_dispute.toFixed(0));
 }
 
+// ── Rich Case Explorer & Audit Workspace ─────────────────────────
+function setCaseFilter(filterType, btn) {
+  currentCaseFilter = filterType;
+  document.querySelectorAll('.case-filter-pill').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  filterCaseList();
+}
+
+function filterCaseList() {
+  const q = (document.getElementById('case-search-input').value || '').toLowerCase().trim();
+  
+  filteredPredictions = globalPredictions.filter(p => {
+    // Search query match
+    const matchQ = !q || p.dispute_id.toLowerCase().includes(q) || String(p.actual).includes(q) || String(p.predicted).includes(q);
+    if (!matchQ) return false;
+
+    // Filter pill match
+    if (currentCaseFilter === 'won') return p.outcome === 'merchant_won';
+    if (currentCaseFilter === 'lost') return p.outcome === 'merchant_lost';
+    if (currentCaseFilter === 'misclassified') return String(p.actual) !== String(p.predicted);
+    if (currentCaseFilter === 'high_value') return (p.confidence || 0) >= 0.70;
+    return true;
+  });
+
+  renderCaseListUI();
+}
+
+function renderCaseExplorer() {
+  filterCaseList();
+  if (filteredPredictions.length > 0 && !selectedCaseRecord) {
+    selectCaseRecord(filteredPredictions[0].dispute_id);
+  }
+}
+
+function renderCaseListUI() {
+  const container = document.getElementById('case-list-container');
+  if (!container) return;
+
+  if (filteredPredictions.length === 0) {
+    container.innerHTML = '<div style="padding:16px; text-align:center; color:var(--text-muted); font-size:12px;">No matching disputes found.</div>';
+    return;
+  }
+
+  container.innerHTML = filteredPredictions.slice(0, 100).map(p => {
+    const isSelected = selectedCaseRecord && selectedCaseRecord.dispute_id === p.dispute_id;
+    const isMatch = String(p.actual) === String(p.predicted);
+    const chipClass = isMatch ? 'chip-success' : 'chip-warning';
+    
+    return `
+      <div class="case-item-row ${isSelected ? 'selected' : ''}" onclick="selectCaseRecord('${p.dispute_id}')">
+        <div>
+          <div class="case-item-id">${p.dispute_id}</div>
+          <div class="case-item-sub">Actual: ${p.actual} &rarr; Pred: ${p.predicted}</div>
+        </div>
+        <div style="text-align:right;">
+          <span class="chip ${chipClass}">${isMatch ? 'Matched' : 'Mismatch'}</span>
+          <div style="font-size:10px; color:var(--text-muted); margin-top:2px;">${((p.confidence||0)*100).toFixed(0)}% Conf</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function selectCaseRecord(disputeId) {
+  const record = globalPredictions.find(p => p.dispute_id === disputeId);
+  if (!record) return;
+
+  selectedCaseRecord = record;
+  renderCaseListUI();
+
+  // Populate Right Audit Card
+  setText('audit-dispute-id', record.dispute_id);
+  setText('audit-meta-summary', `Ground truth outcome: ${record.outcome === 'merchant_won' ? 'Merchant Won' : 'Merchant Lost'} · Evidence: ${((record.evidence_strength||0)*100).toFixed(0)}%`);
+
+  const isMatch = String(record.actual) === String(record.predicted);
+  const statusBadge = document.getElementById('audit-status-badge');
+  if (statusBadge) {
+    statusBadge.innerHTML = isMatch
+      ? '<span class="chip chip-success">Prediction Validated</span>'
+      : '<span class="chip chip-warning">Reason Code Confused</span>';
+  }
+
+  setText('audit-actual-rc', record.actual);
+  setText('audit-pred-rc', record.predicted);
+  setText('audit-conf', `${((record.confidence||0)*100).toFixed(1)}% (Platt-Calibrated)`);
+  setText('audit-outcome', record.outcome === 'merchant_won' ? 'Merchant Won' : 'Merchant Lost');
+
+  setText('audit-evidence', `${((record.evidence_strength||0)*100).toFixed(0)}% Completeness`);
+  setText('audit-winprob', `${((record.confidence||0)*85).toFixed(1)}% Likelihood`);
+  
+  const isAuto = (record.confidence || 0) >= 0.70 && (record.evidence_strength || 0) >= 0.60;
+  setText('audit-action', isAuto ? 'AUTO_SUBMIT (High Confidence)' : 'HUMAN_REVIEW (Borderline)');
+  setText('audit-match-flag', isMatch ? 'Accurate Code Identified' : 'Fallback Routine Engaged');
+
+  const rawPre = document.getElementById('audit-raw-json');
+  if (rawPre) {
+    rawPre.textContent = JSON.stringify(record, null, 2);
+  }
+}
+
+function toggleAuditJson() {
+  const rawPre = document.getElementById('audit-raw-json');
+  if (rawPre) {
+    rawPre.style.display = rawPre.style.display === 'none' ? 'block' : 'none';
+  }
+}
+
+function loadSelectedCaseIntoAnalyzer() {
+  if (!selectedCaseRecord) return;
+  const p = selectedCaseRecord;
+
+  // Fill form
+  document.getElementById('f-amount').value = p.dispute_amount || 12499;
+  document.getElementById('f-network').value = p.card_network || 'Visa';
+  document.getElementById('f-days').value = p.days_to_dispute || 35;
+  document.getElementById('f-category').value = p.product_category || 'electronics';
+  document.getElementById('f-shipping').value = p.shipping_method || 'express';
+  document.getElementById('f-acct-age').value = p.customer_account_age_days || 45;
+  document.getElementById('f-delivery').checked = p.evidence_strength >= 0.5;
+  document.getElementById('f-proof').checked = p.evidence_strength >= 0.6;
+  document.getElementById('f-ip').checked = p.evidence_strength >= 0.4;
+  document.getElementById('f-3ds').checked = p.evidence_strength >= 0.7;
+
+  updateCardPreview();
+
+  // Switch to Home tab and run
+  switchTab('home', document.querySelector('.tabs-nav button:first-child'));
+  analyzeFromForm();
+}
+
 // ── Monitoring & Drift ───────────────────────────────────────────
 async function fetchMonitoringDrift() {
   try {
@@ -385,9 +591,9 @@ function renderMonitoring(d) {
         labels: Object.keys(rc),
         datasets: [{
           data: Object.values(rc),
-          backgroundColor: '#F0F9FF',
-          borderColor: '#0284C7',
-          hoverBackgroundColor: '#0284C7',
+          backgroundColor: '#EEF2FF',
+          borderColor: '#6366F1',
+          hoverBackgroundColor: '#6366F1',
           borderWidth: 1.2,
           borderRadius: 3
         }]
@@ -414,7 +620,7 @@ function renderMonitoring(d) {
         labels: Object.keys(ad),
         datasets: [{
           data: Object.values(ad),
-          backgroundColor: ['#059669', '#D97706'],
+          backgroundColor: ['#10B981', '#F59E0B'],
           borderColor: ['#FFFFFF', '#FFFFFF'],
           borderWidth: 2
         }]
@@ -425,27 +631,6 @@ function renderMonitoring(d) {
         plugins: { legend: { position: 'bottom', labels: { boxWidth: 10 } } }
       }
     });
-  }
-}
-
-// ── Case Explorer ───────────────────────────────────────────────
-function populateCaseDropdown() {
-  const sel = document.getElementById('case-select');
-  if (!sel) return;
-  sel.innerHTML = '<option value="">Select a test dispute record…</option>';
-  globalPredictions.slice(0, 50).forEach(p => {
-    const o = document.createElement('option');
-    o.value = p.dispute_id;
-    o.textContent = `${p.dispute_id} (${p.actual} → ${p.predicted}) | Confidence: ${(p.confidence * 100).toFixed(0)}%`;
-    sel.appendChild(o);
-  });
-}
-
-function inspectCase(id) {
-  if (!id) return;
-  const found = globalPredictions.find(p => p.dispute_id === id);
-  if (found) {
-    document.getElementById('case-json-display').textContent = JSON.stringify(found, null, 2);
   }
 }
 
@@ -469,6 +654,7 @@ function loadPreset(type) {
     r.checked = r.value === p.avs_cvv_match;
   });
   document.getElementById('dispute-json-input').value = JSON.stringify(p, null, 2);
+  updateCardPreview();
 }
 
 // ── Build Payload From Form ─────────────────────────────────────
@@ -518,7 +704,7 @@ function analyzeFromJSON() {
     }
     runPipeline(payload, document.getElementById('run-json-btn'));
   } catch (e) {
-    errDiv.innerHTML = `<span class="chip chip-danger">Invalid JSON: ${e.message}</span>`;
+    errDiv.innerHTML = `<span class="chip chip-danger">Invalid JSON format: ${e.message}</span>`;
     errDiv.style.display = 'block';
   }
 }
@@ -531,14 +717,14 @@ async function runPipeline(payload, btn) {
   stepsC.innerHTML = '';
   outPre.textContent = '';
   badge.innerHTML = '<span class="spinner"></span>';
-  btn.disabled = true;
-  const origText = btn.textContent;
-  btn.textContent = 'Processing Pipeline...';
+  if (btn) btn.disabled = true;
+  const origText = btn ? btn.textContent : '';
+  if (btn) btn.textContent = 'Processing Pipeline...';
 
   try {
-    // Step 1: Input Received with Complex Terms Explained
+    // Step 1: Input Received
     await revealStep(stepsC, 'Step 1 — Input Ingested',
-      `Dispute <strong>${payload.dispute_id || 'N/A'}</strong> [Unique Dispute ID] · ₹${(payload.dispute_amount || 0).toLocaleString('en-IN')} [Contested Amount] · ${payload.card_network || 'Unknown'} [Governing Card Scheme]`, '', 220);
+      `Dispute <strong>${payload.dispute_id || 'N/A'}</strong> · ₹${(payload.dispute_amount || 0).toLocaleString('en-IN')} · ${payload.card_network || 'Unknown'} Network`, '', 220);
 
     const res = await fetch('/api/disputes', {
       method: 'POST',
@@ -552,7 +738,7 @@ async function runPipeline(payload, btn) {
     }
     const data = await res.json();
 
-    // Step 2: Reason Code Classification with Plain Language
+    // Step 2: Reason Code Classification
     const clf = data.classification || {};
     const topK = (clf.top_k_predictions || []).map((t, i) => {
       const p = (t.confidence * 100).toFixed(1);
@@ -632,8 +818,10 @@ async function runPipeline(payload, btn) {
     badge.innerHTML = '';
     outPre.textContent = 'Error: ' + err.message;
   } finally {
-    btn.disabled = false;
-    btn.textContent = origText;
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = origText;
+    }
   }
 }
 

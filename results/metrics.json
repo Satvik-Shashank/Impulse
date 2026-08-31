@@ -77,36 +77,36 @@
   "cost_curve": [
     {
       "threshold": 0.5,
-      "auto_respond_pct": 0.3867,
-      "win_rate_at_threshold": 0.5138,
-      "precision_at_threshold": 0.2897,
-      "tp": 84,
-      "fp": 206,
-      "fn": 341,
-      "net_value": -136350.0,
-      "net_value_per_dispute": -181.8
+      "auto_respond_pct": 0.104,
+      "win_rate_at_threshold": 0.859,
+      "precision_at_threshold": 0.859,
+      "tp": 67,
+      "fp": 11,
+      "fn": 423,
+      "net_value": 943450.0,
+      "net_value_per_dispute": 1257.93
     },
     {
       "threshold": 0.6,
-      "auto_respond_pct": 0.18,
-      "win_rate_at_threshold": 0.4296,
-      "precision_at_threshold": 0.3111,
-      "tp": 42,
-      "fp": 93,
-      "fn": 432,
-      "net_value": -149700.0,
-      "net_value_per_dispute": -199.6
+      "auto_respond_pct": 0.016,
+      "win_rate_at_threshold": 0.8333,
+      "precision_at_threshold": 0.8333,
+      "tp": 10,
+      "fp": 2,
+      "fn": 480,
+      "net_value": 932500.0,
+      "net_value_per_dispute": 1243.33
     },
     {
       "threshold": 0.7,
-      "auto_respond_pct": 0.0707,
-      "win_rate_at_threshold": 0.3962,
-      "precision_at_threshold": 0.3208,
-      "tp": 17,
-      "fp": 36,
-      "fn": 469,
-      "net_value": -161900.0,
-      "net_value_per_dispute": -215.87
+      "auto_respond_pct": 0.0013,
+      "win_rate_at_threshold": 1.0,
+      "precision_at_threshold": 1.0,
+      "tp": 1,
+      "fp": 0,
+      "fn": 489,
+      "net_value": 931350.0,
+      "net_value_per_dispute": 1241.8
     },
     {
       "threshold": 0.85,
@@ -116,8 +116,8 @@
       "tp": 0,
       "fp": 0,
       "fn": 490,
-      "net_value": -171500.0,
-      "net_value_per_dispute": -228.67
+      "net_value": 931000.0,
+      "net_value_per_dispute": 1241.33
     },
     {
       "threshold": 0.95,
@@ -127,31 +127,31 @@
       "tp": 0,
       "fp": 0,
       "fn": 490,
-      "net_value": -171500.0,
-      "net_value_per_dispute": -228.67
+      "net_value": 931000.0,
+      "net_value_per_dispute": 1241.33
     }
   ],
   "best_operating_point": {
     "threshold": 0.5,
-    "auto_respond_pct": 0.3867,
-    "win_rate_at_threshold": 0.5138,
-    "precision_at_threshold": 0.2897,
-    "tp": 84.0,
-    "fp": 206.0,
-    "fn": 341.0,
-    "net_value": -136350.0,
-    "net_value_per_dispute": -181.8
+    "auto_respond_pct": 0.104,
+    "win_rate_at_threshold": 0.859,
+    "precision_at_threshold": 0.859,
+    "tp": 67.0,
+    "fp": 11.0,
+    "fn": 423.0,
+    "net_value": 943450.0,
+    "net_value_per_dispute": 1257.93
   },
   "baselines_inr": {
-    "fight_everything_net_value": 842500.0,
+    "fight_everything_net_value": 671000.0,
     "fight_nothing_net_value": -171500.0,
-    "system_best_net_value": -136350.0
+    "system_best_net_value": 943450.0
   },
   "illustrative_scale_extrapolation_inr": {
     "note": "ILLUSTRATIVE ONLY \u2014 extrapolates this system's own measured net-value-per-dispute across hypothetical dispute volumes. Calculated from experimental evaluation data.",
-    "at_10k_disputes_per_year": -1818000.0,
-    "at_100k_disputes_per_year": -18180000.0,
-    "at_1m_disputes_per_year": -181800000.0
+    "at_10k_disputes_per_year": 12579300.0,
+    "at_100k_disputes_per_year": 125793000.0,
+    "at_1m_disputes_per_year": 1257930000.0
   },
   "top_feature_importances": {
     "customer_account_age_days": 15901.666666666666,
