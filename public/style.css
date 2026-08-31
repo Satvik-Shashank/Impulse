@@ -1,10 +1,10 @@
 /* ════════════════════════════════════════════════════════════════════
    IMPULSE — Autonomous Dispute Defense Platform
-   Stripe-Inspired Solid Theme, High-Contrast Hero Typography,
-   Pulsing Dynamic Slanted Gradient Stripe, 3D Floating Card
+   Ultra-Realistic 3D Card, Dynamic Pacing & Zoom Showcase,
+   Stripe-Themed Architecture & Financial Specification Box
    ════════════════════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
   /* Impulse Brand Palette */
@@ -49,6 +49,7 @@
   --shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
   --shadow-card-hover: 0 16px 36px -4px rgba(99, 102, 241, 0.16), 0 4px 12px -2px rgba(15, 23, 42, 0.05);
   --shadow-showcase: 0 24px 60px -12px rgba(15, 23, 42, 0.18), 0 2px 8px rgba(15, 23, 42, 0.04);
+  --shadow-showcase-zoom: 0 36px 90px -12px rgba(99, 102, 241, 0.32), 0 0 0 2px rgba(99, 102, 241, 0.5);
 
   /* Radii */
   --radius-sm: 6px;
@@ -85,7 +86,7 @@ body {
   overflow-x: hidden;
 }
 
-/* ── Signature Dynamic Pulsing Slanted Stripe Ribbon (Elevated Position) ── */
+/* ── Signature Dynamic Pulsing Slanted Stripe Ribbon ────────────── */
 .stripe-pulsing-ribbon {
   position: absolute;
   top: -80px;
@@ -271,7 +272,7 @@ body {
   z-index: 2;
 }
 
-/* ── Hero Section (Brilliant Crisp White/Cyan Typography On Top of Stripe) ── */
+/* ── Hero Section (Luminous High-Contrast Typography) ───────────── */
 .hero-header {
   margin-bottom: 24px;
   text-align: center;
@@ -391,141 +392,218 @@ body {
   transform: translateY(-1px);
 }
 
-/* ── Hero Interactive Showcase Container (Card + Live Inspector) ── */
+/* ── Hero Showcase Container with Smooth Zoom Focus ─────────────── */
 .hero-showcase-container {
   display: grid;
-  grid-template-columns: 340px 1fr;
-  gap: 24px;
+  grid-template-columns: 360px 1fr;
+  gap: 28px;
   background: #FFFFFF;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-xl);
-  padding: 24px;
+  padding: 26px;
   box-shadow: var(--shadow-showcase);
   margin: 0 auto 40px;
-  max-width: 960px;
+  max-width: 980px;
   align-items: center;
   position: relative;
   z-index: 2;
+  transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-showcase-container.is-zoomed {
+  transform: scale(1.035);
+  box-shadow: var(--shadow-showcase-zoom);
 }
 
 @media (max-width: 860px) {
   .hero-showcase-container { grid-template-columns: 1fr; }
 }
 
-/* 3D Floating Interactive Credit Card Visualizer */
+/* ── Ultra-Realistic 3D Credit Card Visualizer ───────────────────── */
 .interactive-credit-card {
   width: 100%;
-  height: 195px;
-  border-radius: var(--radius-md);
-  background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+  height: 215px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #1E293B 0%, #0F172A 50%, #020617 100%);
   color: #FFFFFF;
-  padding: 20px 22px;
+  padding: 22px 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-shadow: 0 18px 40px -6px rgba(15, 23, 42, 0.35), 0 0 1px 1px rgba(255, 255, 255, 0.12) inset;
+  box-shadow:
+    0 24px 48px -8px rgba(0, 0, 0, 0.5),
+    0 1px 2px 0 rgba(255, 255, 255, 0.25) inset,
+    0 -1px 2px 0 rgba(0, 0, 0, 0.4) inset;
   position: relative;
   overflow: hidden;
-  animation: cardFloating 4.5s ease-in-out infinite alternate;
+  animation: cardFloating 5s ease-in-out infinite alternate;
+  transform-style: preserve-3d;
 }
 
 @keyframes cardFloating {
   0% { transform: translateY(0px) rotate(-0.5deg); }
-  50% { transform: translateY(-7px) rotate(0.8deg); }
+  50% { transform: translateY(-8px) rotate(1deg); }
   100% { transform: translateY(0px) rotate(-0.5deg); }
 }
 
+/* Metallic Sheen Sheen Overlay */
 .interactive-credit-card::before {
   content: '';
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, transparent 60%);
+  top: -60%;
+  left: -60%;
+  width: 220%;
+  height: 220%;
+  background: linear-gradient(
+    115deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 35%,
+    rgba(255, 255, 255, 0.16) 45%,
+    rgba(255, 255, 255, 0.05) 55%,
+    transparent 100%
+  );
   pointer-events: none;
+  transform: rotate(-15deg);
 }
 
 .card-top-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.card-chip-icon {
-  width: 36px;
-  height: 28px;
-  background: linear-gradient(135deg, #FDE68A 0%, #D97706 100%);
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   position: relative;
+  z-index: 2;
 }
 
-.card-chip-icon::after {
+/* Realistic Gold EMV Chip & Contactless Waves */
+.card-chip-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.card-emv-chip {
+  width: 42px;
+  height: 32px;
+  background: linear-gradient(135deg, #FDE68A 0%, #D97706 60%, #92400E 100%);
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+  position: relative;
+  border: 1px solid rgba(180, 83, 9, 0.6);
+}
+
+.card-emv-chip::before {
   content: '';
   position: absolute;
-  inset: 4px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 2px;
+  top: 9px;
+  left: 0;
+  right: 0;
+  height: 14px;
+  border-top: 1px solid rgba(146, 64, 14, 0.7);
+  border-bottom: 1px solid rgba(146, 64, 14, 0.7);
 }
 
-.card-network-badge {
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.05em;
+.card-emv-chip::after {
+  content: '';
+  position: absolute;
+  left: 14px;
+  top: 0;
+  bottom: 0;
+  width: 14px;
+  border-left: 1px solid rgba(146, 64, 14, 0.7);
+  border-right: 1px solid rgba(146, 64, 14, 0.7);
+}
+
+.contactless-wave-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.7;
   color: #FFFFFF;
-  text-transform: uppercase;
 }
 
+.card-network-logo-box {
+  display: flex;
+  align-items: center;
+}
+
+.card-network-logo-box svg {
+  height: 24px;
+}
+
+/* Embossed Card Number Display */
 .card-number-display {
   font-family: var(--font-mono);
-  font-size: 15px;
-  letter-spacing: 0.12em;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
   color: #F8FAFC;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7), 0 -1px 1px rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 2;
+  margin: 6px 0;
 }
 
 .card-bottom-row {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+  position: relative;
+  z-index: 2;
 }
 
 .card-holder-label {
   font-size: 8px;
+  font-weight: 700;
   text-transform: uppercase;
   color: #94A3B8;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
 }
 
 .card-holder-val {
-  font-size: 11px;
-  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
   color: #F1F5F9;
   text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.6);
+}
+
+.card-meta-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.card-expiry-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: #CBD5E1;
 }
 
 .card-amount-tag {
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(56, 189, 248, 0.4);
   padding: 4px 10px;
   border-radius: var(--radius-sm);
   font-size: 13px;
   font-weight: 800;
   color: #38BDF8;
   font-variant-numeric: tabular-nums;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Showcase Inspector Panel */
+/* ── Showcase Inspector Panel ───────────────────────────────────── */
 .showcase-inspector-panel {
   background: var(--bg-surface-sunken);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 18px 20px;
+  padding: 20px 22px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 195px;
+  min-height: 215px;
 }
 
 .inspector-header-row {
@@ -549,8 +627,23 @@ body {
   border-radius: var(--radius-pill);
 }
 
+.inspector-content-box {
+  animation: stepSlideFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes stepSlideFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .inspector-title {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 800;
   color: var(--brand-navy-dark);
   margin-bottom: 4px;
@@ -604,6 +697,97 @@ body {
 .btn-inspector-action:hover {
   background: linear-gradient(135deg, #4F46E5 0%, #3730A3 100%);
   transform: translateY(-1px);
+}
+
+/* ── Stripe-Themed Architecture & Financial Specification Box ───── */
+.stripe-spec-box {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+  border: 1px solid var(--border-color);
+  border-top: 4px solid var(--brand-indigo);
+  border-radius: var(--radius-lg);
+  padding: 22px 24px;
+  margin-bottom: 26px;
+  box-shadow: var(--shadow-card);
+  position: relative;
+  overflow: hidden;
+}
+
+.stripe-spec-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.spec-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.spec-badge-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--brand-navy-dark);
+}
+
+.spec-chevron {
+  font-size: 12px;
+  color: var(--brand-indigo);
+  font-weight: 800;
+  transition: transform 0.2s ease;
+}
+
+.spec-grid-layout {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+@media (max-width: 800px) {
+  .spec-grid-layout { grid-template-columns: 1fr; }
+}
+
+.spec-card-item {
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-subtle);
+}
+
+.spec-card-tag {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--brand-indigo);
+  margin-bottom: 4px;
+}
+
+.spec-card-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--brand-navy-dark);
+  margin-bottom: 6px;
+}
+
+.spec-card-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.55;
 }
 
 /* ── Section Title Wraps ────────────────────────────────────────── */
@@ -730,35 +914,6 @@ body {
   font-size: 12px;
   color: var(--text-secondary);
   line-height: 1.5;
-}
-
-/* ── Financial Explanation Box ──────────────────────────────────── */
-.explainer-box {
-  background: var(--bg-surface-sunken);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 16px 18px;
-  margin-bottom: 24px;
-}
-
-.explainer-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--brand-navy-dark);
-  cursor: pointer;
-  user-select: none;
-}
-
-.explainer-content {
-  margin-top: 10px;
-  font-size: 12px;
-  color: var(--text-secondary);
-  line-height: 1.6;
-  border-top: 1px solid var(--border-color);
-  padding-top: 10px;
 }
 
 .formula-pill {

@@ -119,25 +119,50 @@ function updateCardPreview() {
   const cat = document.getElementById('f-category').value;
   
   const elAmt = document.getElementById('sim-card-amount');
-  const elNet = document.getElementById('sim-card-network');
+  const elLogo = document.getElementById('sim-card-logo');
   const elId = document.getElementById('sim-card-id');
   const elNum = document.getElementById('sim-card-number');
 
   if (elAmt) elAmt.textContent = '₹' + amt.toLocaleString('en-IN', { minimumFractionDigits: 2 });
-  if (elNet) elNet.textContent = net;
   if (elId) elId.textContent = `DSP-LIVE · ${cat.toUpperCase()}`;
+  
+  if (elLogo) {
+    if (net === 'Visa') {
+      elLogo.innerHTML = `
+        <svg viewBox="0 0 70 24" width="54" height="18" fill="#FFFFFF">
+          <path d="M27.2 2.8l-4.5 17.5h-4.3L22.9 2.8h4.3zm17.5 11.4l2.3-6.4c-.1 0 1.2-2.1 1.5-2.6l.8 3.9 1.4 5.1h-6zm7.8 6.1h3.9L53 2.8h-3.6c-.8 0-1.5.5-1.8 1.2l-6.3 16.3h4.4l.9-2.4h5.4l.5 2.4zM39.6 14.1c0-4.3-6-4.6-6-6.5 0-.6.5-1.2 1.8-1.4 1.3-.2 3.5.1 4.7.7l.8-3.8c-1.2-.4-2.8-.7-4.7-.7-4.4 0-7.5 2.3-7.5 5.7 0 2.5 2.2 3.8 3.9 4.6 1.7.9 2.3 1.4 2.3 2.2 0 1.2-1.4 1.7-2.7 1.7-2.3 0-3.6-.3-5.5-1.2l-.8 3.9c1.1.5 3.1.9 5.2.9 4.8 0 8.1-2.4 8.1-6.1zM18.8 2.8L12.7 17.1l-.6-3.2c-1.1-3.8-4.5-7.9-8.4-10l5.4 16.4h4.5l6.7-17.5h-4.5z"/>
+        </svg>
+      `;
+    } else {
+      elLogo.innerHTML = `
+        <svg viewBox="0 0 36 24" width="38" height="24">
+          <circle cx="12" cy="12" r="10" fill="#EB001B"/>
+          <circle cx="24" cy="12" r="10" fill="#F79E1B" fill-opacity="0.88"/>
+        </svg>
+      `;
+    }
+  }
+
   if (elNum) {
     elNum.textContent = net === 'Visa' ? '4111 •••• •••• 4242' : '5500 •••• •••• 8899';
   }
 }
 
-// ── Paced Live Tour Simulation (Centered Showcase) ────────────────
+// ── Paced Live Tour Simulation with Zoom & Slide Transitions ─────
 function renderSimStep(idx) {
   simCurrentStep = Math.max(0, Math.min(idx, SIM_STEPS.length - 1));
   const step = SIM_STEPS[simCurrentStep];
 
   setText('insp-step-badge', step.stepBadge);
   setText('insp-step-counter', step.stepCounter);
+  
+  const contentBox = document.getElementById('insp-content-box');
+  if (contentBox) {
+    contentBox.style.animation = 'none';
+    contentBox.offsetHeight; // trigger reflow
+    contentBox.style.animation = 'stepSlideFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+  }
+
   setText('insp-title', step.title);
   setText('insp-desc', step.desc);
 
@@ -151,25 +176,34 @@ function renderSimStep(idx) {
 async function startGuidedSimulation() {
   if (simTimer) clearTimeout(simTimer);
   const btn = document.getElementById('btn-run-sim');
-  if (btn) btn.textContent = 'Simulating...';
+  const showcase = document.getElementById('hero-showcase-box');
 
-  // Step 1
+  if (btn) btn.textContent = 'Simulating...';
+  if (showcase) {
+    showcase.classList.add('is-zoomed');
+    showcase.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // Step 1: Ingestion
   renderSimStep(0);
   await sleep(2600);
 
-  // Step 2
+  // Step 2: Classification
   renderSimStep(1);
   await sleep(2600);
 
-  // Step 3
+  // Step 3: Evidence
   renderSimStep(2);
   await sleep(2600);
 
-  // Step 4
+  // Step 4: Decision
   renderSimStep(3);
   analyzeFromForm();
-  await sleep(1500);
+  await sleep(2000);
 
+  if (showcase) {
+    showcase.classList.remove('is-zoomed');
+  }
   if (btn) btn.textContent = 'Replay Simulation';
 }
 
@@ -202,11 +236,16 @@ function switchTab(tabId, btn) {
   }
 }
 
-// ── Financial Explainer Toggle ───────────────────────────────────
+// ── Financial & Architecture Explainer Toggle ────────────────────
 function toggleExplainer() {
   const details = document.getElementById('explainer-details');
+  const icon = document.getElementById('spec-toggle-icon');
   if (details) {
-    details.style.display = details.style.display === 'none' ? 'block' : 'none';
+    const isHidden = details.style.display === 'none';
+    details.style.display = isHidden ? 'grid' : 'none';
+    if (icon) {
+      icon.textContent = isHidden ? '− Collapse' : '+ Expand';
+    }
   }
 }
 
