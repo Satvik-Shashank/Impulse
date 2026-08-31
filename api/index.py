@@ -31,6 +31,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from fastapi.staticfiles import StaticFiles
+public_dir = os.path.join(PROJECT_ROOT, "public")
+if os.path.exists(public_dir):
+    app.mount("/static", StaticFiles(directory=public_dir), name="static")
+
+
 
 # ── Health ──────────────────────────────────────────────────────────────────
 
@@ -160,3 +166,10 @@ def monitoring_drift(window: int = Query(200, ge=10, le=5000)):
         return monitor.compute_drift_snapshot(window=window)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ── Static Frontend Mount for Local Viewing ───────────────────────────────
+
+if os.path.exists(public_dir):
+    app.mount("/", StaticFiles(directory=public_dir, html=True), name="public")
+
