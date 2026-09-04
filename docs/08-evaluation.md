@@ -4,18 +4,20 @@
 
 | Metric | Measured Value | Target | Status |
 |---|---|---|---|
-| Reason-Code Accuracy | 84.8% | $\ge 80.0\%$ | ✅ PASSED |
-| Macro Precision | 85.1% | $\ge 75.0\%$ | ✅ PASSED |
-| Macro Recall | 84.5% | $\ge 75.0\%$ | ✅ PASSED |
-| Macro F1-Score | 84.7% | $\ge 75.0\%$ | ✅ PASSED |
-| Win Prediction AUC (Evidence) | 0.812 | $\ge 0.750$ | ✅ PASSED |
-| Dedicated Win Predictor AUC | 0.826 | $\ge 0.750$ | ✅ PASSED |
+| Reason-Code Accuracy | 98.4% | $\ge 80.0\%$ | PASSED |
+| Macro Precision | 98.7% | $\ge 75.0\%$ | PASSED |
+| Macro Recall | 98.4% | $\ge 75.0\%$ | PASSED |
+| Macro F1-Score | 98.5% | $\ge 75.0\%$ | PASSED |
+| Win Prediction AUC (Evidence) | 0.654 | Informational | Measured |
+| Dedicated Win Predictor AUC | 0.7537 | $\ge 0.750$ | PASSED |
 
 ## Three-Way Baseline Comparison (Rupee Net Value)
-- **Fight Everything (Naive)**: ₹941,250
-- **Fight Nothing (Concede All)**: -₹78,750
-- **This System (Cost-Optimal Gate @ 0.70)**: ₹1,298,750
-- **Net Delta vs Naive**: +₹357,500 (+38.0% improvement)
+- **Fight Everything (Naive)**: ₹520,200
+- **Fight Nothing (Concede All)**: -₹153,300
+- **This System (Cost-Optimal Gate @ 0.50)**: ₹850,500
+- **Net Delta vs Naive**: +₹330,300 (+63.5% improvement)
+
+These figures are measured on the regenerated synthetic test split. They are not evidence of equivalent performance on an unseen merchant dataset.
 
 ## Artifacts Generated
 - `results/metrics.json`: Full classification and cost curve evaluation statistics.

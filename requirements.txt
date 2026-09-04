@@ -7,7 +7,7 @@ SQLAlchemy>=2.0.0
 psycopg[binary]>=3.1.0
 
 # ML & Calibration
-scikit-learn>=1.3.0
+scikit-learn==1.9.0
 lightgbm>=4.1.0
 optuna>=3.5.0
 
@@ -23,6 +23,7 @@ plotly>=5.18.0
 fastapi>=0.100.0
 uvicorn>=0.20.0
 python-multipart>=0.0.6
+httpx>=0.28.1
 
 # Testing / data validation
 pytest>=7.4.0

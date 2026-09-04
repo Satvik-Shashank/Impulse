@@ -576,10 +576,21 @@ function updateCostPoint(val) {
   const t = parseFloat(val);
   setText('threshold-val', t.toFixed(2));
   if (!globalMetrics || !globalMetrics.cost_curve) return;
-  const row = globalMetrics.cost_curve.find(c => Math.abs(c.threshold - t) < 0.01) || globalMetrics.cost_curve[0];
-  setText('cost-auto-pct', pct(row.auto_respond_pct));
-  setText('cost-win-rate', pct(row.win_rate_at_threshold));
-  setText('cost-net-dispute', '₹' + row.net_value_per_dispute.toFixed(0));
+  const curve = globalMetrics.cost_curve;
+  let lower = curve[0];
+  let upper = curve[curve.length - 1];
+  for (let i = 1; i < curve.length; i++) {
+    if (curve[i].threshold >= t) {
+      lower = curve[i - 1];
+      upper = curve[i];
+      break;
+    }
+  }
+  const ratio = upper.threshold === lower.threshold ? 0 : (t - lower.threshold) / (upper.threshold - lower.threshold);
+  const interpolate = key => lower[key] + (upper[key] - lower[key]) * ratio;
+  setText('cost-auto-pct', pct(interpolate('auto_respond_pct')));
+  setText('cost-win-rate', pct(interpolate('win_rate_at_threshold')));
+  setText('cost-net-dispute', '₹' + interpolate('net_value_per_dispute').toFixed(0));
 }
 
 // ── Rich Case Explorer & Audit Workspace ─────────────────────────
@@ -602,7 +613,7 @@ function filterCaseList() {
     if (currentCaseFilter === 'won') return p.outcome === 'merchant_won';
     if (currentCaseFilter === 'lost') return p.outcome === 'merchant_lost';
     if (currentCaseFilter === 'misclassified') return String(p.actual) !== String(p.predicted);
-    if (currentCaseFilter === 'high_value') return (p.confidence || 0) >= 0.70;
+    if (currentCaseFilter === 'high_value') return (p.dispute_amount || 0) >= 10000;
     return true;
   });
 

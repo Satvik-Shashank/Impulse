@@ -11,6 +11,6 @@ Completed:
 In Progress: Full verification and model quality improvement
 Blocked: Managed PostgreSQL and deployed-load benchmarking require environment credentials and a deployment decision.
 Known Issues: Current held-out reason-code accuracy is 98.4% on regenerated synthetic data; this must not be presented as real-merchant accuracy. Dedicated win-model AUC is 0.7537.
-Technical Debt: Existing scripted simulation copy remains separate from live API results; production deployment requires `DATABASE_URL`.
+Technical Debt: Production deployment requires `DATABASE_URL`; runtime monitoring starts empty until real predictions arrive.
 Next Tasks: Validate with labeled merchant data, review bootstrap/fairness artifacts, and run a real Vercel load test.
 Last Verified: 2026-09-03

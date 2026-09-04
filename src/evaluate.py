@@ -10,7 +10,7 @@ Computes:
   * Three-way baseline comparison: fight-everything / fight-nothing / this system
   * A rough scale extrapolation (see NOTE below — clearly labeled as illustrative)
   * results/metrics.json + results/predictions.csv
-  * Mock monitoring log entries for drift demonstration
+    * Monitoring score baseline for runtime PSI comparison
 
 Usage:
     python -m src.evaluate --test-set data/disputes_test.csv --output results/
@@ -228,29 +228,6 @@ def train_win_predictor(train_path, val_path, model_path):
     for feat, imp in list(wp.feature_importances().items())[:10]:
         print(f"  {feat:32s} {imp:.1f}")
     return auc, wp
-
-
-def generate_mock_monitoring_log(results_df, out_dir):
-    """Generate mock monitoring log entries for drift demonstration."""
-    from datetime import datetime, timedelta
-    log_path = os.path.join(out_dir, "monitoring_log.jsonl")
-
-    base_time = datetime.utcnow() - timedelta(hours=len(results_df) * 0.1)
-    with open(log_path, "w", encoding="utf-8") as f:
-        for i, (_, row) in enumerate(results_df.iterrows()):
-            ts = (base_time + timedelta(hours=i * 0.1)).isoformat() + "Z"
-            entry = {
-                "timestamp": ts,
-                "dispute_id": row.get("dispute_id", f"DSP-MOCK-{i:04d}"),
-                "reason_code": row.get("predicted", "unknown"),
-                "confidence": round(float(row.get("confidence", 0.5)), 4),
-                "evidence_strength": round(float(row.get("evidence_strength", 0.5)), 4),
-                "win_probability": round(float(row.get("confidence", 0.5) * 0.8), 4),
-                "expected_value_inr": round(float(row.get("confidence", 0.5) * 1500 - 500), 2),
-                "action": "AUTO_SUBMIT" if row.get("confidence", 0) >= 0.70 else "HUMAN_REVIEW",
-            }
-            f.write(json.dumps(entry) + "\n")
-    print(f"Mock monitoring log written: {log_path} ({len(results_df)} entries)")
 
 
 def main(test_path="data/disputes_test.csv", model_path="models/classifier.pkl",
