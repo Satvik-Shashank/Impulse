@@ -8,7 +8,7 @@ import json
 import os
 import numpy as np
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -45,7 +45,7 @@ class MonitoringLog:
     def log_prediction(self, pipeline_result: dict) -> None:
         """Append a single prediction record to the monitoring log."""
         entry = {
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             "dispute_id": pipeline_result.get("dispute_id"),
             "reason_code": pipeline_result.get("classification", {}).get("predicted_reason_code"),
             "confidence": pipeline_result.get("classification", {}).get("confidence"),

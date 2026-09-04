@@ -4,7 +4,7 @@
 The Chargeback Intelligence Platform requires persistent storage for incoming disputes, generated representment packages, and decision audit logs. The system must support both local development and Vercel serverless deployment without requiring complex infrastructure setup.
 
 ## Decision
-We choose **SQLite** managed via **SQLAlchemy ORM** (`src/db/database.py` and `src/api/storage.py`).
+We choose **SQLite** managed via **SQLAlchemy ORM** (`src/api/storage.py` and `src/db/models.py`).
 
 ## Alternatives Considered
 1. **PostgreSQL / MySQL**: Require external database provisioning, connection pool management, and credentials management. Over-engineered for local evaluation and serverless demos.

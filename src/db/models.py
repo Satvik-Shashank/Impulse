@@ -1,6 +1,6 @@
 """SQLAlchemy models for persistent dispute database & decision audit logs."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, Text, ForeignKey
 from sqlalchemy.orm import declarative_base, relationship
 
@@ -42,8 +42,8 @@ class DisputeModel(Base):
     action_decision = Column(String, nullable=True)
     generated_response_text = Column(Text, nullable=True)
     
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     # Relationships
     attachments = relationship("EvidenceAttachmentModel", back_populates="dispute", cascade="all, delete-orphan")
@@ -59,7 +59,7 @@ class EvidenceAttachmentModel(Base):
     file_name = Column(String, nullable=False)
     file_size_bytes = Column(Integer, default=0)
     summary = Column(Text, nullable=True)
-    uploaded_at = Column(DateTime, default=datetime.utcnow)
+    uploaded_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     dispute = relationship("DisputeModel", back_populates="attachments")
 
@@ -77,6 +77,6 @@ class DecisionAuditLogModel(Base):
     cost_fn = Column(Float, default=350.0)
     savings_tp = Column(Float, default=2250.0)
     estimated_net_value = Column(Float, nullable=False)
-    evaluated_at = Column(DateTime, default=datetime.utcnow)
+    evaluated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     dispute = relationship("DisputeModel", back_populates="audit_logs")
