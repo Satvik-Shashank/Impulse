@@ -66,17 +66,36 @@ app.add_middleware(
 
 @app.middleware("http")
 async def fix_vercel_rewrites(request: Request, call_next):
-    path = request.scope.get("path", "")
-    if path.startswith("/api/index.py"):
-        new_path = path[len("/api/index.py"):]
-        if not new_path or new_path == "/":
-            new_path = "/api/health"
-        elif not new_path.startswith("/api"):
-            new_path = "/api" + new_path
-        request.scope["path"] = new_path
-    elif not path.startswith("/api") and not path.startswith("/static") and path != "/":
-        request.scope["path"] = "/api" + path
+    # 1. Check query parameter 'path' passed by vercel rewrite: /api/index.py?path=...
+    target_path = request.query_params.get("path")
+
+    # 2. Check Vercel headers for original URI
+    if not target_path:
+        target_path = (
+            request.headers.get("x-matched-path")
+            or request.headers.get("x-forwarded-uri")
+            or request.headers.get("x-original-uri")
+            or request.headers.get("x-invoke-path")
+        )
+
+    # 3. Fallback to scope path
+    if not target_path:
+        target_path = request.scope.get("path", "")
+
+    # Strip /api/index.py prefix if present
+    if target_path.startswith("/api/index.py"):
+        target_path = target_path[len("/api/index.py"):]
+
+    if not target_path or target_path == "/":
+        target_path = "/api/health"
+
+    # Ensure /api prefix for API routes (unless static)
+    if not target_path.startswith("/api") and not target_path.startswith("/static"):
+        target_path = "/api/" + target_path.lstrip("/")
+
+    request.scope["path"] = target_path
     return await call_next(request)
+
 
 
 from fastapi.staticfiles import StaticFiles

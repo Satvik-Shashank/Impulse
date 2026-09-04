@@ -100,6 +100,11 @@ def test_api_rejects_blank_numeric_field_with_validation_error():
 
 
 def test_vercel_rewrite_path_normalization():
+    # Test path rewritten by Vercel query param /api/index.py?path=/api/health
+    response = client.get("/api/index.py?path=/api/health")
+    assert response.status_code == 200
+    assert response.json()["status"] == "ok"
+
     # Test path rewritten by Vercel to /api/index.py/api/health
     response = client.get("/api/index.py/api/health")
     assert response.status_code == 200
@@ -114,4 +119,5 @@ def test_vercel_rewrite_path_normalization():
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json()["status"] == "ok"
+
 
