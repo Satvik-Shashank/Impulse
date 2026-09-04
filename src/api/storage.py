@@ -13,6 +13,7 @@ from sqlalchemy import create_engine, func, desc
 from sqlalchemy.orm import sessionmaker, Session
 
 from src.db.models import Base, DisputeModel, DecisionAuditLogModel
+from src.config import COST_FP, COST_FN, SAVINGS_TP
 
 _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DB_DIR = os.path.join(_PROJECT_ROOT, "data")
@@ -107,9 +108,9 @@ class DisputeStore:
                 confidence_score=clf.get("confidence", 0.0),
                 evidence_strength=ev.get("evidence_strength", 0.0),
                 action_taken=action,
-                cost_fp=1000.0,
-                cost_fn=350.0,
-                savings_tp=2250.0,
+                cost_fp=COST_FP,
+                cost_fn=COST_FN,
+                savings_tp=SAVINGS_TP,
                 estimated_net_value=pipeline_result.get("expected_value_inr", 0.0),
             )
             db.add(audit)

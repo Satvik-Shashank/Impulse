@@ -13,12 +13,9 @@ import sys
 from src.models.classifier import DisputeClassifier
 from src.pipeline.evidence_retriever import retrieve_evidence
 from src.pipeline.response_generator import generate_response
+from src.config import COST_FP, COST_FN, SAVINGS_TP
 
 # Cost assumptions (working modeling assumptions, not cited industry data)
-COST_FP = 1000      # wasted filing fee + lost, harder-to-refight case
-COST_FN = 350       # ops labour to manually review a case that would have won
-SAVINGS_TP = 2250   # avoided ops cost + recovered revenue on a won auto-response
-
 _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 

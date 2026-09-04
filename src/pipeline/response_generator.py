@@ -16,7 +16,7 @@ env = Environment(
 
 # Confidence threshold controlling auto-submit. Set to 1.0 to disable all
 # auto-responses (kill switch).
-AUTO_RESPOND_CONFIDENCE = float(os.getenv("AUTO_RESPOND_CONFIDENCE", "0.70"))
+from src.config import AUTO_RESPOND_CONFIDENCE
 
 
 def generate_response(dispute: dict, classification: dict, evidence: dict) -> dict:

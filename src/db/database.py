@@ -7,6 +7,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from src.db.models import Base, DisputeModel, EvidenceAttachmentModel, DecisionAuditLogModel
 from src.pipeline.run import ChargebackResponder
+from src.config import COST_FP, COST_FN, SAVINGS_TP
 
 DB_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "data")
 os.makedirs(DB_DIR, exist_ok=True)
@@ -102,9 +103,9 @@ def save_dispute_and_process(dispute_dict: dict, db: Session, model_path: str = 
     db.commit()
 
     # Net cost calculation
-    cost_fp = 1000.0
-    cost_fn = 350.0
-    savings_tp = 2250.0
+    cost_fp = COST_FP
+    cost_fn = COST_FN
+    savings_tp = SAVINGS_TP
     net_val = (savings_tp if status == "AUTO_SUBMITTED" else -cost_fn)
 
     # Record Audit Log

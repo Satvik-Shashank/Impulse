@@ -31,15 +31,11 @@ from sklearn.utils import resample
 from src.models.classifier import DisputeClassifier
 from src.models.win_predictor import WinPredictor
 from src.pipeline.evidence_retriever import retrieve_evidence
+from src.config import COST_FP, COST_FN, SAVINGS_TP
 
 
 # ── Cost assumptions (working assumptions for the model, NOT cited industry
 #    data - state as assumptions in any demo/writeup). All in INR. ──
-COST_FP = 1000      # wasted filing fee + lost, harder-to-refight case
-COST_FN = 350       # ops labour to manually review a case that would have won
-SAVINGS_TP = 2250   # avoided ops cost + recovered revenue on a won auto-response
-
-
 def compute_cost_metrics(results_df, threshold,
                          cost_fp=COST_FP, cost_fn=COST_FN, savings_tp=SAVINGS_TP):
     """Rupee-denominated net financial value under calibrated decision engine."""
