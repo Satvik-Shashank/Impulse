@@ -22,17 +22,21 @@ _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
 class ChargebackResponder:
     def __init__(self, model_path: str = "models/classifier.pkl",
                  win_model_path: str = "models/win_predictor.pkl"):
-        self.classifier = DisputeClassifier.load(model_path)
+        abs_model_path = os.path.join(_PROJECT_ROOT, model_path) if not os.path.isabs(model_path) else model_path
+        if not os.path.exists(abs_model_path) and os.path.exists(model_path):
+            abs_model_path = model_path
+        self.classifier = DisputeClassifier.load(abs_model_path)
+
         self.win_predictor = None
         try:
             from src.models.win_predictor import WinPredictor
             abs_win_path = os.path.join(_PROJECT_ROOT, win_model_path) if not os.path.isabs(win_model_path) else win_model_path
-            if os.path.exists(abs_win_path):
-                self.win_predictor = WinPredictor.load(abs_win_path)
-            elif os.path.exists(win_model_path):
-                self.win_predictor = WinPredictor.load(win_model_path)
+            if not os.path.exists(abs_win_path) and os.path.exists(win_model_path):
+                abs_win_path = win_model_path
+            self.win_predictor = WinPredictor.load(abs_win_path)
         except Exception:
             self.win_predictor = None
+
 
     def process(self, dispute: dict) -> dict:
         """Run the full chargeback auto-responder pipeline."""

@@ -112,16 +112,22 @@ def health():
     model_path = os.path.join(PROJECT_ROOT, "models", "classifier.pkl")
     has_managed_db = bool(os.getenv("DATABASE_URL"))
     model_status = "missing"
+    load_error = None
+    lightgbm_importable = None
     if os.path.exists(model_path):
-        from src.models.classifier import DisputeClassifier
+        from src.models.classifier import DisputeClassifier, HAS_LIGHTGBM
+        lightgbm_importable = HAS_LIGHTGBM
         classifier = DisputeClassifier.load(model_path)
         model_status = "ready" if classifier.model is not None else "unavailable"
+        load_error = classifier.load_error
     return {
         "status": "ok" if model_status == "ready" else "degraded",
         "service": "Chargeback Intelligence Platform",
         "version": "2.0.0",
         "model_artifact": os.path.exists(model_path),
         "model_status": model_status,
+        "lightgbm_importable": lightgbm_importable,
+        "model_load_error": load_error,
         "persistence": "managed" if has_managed_db else "local_development_only",
     }
 

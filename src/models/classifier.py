@@ -5,11 +5,28 @@ returns *calibrated* probabilities so the auto-respond confidence threshold
 maps to real accuracy. Includes fallback for environments where libgomp.so.1 is missing.
 """
 
+import os
+import ctypes
+
 import joblib
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.calibration import CalibratedClassifierCV
+
+# On some serverless Linux runtimes (e.g. Vercel's Python builder), LightGBM's
+# compiled extension fails to import because the system copy of libgomp.so.1
+# (GNU OpenMP) isn't present. If a compatible libgomp.so.1 has been vendored
+# into lib/libgomp.so.1, preload it into the process before importing lightgbm
+# so its dynamic linker can find the symbol.
+# This is a no-op if the file isn't present — safe to leave in either way.
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+_VENDORED_LIBGOMP = os.path.join(_PROJECT_ROOT, "lib", "libgomp.so.1")
+if os.path.exists(_VENDORED_LIBGOMP):
+    try:
+        ctypes.CDLL(_VENDORED_LIBGOMP, mode=ctypes.RTLD_GLOBAL)
+    except OSError:
+        pass  # Fall through to the normal import attempt below
 
 try:
     import lightgbm as lgb
@@ -187,8 +204,11 @@ class DisputeClassifier:
     @classmethod
     def load(cls, path: str = "models/classifier.pkl") -> "DisputeClassifier":
         obj = cls()
+        abs_path = os.path.join(_PROJECT_ROOT, path) if not os.path.isabs(path) else path
+        if not os.path.exists(abs_path) and os.path.exists(path):
+            abs_path = path
         try:
-            data = joblib.load(path)
+            data = joblib.load(abs_path)
             obj.model, obj.label_encoder, obj.cat_encoders = (
                 data.get("model"), data.get("le", obj.label_encoder), data.get("cat_enc", {})
             )

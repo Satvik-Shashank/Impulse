@@ -4,9 +4,22 @@ Predicts the probability that a merchant will WIN a chargeback dispute,
 given the evidence available and dispute characteristics. Includes fallback for serverless Linux.
 """
 
+import os
+import ctypes
+
 import joblib
 import numpy as np
 import pandas as pd
+
+# See src/models/classifier.py for why this preload exists. No-op if the
+# vendored library isn't present.
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+_VENDORED_LIBGOMP = os.path.join(_PROJECT_ROOT, "lib", "libgomp.so.1")
+if os.path.exists(_VENDORED_LIBGOMP):
+    try:
+        ctypes.CDLL(_VENDORED_LIBGOMP, mode=ctypes.RTLD_GLOBAL)
+    except OSError:
+        pass
 
 try:
     import lightgbm as lgb
@@ -120,8 +133,11 @@ class WinPredictor:
     @classmethod
     def load(cls, path: str = "models/win_predictor.pkl") -> "WinPredictor":
         obj = cls()
+        abs_path = os.path.join(_PROJECT_ROOT, path) if not os.path.isabs(path) else path
+        if not os.path.exists(abs_path) and os.path.exists(path):
+            abs_path = path
         try:
-            data = joblib.load(path)
+            data = joblib.load(abs_path)
             obj.model = data.get("model")
         except Exception:
             obj.model = None
