@@ -41,6 +41,6 @@ graph TD
 
 ## Technology Decisions & Trade-Offs
 - **FastAPI over Flask**: Native async support, automatic OpenAPI documentation generation at `/docs`, and lightweight footprint for Vercel serverless functions.
-- **Vanilla HTML/CSS/JS over Heavy Frameworks**: Instant load times, zero build overhead, simple Vercel static asset hosting, avoiding Streamlit entirely as requested.
+- **Vanilla HTML/CSS/JS over Heavy Frameworks**: Instant load times, zero build overhead, simple Vercel static asset hosting.
 - **SQLite over PostgreSQL**: Zero-configuration embedded persistence suitable for local dev and serverless demo environments, with full SQLAlchemy migration readiness.
 - **Platt-Scaled Calibration over Raw Probabilities**: Ensures LightGBM raw scores accurately map to true empirical probabilities required for cost-threshold decision making.
