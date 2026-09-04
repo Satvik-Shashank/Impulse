@@ -1616,12 +1616,31 @@ textarea.code-textarea:focus {
   padding: 4px 12px;
   border-radius: var(--radius-pill);
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  background: #ECFDF5;
-  color: #047857;
-  border: 1px solid #A7F3D0;
+  letter-spacing: 0.05em;
+  background: #F8FAFC;
+  color: #475569;
+  border: 1px solid #CBD5E1;
+  transition: all 0.2s ease;
+}
+
+.monitoring-health-badge.status-nominal {
+  background: #F0FDF4;
+  color: #166534;
+  border: 1px solid #BBF7D0;
+}
+
+.monitoring-health-badge.status-watch {
+  background: #FFFBEB;
+  color: #B45309;
+  border: 1px solid #FDE68A;
+}
+
+.monitoring-health-badge.status-shifted {
+  background: #FEF2F2;
+  color: #B91C1C;
+  border: 1px solid #FECACA;
 }
 
 /* ── Charts ─────────────────────────────────────────────────────── */

@@ -806,7 +806,17 @@ function renderMonitoring(d) {
   const psi = Math.max(psiValues.confidence || 0, psiValues.evidence_strength || 0);
   const healthBadge = document.getElementById('monitoring-health-badge');
   if (healthBadge) {
-    healthBadge.textContent = `Model Health: ${psi > 0.25 ? 'SHIFTED' : psi > 0.1 ? 'WATCH' : 'NOMINAL'} (${psi.toFixed(3)} PSI)`;
+    let statusClass = 'status-nominal';
+    let statusText = 'NOMINAL';
+    if (psi > 0.25) {
+      statusClass = 'status-shifted';
+      statusText = 'SHIFTED';
+    } else if (psi > 0.1) {
+      statusClass = 'status-watch';
+      statusText = 'WATCH';
+    }
+    healthBadge.className = `monitoring-health-badge ${statusClass}`;
+    healthBadge.textContent = `Model Health: ${statusText} (${psi.toFixed(3)} PSI)`;
   }
 
   // Populate Live Inference Stream Table
@@ -866,14 +876,21 @@ function renderMonitoring(d) {
   const actionCanvas = document.getElementById('chart-mon-action');
   if (actionCanvas) {
     destroyChart('chart-mon-action');
+    const labels = Object.keys(ad);
+    const colorMap = {
+      'AUTO_SUBMIT': '#3B82F6',
+      'HUMAN_REVIEW': '#F59E0B',
+      'SAFE_FALLBACK': '#64748B'
+    };
+    const bgColors = labels.map(lbl => colorMap[lbl] || '#6366F1');
     chartInstances['chart-mon-action'] = new Chart(actionCanvas, {
       type: 'doughnut',
       data: {
-        labels: Object.keys(ad),
+        labels: labels,
         datasets: [{
           data: Object.values(ad),
-          backgroundColor: ['#10B981', '#6366F1'],
-          borderColor: ['#FFFFFF', '#FFFFFF'],
+          backgroundColor: bgColors,
+          borderColor: '#FFFFFF',
           borderWidth: 3,
           hoverOffset: 4
         }]
