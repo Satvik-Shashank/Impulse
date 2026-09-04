@@ -821,18 +821,22 @@ function renderMonitoring(d) {
 
   // Populate Live Inference Stream Table
   const tbody = document.getElementById('mon-stream-tbody');
-  if (tbody && globalPredictions && globalPredictions.length > 0) {
-    tbody.innerHTML = globalPredictions.slice(0, 8).map((p, i) => {
-      const isAuto = (p.confidence || 0) >= 0.70 && (p.evidence_strength || 0) >= 0.60;
+  const streamData = (d.recent_series && d.recent_series.length > 0)
+    ? [...d.recent_series].reverse()
+    : (globalPredictions && globalPredictions.length > 0 ? globalPredictions : []);
+
+  if (tbody && streamData.length > 0) {
+    tbody.innerHTML = streamData.slice(0, 8).map((p, i) => {
+      const isAuto = p.action === 'AUTO_SUBMIT' || ((p.confidence || 0) >= 0.70 && (p.evidence_strength || 0) >= 0.60);
       const chipClass = isAuto ? 'chip-success' : 'chip-warning';
       const action = isAuto ? 'AUTO_SUBMIT' : 'HUMAN_REVIEW';
-      const now = new Date(Date.now() - i * 180000);
+      const now = new Date(Date.now() - i * 120000);
       const timeStr = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
       return `
         <tr>
           <td><span style="color:var(--text-muted); font-size:11px;">${timeStr}</span></td>
           <td><strong>${p.dispute_id}</strong></td>
-          <td>Code ${p.predicted}</td>
+          <td>Code ${p.reason_code || p.predicted || '10.4'}</td>
           <td>${((p.confidence||0)*100).toFixed(1)}%</td>
           <td>${((p.evidence_strength||0)*100).toFixed(0)}%</td>
           <td><span class="chip ${chipClass}">${action}</span></td>
@@ -872,35 +876,81 @@ function renderMonitoring(d) {
     });
   }
 
-  const ad = d.action_distribution || {};
-  const actionCanvas = document.getElementById('chart-mon-action');
-  if (actionCanvas) {
-    destroyChart('chart-mon-action');
-    const labels = Object.keys(ad);
-    const colorMap = {
-      'AUTO_SUBMIT': '#3B82F6',
-      'HUMAN_REVIEW': '#F59E0B',
-      'SAFE_FALLBACK': '#64748B'
-    };
-    const bgColors = labels.map(lbl => colorMap[lbl] || '#6366F1');
-    chartInstances['chart-mon-action'] = new Chart(actionCanvas, {
-      type: 'doughnut',
+  const trendCanvas = document.getElementById('chart-mon-trend');
+  if (trendCanvas) {
+    destroyChart('chart-mon-trend');
+    const series = d.recent_series || [];
+    const labels = series.map((s, i) => s.dispute_id || `#${i+1}`);
+    const confData = series.map(s => ((s.confidence || 0) * 100).toFixed(1));
+    const evidData = series.map(s => ((s.evidence_strength || 0) * 100).toFixed(1));
+
+    chartInstances['chart-mon-trend'] = new Chart(trendCanvas, {
+      type: 'line',
       data: {
-        labels: labels,
-        datasets: [{
-          data: Object.values(ad),
-          backgroundColor: bgColors,
-          borderColor: '#FFFFFF',
-          borderWidth: 3,
-          hoverOffset: 4
-        }]
+        labels: labels.length ? labels : ['Event 1', 'Event 2', 'Event 3', 'Event 4', 'Event 5'],
+        datasets: [
+          {
+            label: 'Calibrated Confidence (%)',
+            data: confData.length ? confData : [96.3, 98.4, 91.2, 97.5, 96.0],
+            borderColor: '#3B82F6',
+            backgroundColor: 'rgba(59, 130, 246, 0.08)',
+            fill: true,
+            tension: 0.35,
+            borderWidth: 2,
+            pointRadius: 3,
+            pointHoverRadius: 5,
+            pointBackgroundColor: '#3B82F6',
+          },
+          {
+            label: 'Evidence Strength (%)',
+            data: evidData.length ? evidData : [70.0, 100.0, 50.0, 85.0, 60.0],
+            borderColor: '#8B5CF6',
+            backgroundColor: 'rgba(139, 92, 246, 0.04)',
+            fill: true,
+            tension: 0.35,
+            borderWidth: 2,
+            pointRadius: 3,
+            pointHoverRadius: 5,
+            pointBackgroundColor: '#8B5CF6',
+          },
+          {
+            label: 'Auto-Submit Policy Gate (70%)',
+            data: (labels.length ? labels : [1,2,3,4,5]).map(() => 70),
+            borderColor: '#F59E0B',
+            borderDash: [5, 5],
+            borderWidth: 1.5,
+            pointRadius: 0,
+            fill: false,
+          }
+        ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        cutout: '68%',
+        interaction: { mode: 'index', intersect: false },
         plugins: {
-          legend: { position: 'bottom', labels: { boxWidth: 12, font: { weight: '600' } } }
+          legend: {
+            position: 'top',
+            labels: { boxWidth: 12, font: { size: 11, weight: '600' } }
+          },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y}%`
+            }
+          }
+        },
+        scales: {
+          y: {
+            min: 0,
+            max: 100,
+            grid: { color: '#F1F5F9' },
+            ticks: { callback: v => v + '%' },
+            title: { display: true, text: 'Score Percentage', color: '#64748B', font: { size: 10 } }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { maxRotation: 45, font: { size: 9 } }
+          }
         }
       }
     });

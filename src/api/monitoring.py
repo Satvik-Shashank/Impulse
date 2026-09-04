@@ -153,5 +153,16 @@ class MonitoringLog:
                 "evidence_strength": population_stability_index(baseline_strength, strengths),
                 "interpretation": "<0.10 stable; 0.10-0.25 moderate shift; >0.25 significant shift",
             },
+            "recent_series": [
+                {
+                    "dispute_id": e.get("dispute_id", f"DSP-{i+1}"),
+                    "confidence": round(float(e.get("confidence", 0)), 3),
+                    "evidence_strength": round(float(e.get("evidence_strength", 0)), 3),
+                    "win_probability": round(float(e.get("win_probability", 0)), 3),
+                    "action": e.get("action", "HUMAN_REVIEW"),
+                    "reason_code": str(e.get("reason_code", "")),
+                }
+                for i, e in enumerate(entries[-25:])
+            ],
             "data_source": "runtime_prediction_log",
         }
