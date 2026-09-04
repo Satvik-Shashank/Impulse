@@ -63,6 +63,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.middleware("http")
+async def fix_vercel_rewrites(request: Request, call_next):
+    path = request.scope.get("path", "")
+    if path.startswith("/api/index.py"):
+        new_path = path[len("/api/index.py"):]
+        if not new_path or new_path == "/":
+            new_path = "/api/health"
+        elif not new_path.startswith("/api"):
+            new_path = "/api" + new_path
+        request.scope["path"] = new_path
+    elif not path.startswith("/api") and not path.startswith("/static") and path != "/":
+        request.scope["path"] = "/api" + path
+    return await call_next(request)
+
+
 from fastapi.staticfiles import StaticFiles
 public_dir = os.path.join(PROJECT_ROOT, "public")
 if os.path.exists(public_dir):
