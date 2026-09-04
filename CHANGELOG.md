@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.1.0] - 2026-09-04
+### Added
+- Privacy-scoped CSV/XLSX Bring Your Own Data analysis with column mapping, validation, and expiring in-memory sessions.
+- Runtime model health reporting, PSI baselines, and explicit degraded-mode responses.
+- Fresh evaluation artifacts with subgroup metrics and bootstrap confidence intervals.
+
+### Fixed
+- Removed synthetic monitoring replay from evaluation output.
+- Corrected threshold interpolation and amount-based high-value filtering in the dashboard.
+- Model fallback paths now fail closed to human review instead of presenting heuristic outputs as model predictions.
+
 ## [2.0.0] - 2026-08-31
 ### Added
 - Dedicated LightGBM `WinPredictor` model with Platt-scaled calibration (`src/models/win_predictor.py`).
