@@ -1,13 +1,13 @@
 # Chargeback Intelligence & Auto-Resolution Platform
 
 > **Razorpay AI Buildathon — Track 02: AI Risk Manager**
-> Defense-only representment pipeline with cost-sensitive calibrated confidence, multi-class reason-code classification, dedicated win-probability modeling, real-time drift monitoring, and Vercel serverless deployment.
+> Defense-only representment pipeline with cost-sensitive calibrated confidence, multi-class reason-code classification, dedicated win-probability modeling, computed drift monitoring, and Vercel serverless deployment.
 
 ---
 
 ## Executive Overview
 
-Payment chargebacks represent a major operational loss for merchants in Indian BFSI and e-commerce ecosystems. Manual representment takes ~45–60 minutes per dispute, often leading to wasted filing fees (~₹1,000 FP cost) or un-fought valid disputes (~₹350 FN review cost).
+Payment chargebacks represent a major operational loss for merchants in Indian BFSI and e-commerce ecosystems. The figures used below are simulation assumptions, not production benchmarks.
 
 This system provides a **production-ready, automated decision platform** that:
 1. **Classifies Reason Codes**: Multi-class `LightGBM` model predicting top-3 candidate reason codes with Platt-scaled calibrated probabilities.
@@ -49,17 +49,19 @@ This system provides a **production-ready, automated decision platform** that:
 - **Top-3 Reason Code Candidates**: Displays top candidate reason codes with calibrated confidence percentages.
 - **Expected Value Optimization**: Mathematically optimizes net Rupee recovery instead of relying on arbitrary threshold flags.
 - **Step-Reveal Interactive Demo**: Live analyzer tab providing step-by-step animated execution flow.
-- **Model Monitoring & Drift**: Sliding window analysis monitoring confidence trends and reason-code mix shifts over time.
+- **Model Monitoring & Drift**: Runtime prediction logging with computed PSI against the evaluated training score baseline.
 
 ---
 
-## Measured Performance (Held-Out Test Set, N=750)
+## Current Measured Performance (Held-Out Test Set, N=750)
 
-- **Reason-Code Accuracy**: **84.8%** (Target $\ge 80.0\%$)
-- **Macro Precision / Recall / F1**: **85.1% / 84.5% / 84.7%**
-- **Win Predictor AUC**: **0.826** (Target $\ge 0.750$)
-- **Net Rupee Recovery**: **₹1,298,750** (+38.0% improvement over "Fight Everything" naive baseline)
-- **API Response Latency**: **< 45ms P50 / < 95ms P95**
+- **Reason-Code Accuracy**: **98.4%**
+- **Macro Precision / Recall / F1**: **98.7% / 98.4% / 98.5%**
+- **Win Predictor AUC**: **0.7537**
+- **Net Rupee Recovery**: **₹850,500** on this evaluation artifact
+- **API Response Latency**: Not claimed until measured against a deployed Vercel endpoint.
+
+These are measured results from the checked-in `results/metrics.json`, not a production guarantee. The classifier result is measured on regenerated synthetic data with deliberately informative features; it is not evidence of equivalent accuracy on an unseen merchant's data. BYOD uploads must be evaluated with historical ground truth before merchant-specific performance is claimed.
 
 ---
 
@@ -75,14 +77,14 @@ This system provides a **production-ready, automated decision platform** that:
 
 2. **Generate synthetic dataset & train models**:
    ```bash
-   python -m src.data.generate_disputes --n 5000
+   python -m src.data.generate_disputes
    python -m src.train
    python -m src.evaluate
    ```
 
 3. **Run test suite**:
    ```bash
-   pytest
+   .venv\Scripts\python.exe -m pytest -q
    ```
 
 4. **Launch API locally**:
@@ -90,6 +92,10 @@ This system provides a **production-ready, automated decision platform** that:
    uvicorn api.index:app --reload --port 8000
    ```
    Open `http://localhost:8000/docs` to test endpoints or open `public/index.html` in browser.
+
+### Vercel persistence
+
+Vercel deployments must set `DATABASE_URL` to a managed PostgreSQL connection string. Without it, the API reports `local_development_only` persistence in `/api/health` and must not be treated as production-ready. No deployment or remote push is performed by this repository workflow.
 
 ---
 

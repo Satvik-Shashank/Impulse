@@ -16,7 +16,7 @@ env = Environment(
 
 # Confidence threshold controlling auto-submit. Set to 1.0 to disable all
 # auto-responses (kill switch).
-AUTO_RESPOND_CONFIDENCE = 0.70
+AUTO_RESPOND_CONFIDENCE = float(os.getenv("AUTO_RESPOND_CONFIDENCE", "0.70"))
 
 
 def generate_response(dispute: dict, classification: dict, evidence: dict) -> dict:
@@ -43,6 +43,7 @@ def generate_response(dispute: dict, classification: dict, evidence: dict) -> di
     should_auto_respond = (
         evidence["auto_respond_eligible"]
         and classification["confidence"] >= AUTO_RESPOND_CONFIDENCE
+        and classification.get("model_status") != "fallback_unavailable_for_auto_submit"
     )
 
     return {

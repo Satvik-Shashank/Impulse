@@ -72,3 +72,17 @@ def test_api_monitoring_drift():
     assert response.status_code == 200
     data = response.json()
     assert "window_size" in data
+
+
+def test_api_rejects_unknown_fields():
+    response = client.post("/api/disputes", json={"dispute_id": "x", "card_number": "4111111111111111"})
+    assert response.status_code == 422
+
+
+def test_api_rejects_negative_amount():
+    response = client.post("/api/disputes", json={
+        "dispute_id": "DSP-TEST-NEG", "card_network": "Visa", "dispute_amount": -1,
+        "transaction_date": "2026-08-01", "days_to_dispute": 1,
+        "product_category": "electronics", "shipping_method": "standard",
+    })
+    assert response.status_code == 422

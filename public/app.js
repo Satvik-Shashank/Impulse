@@ -11,6 +11,7 @@ let currentCaseFilter = 'all';
 let chartInstances = {};
 let simCurrentStep = 0;
 let simTimer = null;
+let byodState = { filename: null, sessionId: null, mapping: null };
 
 // ── Chart.js Defaults ─────────────────────────────────────────────
 Chart.defaults.color = '#475569';
@@ -247,7 +248,68 @@ function setAnalyzerMode(mode, btn) {
   if (btn) btn.classList.add('active');
   document.getElementById('form-mode').style.display = mode === 'form' ? 'block' : 'none';
   document.getElementById('json-mode').style.display = mode === 'json' ? 'block' : 'none';
+  document.getElementById('upload-mode').style.display = mode === 'upload' ? 'block' : 'none';
 }
+
+async function parseByodFile() {
+  const file = document.getElementById('byod-file').files[0];
+  if (!file) return;
+  const form = new FormData();
+  form.append('file', file);
+  const response = await fetch('/api/upload/parse', { method: 'POST', body: form });
+  const data = await response.json();
+  if (!response.ok) return showByodMessage(data.detail || 'Could not parse file.', true);
+  byodState.filename = data.filename;
+  byodState.mapping = data.suggested_mapping || {};
+  renderByodMapping(data.columns, data.suggested_mapping || {});
+}
+
+function renderByodMapping(columns, suggested) {
+  const targetFields = ['dispute_amount', 'days_to_dispute', 'delivery_confirmed', 'has_delivery_proof', 'ip_geolocation_match', 'avs_cvv_match', 'customer_account_age_days', 'customer_prior_disputes', 'customer_prior_orders', 'has_customer_correspondence', 'has_3ds_authentication', 'card_network', 'product_category', 'shipping_method', 'reason_code', 'outcome'];
+  const html = columns.map(column => {
+    const selected = Object.keys(suggested).find(field => suggested[field] === column) || '';
+    return `<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:6px 0; align-items:center;"><span>${escapeHtml(column)}</span><select data-source="${escapeHtml(column)}"><option value="">Ignore this column</option>${targetFields.map(field => `<option value="${field}" ${field === selected ? 'selected' : ''}>${field}</option>`).join('')}</select></div>`;
+  }).join('');
+  const panel = document.getElementById('byod-mapping');
+  panel.innerHTML = `<strong>Confirm column mapping</strong><div class="form-hint">Only mapped schema fields are retained. Unmapped columns are deleted from the staged dataset.</div>${html}<button class="btn-submit-action" style="margin-top:12px;" onclick="applyByodMapping()">Validate &amp; Continue</button>`;
+  panel.style.display = 'block';
+}
+
+async function applyByodMapping() {
+  const file = document.getElementById('byod-file').files[0];
+  const mapping = {};
+  document.querySelectorAll('#byod-mapping select').forEach(select => { if (select.value) mapping[select.value] = select.dataset.source; });
+  const form = new FormData(); form.append('file', file); form.append('mapping', JSON.stringify(mapping));
+  const response = await fetch('/api/upload/apply-mapping', { method: 'POST', body: form });
+  const data = await response.json();
+  if (!response.ok) return showByodMessage(data.detail || 'Mapping validation failed.', true);
+  byodState.sessionId = data.session_id; byodState.mapping = mapping;
+  const report = data.validation_report;
+  document.getElementById('byod-report').innerHTML = `<strong>${report.usable_rows} of ${report.total_rows} rows usable</strong><div class="form-hint">${report.dropped_rows} rows dropped or flagged. ${report.ground_truth_available ? 'Ground truth detected; evaluation is available.' : 'No reason_code and outcome pair detected; evaluation metrics will not be available.'}</div>`;
+  document.getElementById('byod-report').style.display = 'block';
+  document.getElementById('byod-run-btn').style.display = report.usable_rows ? 'block' : 'none';
+  document.getElementById('byod-delete-btn').style.display = 'block';
+}
+
+async function analyzeByod() {
+  const response = await fetch(`/api/upload/${byodState.sessionId}/analyze`, { method: 'POST' });
+  const data = await response.json();
+  if (!response.ok) return showByodMessage(data.detail || 'Analysis failed.', true);
+  window.currentDataSource = `your uploaded data (${data.predictions.length} rows)`;
+  globalPredictions = data.predictions.map(item => ({ dispute_id: item.dispute_id, predicted: item.classification.predicted_reason_code, confidence: item.classification.confidence, evidence_strength: item.evidence.evidence_strength }));
+  filteredPredictions = [...globalPredictions];
+  document.getElementById('byod-banner').style.display = 'flex';
+  document.getElementById('byod-banner-text').textContent = `Analyzing your uploaded data: ${byodState.filename}. Not stored after this session.`;
+  document.getElementById('byod-global-banner').style.display = 'flex';
+  document.getElementById('byod-global-banner-text').textContent = `Analyzing your uploaded data: ${byodState.filename} (${data.predictions.length} rows). Not stored after this session.`;
+  showByodMessage(data.metrics_available ? 'Analysis complete. Uploaded ground truth was used.' : data.evaluation_note, false);
+  renderCaseExplorer();
+}
+
+async function deleteByod() { if (byodState.sessionId) await fetch(`/api/upload/${byodState.sessionId}`, { method: 'DELETE' }); resetByod(); }
+function resetByod() { byodState = { filename: null, sessionId: null, mapping: null }; document.getElementById('byod-banner').style.display = 'none'; document.getElementById('byod-global-banner').style.display = 'none'; document.getElementById('byod-mapping').style.display = 'none'; document.getElementById('byod-report').style.display = 'none'; document.getElementById('byod-run-btn').style.display = 'none'; document.getElementById('byod-delete-btn').style.display = 'none'; document.getElementById('byod-file').value = ''; }
+function showByodMessage(message, isError) { const report = document.getElementById('byod-report'); report.innerHTML = `<span class="chip ${isError ? 'chip-danger' : 'chip-success'}">${escapeHtml(String(message))}</span>`; report.style.display = 'block'; }
+function escapeHtml(value) { return value.replace(/[&<>'"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character])); }
 
 // ── Health Check ────────────────────────────────────────────────
 async function checkApiHealth() {
@@ -256,7 +318,10 @@ async function checkApiHealth() {
   try {
     const res = await fetch('/api/health');
     if (res.ok) {
-      el.textContent = 'API Online (FastAPI :8000)';
+      const health = await res.json();
+      el.textContent = health.status === 'degraded'
+        ? `API degraded · persistence: ${health.persistence}`
+        : 'API Online (FastAPI)';
     } else {
       el.textContent = 'API Error';
     }
@@ -297,25 +362,25 @@ async function fetchPredictions() {
 function renderHeroMetrics() {
   if (!globalMetrics) return;
   const b = globalMetrics.baselines_inr || {};
-  const fe = b.fight_everything_net_value || 671000;
-  const fn = b.fight_nothing_net_value || -171500;
-  const sb = b.system_best_net_value || 943450;
+  const fe = b.fight_everything_net_value;
+  const fn = b.fight_nothing_net_value;
+  const sb = b.system_best_net_value;
 
-  animateValue('val-fight-everything', fe, '₹');
-  animateValue('val-fight-nothing', fn, '₹');
-  animateValue('val-system-best', sb, '₹');
+  if (Number.isFinite(fe)) animateValue('val-fight-everything', fe, '₹');
+  if (Number.isFinite(fn)) animateValue('val-fight-nothing', fn, '₹');
+  if (Number.isFinite(sb)) animateValue('val-system-best', sb, '₹');
 
   const delta = sb - fe;
   const el = document.getElementById('val-delta');
-  if (el) {
+  if (el && Number.isFinite(delta)) {
     el.textContent = `+₹${delta.toLocaleString('en-IN')} higher net recovery vs naive fighting`;
   }
 
   const scale = globalMetrics.illustrative_scale_extrapolation_inr || {};
   const banner = document.getElementById('scale-banner-text');
   if (banner && scale.note) {
-    const val100k = (scale.at_100k_disputes_per_year || 125793000).toLocaleString('en-IN');
-    banner.innerHTML = `<span class="banner-chip">Scale Projection</span><span>${scale.note} At 100k disputes/year: <strong>₹${val100k}</strong> net value.</span>`;
+    const val100k = scale.at_100k_disputes_per_year;
+    banner.innerHTML = `<span class="banner-chip">Scale Projection</span><span>${scale.note}${Number.isFinite(val100k) ? ` At 100k disputes/year: <strong>₹${val100k.toLocaleString('en-IN')}</strong> net value.` : ''}</span>`;
   }
 }
 
@@ -337,7 +402,7 @@ function renderKPIs() {
   setText('stat-acc', pct(m.reason_code_accuracy));
   setText('stat-prec', pct(m.macro_precision));
   setText('stat-rec', pct(m.macro_recall));
-  setText('stat-auc', m.win_prediction_auc.toFixed(3));
+  setText('stat-auc', Number.isFinite(m.win_prediction_auc) ? m.win_prediction_auc.toFixed(3) : 'Unavailable');
   setText('stat-win-auc', m.win_predictor_dedicated_auc ? m.win_predictor_dedicated_auc.toFixed(3) : '0.783');
 }
 
@@ -722,10 +787,16 @@ async function fetchMonitoringDrift() {
 
 function renderMonitoring(d) {
   setText('mon-window', d.window_size || '200');
-  setText('mon-conf', d.confidence ? d.confidence.mean.toFixed(3) : '0.481');
-  setText('mon-evidence', d.evidence_strength ? d.evidence_strength.mean.toFixed(3) : '0.577');
-  setText('mon-winprob', d.win_probability ? d.win_probability.mean.toFixed(3) : '0.395');
-  setText('mon-autorate', d.auto_rate_pct ? d.auto_rate_pct + '%' : '6.5%');
+  setText('mon-conf', d.confidence ? d.confidence.mean.toFixed(3) : '--');
+  setText('mon-evidence', d.evidence_strength ? d.evidence_strength.mean.toFixed(3) : '--');
+  setText('mon-winprob', d.win_probability ? d.win_probability.mean.toFixed(3) : '--');
+  setText('mon-autorate', d.auto_rate_pct !== undefined ? d.auto_rate_pct + '%' : '--');
+  const psiValues = d.psi || {};
+  const psi = Math.max(psiValues.confidence || 0, psiValues.evidence_strength || 0);
+  const healthBadge = document.getElementById('monitoring-health-badge');
+  if (healthBadge) {
+    healthBadge.textContent = `Model Health: ${psi > 0.25 ? 'SHIFTED' : psi > 0.1 ? 'WATCH' : 'NOMINAL'} (${psi.toFixed(3)} PSI)`;
+  }
 
   // Populate Live Inference Stream Table
   const tbody = document.getElementById('mon-stream-tbody');
@@ -744,7 +815,7 @@ function renderMonitoring(d) {
           <td>${((p.confidence||0)*100).toFixed(1)}%</td>
           <td>${((p.evidence_strength||0)*100).toFixed(0)}%</td>
           <td><span class="chip ${chipClass}">${action}</span></td>
-          <td><span style="color:var(--brand-indigo); font-weight:600;">${12 + (i % 6)}ms</span></td>
+          <td><span style="color:var(--text-muted); font-weight:600;">Recorded</span></td>
         </tr>
       `;
     }).join('');

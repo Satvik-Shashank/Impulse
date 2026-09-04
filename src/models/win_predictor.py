@@ -32,6 +32,7 @@ class WinPredictor:
 
     def __init__(self):
         self.model = None
+        self.load_error = None
 
     def _prepare_features(self, df: pd.DataFrame) -> pd.DataFrame:
         """Extract and encode features for the win predictor."""
@@ -82,20 +83,11 @@ class WinPredictor:
                 X = self._prepare_features(row)
                 probs = self.model.predict_proba(X)[0]
                 return float(probs[1])
-            except Exception:
-                pass
+            except Exception as exc:
+                self.load_error = f"model inference failed: {exc}"
 
-        # Fallback score calculation if LightGBM model fails / missing libgomp
-        score = 0.20
-        if dispute.get("delivery_confirmed") or dispute.get("has_delivery_proof"):
-            score += 0.35
-        if dispute.get("has_3ds_authentication"):
-            score += 0.25
-        if dispute.get("ip_geolocation_match"):
-            score += 0.10
-        if dispute.get("avs_cvv_match") == "both_match":
-            score += 0.10
-        return min(0.95, round(score, 4))
+        # Unknown win probability must not be presented as a model score.
+        return 0.5
 
     def predict_batch(self, df: pd.DataFrame) -> np.ndarray:
         """Return array of P(merchant_won) for a DataFrame."""
@@ -118,7 +110,7 @@ class WinPredictor:
                                        key=lambda kv: kv[1], reverse=True))
             except Exception:
                 pass
-        return {col: 1.0 / len(WIN_FEATURE_COLS) for col in WIN_FEATURE_COLS}
+        return {}
 
     def save(self, path: str = "models/win_predictor.pkl") -> None:
         import os
@@ -133,5 +125,6 @@ class WinPredictor:
             obj.model = data.get("model")
         except Exception:
             obj.model = None
+            obj.load_error = "win predictor artifact could not be loaded"
         return obj
 

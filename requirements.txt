@@ -1,8 +1,10 @@
 # Core data & Database
 pandas>=2.0.0
+openpyxl>=3.1.0
 numpy>=1.24.0
 Faker>=24.0.0
 SQLAlchemy>=2.0.0
+psycopg[binary]>=3.1.0
 
 # ML & Calibration
 scikit-learn>=1.3.0

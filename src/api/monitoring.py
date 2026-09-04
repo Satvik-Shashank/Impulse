@@ -6,18 +6,40 @@ rolling statistics to detect distribution shifts in incoming disputes.
 
 import json
 import os
+import numpy as np
+import pandas as pd
 from datetime import datetime
 from typing import Optional
 
 _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DEFAULT_LOG_PATH = os.path.join(_PROJECT_ROOT, "results", "monitoring_log.jsonl")
+DEFAULT_BASELINE_PATH = os.path.join(_PROJECT_ROOT, "results", "monitoring_baseline.json")
+
+
+def population_stability_index(expected, actual, bins=10):
+    """Calculate PSI using quantile bins from the expected population."""
+    expected = np.asarray(expected, dtype=float)
+    actual = np.asarray(actual, dtype=float)
+    if len(expected) == 0 or len(actual) == 0:
+        return None
+    breakpoints = np.unique(np.percentile(expected, np.linspace(0, 100, bins + 1)))
+    if len(breakpoints) < 2:
+        breakpoints = np.array([breakpoints[0] - 1e-6, breakpoints[0] + 1e-6])
+    else:
+        breakpoints = np.concatenate(([-np.inf], breakpoints[1:-1], [np.inf]))
+    expected_pct = np.histogram(expected, breakpoints)[0] / len(expected)
+    actual_pct = np.histogram(actual, breakpoints)[0] / len(actual)
+    expected_pct = np.clip(expected_pct, 1e-6, None)
+    actual_pct = np.clip(actual_pct, 1e-6, None)
+    return float(np.sum((actual_pct - expected_pct) * np.log(actual_pct / expected_pct)))
 
 
 class MonitoringLog:
     """Append-only JSONL prediction log with drift analysis."""
 
-    def __init__(self, log_path: str = DEFAULT_LOG_PATH):
+    def __init__(self, log_path: str = DEFAULT_LOG_PATH, baseline_path: str = DEFAULT_BASELINE_PATH):
         self.log_path = log_path
+        self.baseline_path = baseline_path
         os.makedirs(os.path.dirname(self.log_path), exist_ok=True)
 
     def log_prediction(self, pipeline_result: dict) -> None:
@@ -70,6 +92,14 @@ class MonitoringLog:
         confidences = [e.get("confidence", 0) for e in entries if e.get("confidence") is not None]
         strengths = [e.get("evidence_strength", 0) for e in entries if e.get("evidence_strength") is not None]
         win_probs = [e.get("win_probability", 0) for e in entries if e.get("win_probability") is not None]
+        baseline = None
+        if os.path.exists(self.baseline_path):
+            with open(self.baseline_path, "r", encoding="utf-8") as handle:
+                baseline = json.load(handle)
+        baseline_confidence = baseline_strength = []
+        if baseline:
+            baseline_confidence = baseline.get("confidence", [])
+            baseline_strength = baseline.get("evidence_strength", [])
 
         # Reason code distribution
         rc_counts = {}
@@ -118,4 +148,10 @@ class MonitoringLog:
             "auto_rate_pct": round(
                 action_counts["AUTO_SUBMIT"] / n * 100, 1
             ) if n else 0.0,
+            "psi": {
+                "confidence": population_stability_index(baseline_confidence, confidences),
+                "evidence_strength": population_stability_index(baseline_strength, strengths),
+                "interpretation": "<0.10 stable; 0.10-0.25 moderate shift; >0.25 significant shift",
+            },
+            "data_source": "runtime_prediction_log",
         }

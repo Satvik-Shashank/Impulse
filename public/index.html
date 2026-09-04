@@ -30,6 +30,10 @@
         <button class="tab-btn" onclick="switchTab('guardrails', this)">Guardrails</button>
       </nav>
     </header>
+    <div id="byod-global-banner" class="card" style="display:none; margin:12px auto; max-width:1200px; background:var(--bg-surface-subtle);">
+      <strong id="byod-global-banner-text"></strong>
+      <button class="btn-secondary" onclick="deleteByod()">Delete uploaded data</button>
+    </div>
 
     <!-- ═══════════════════════════════════════════════════════════════
          TAB 1: HOME (HERO + SPECIFICATION BOX + LIVE ANALYZER)
@@ -334,6 +338,7 @@
           <div class="mode-segmented-bar">
             <button class="mode-segmented-btn active" onclick="setAnalyzerMode('form', this)">Structured Form</button>
             <button class="mode-segmented-btn" onclick="setAnalyzerMode('json', this)">Raw JSON</button>
+            <button class="mode-segmented-btn" onclick="setAnalyzerMode('upload', this)">Use My Own Data</button>
           </div>
 
           <div class="quickfill-btn-group">
@@ -449,6 +454,24 @@
                 <button class="btn-submit-action" id="run-json-btn" onclick="analyzeFromJSON()">Validate &amp;
                   Analyze</button>
               </div>
+            </div>
+
+            <div id="upload-mode" class="card" style="display:none;">
+              <div class="form-group">
+                <label for="byod-file">Upload CSV or Excel data</label>
+                <div class="form-hint">Files are parsed in memory, unmapped columns are discarded, and staged rows expire after one hour.</div>
+                <input type="file" id="byod-file" accept=".csv,.xlsx" onchange="parseByodFile()">
+              </div>
+              <a href="/api/upload/template" download>Download upload template (.xlsx)</a>
+              <div id="byod-mapping" style="display:none; margin-top:14px;"></div>
+              <div id="byod-report" style="display:none; margin-top:14px;"></div>
+              <button class="btn-submit-action" id="byod-run-btn" style="display:none; margin-top:14px;" onclick="analyzeByod()">Run Analysis on My Data</button>
+              <button class="btn-secondary" id="byod-delete-btn" style="display:none; margin-top:8px;" onclick="deleteByod()">Delete My Uploaded Data</button>
+            </div>
+
+            <div id="byod-banner" class="card" style="display:none; margin-top:14px; background:var(--bg-surface-subtle);">
+              <strong id="byod-banner-text"></strong>
+              <button class="btn-secondary" onclick="resetByod()">Reset to Sample Data</button>
             </div>
 
             <!-- About Dataset Card -->
@@ -786,8 +809,8 @@
             <p class="section-desc">Computes rolling statistics over logged inferences to detect shifts in incoming
               dispute categories, evidence availability, or confidence degradation.</p>
           </div>
-          <div class="monitoring-health-badge">
-            <span class="status-indicator-dot dot-success"></span> Model Health: NOMINAL (0.024 PSI Drift)
+          <div class="monitoring-health-badge" id="monitoring-health-badge">
+            Model Health: Awaiting runtime PSI
           </div>
         </div>
 

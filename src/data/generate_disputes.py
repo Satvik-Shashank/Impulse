@@ -100,6 +100,9 @@ def generate_dispute(dispute_id: int) -> dict:
     has_3ds = np.random.random() > (0.75 if is_fraud_code else 0.25)
     prior_disputes = int(np.random.poisson(0.6 if is_fraud_code else 0.1))
     has_customer_correspondence = np.random.random() > (0.75 if is_fraud_code else 0.45)
+    customer_account_age_days = int(np.random.exponential(90 if is_fraud_code else 220))
+    product_category = str(np.random.choice(PRODUCT_CATEGORIES))
+    shipping_method = str(np.random.choice(SHIPPING_METHODS))
 
     # ── Step 3: NOW sample reason_code, conditional on the flavor already drawn ──
     if is_fraud_code:
@@ -108,6 +111,34 @@ def generate_dispute(dispute_id: int) -> dict:
         rc = np.random.choice(NONFRAUD_CODES, p=_NONFRAUD_PROBS)
 
     rc_info = REASON_CODES[rc]
+
+    # Add reason-code-specific signal after bucket conditioning so codes within
+    # the same fraud/non-fraud group remain distinguishable.
+    if rc == "10.4":
+        product_category, shipping_method = "electronics", "express"
+        ip_match, has_3ds = False, False
+    elif rc == "10.5":
+        product_category, shipping_method = "automotive", "pickup"
+        avs_cvv, has_3ds = "neither", False
+    elif rc == "13.1":
+        shipping_method, delivery_confirmed, has_delivery_proof = "standard", False, False
+    elif rc == "13.3":
+        product_category, has_customer_correspondence = "fashion", True
+    elif rc == "13.6":
+        product_category, has_customer_correspondence = "home", True
+        days_to_dispute = max(days_to_dispute, 45)
+    elif rc == "4837":
+        has_3ds, avs_cvv = False, "neither"
+    elif rc == "4853":
+        product_category, has_customer_correspondence = "beauty", True
+    elif rc == "4855":
+        shipping_method, delivery_confirmed, has_delivery_proof = "standard", False, False
+    elif rc == "4860":
+        product_category, has_customer_correspondence = "grocery", True
+        days_to_dispute = max(days_to_dispute, 45)
+    elif rc == "4863":
+        customer_account_age_days = min(customer_account_age_days, 30)
+        prior_disputes = max(prior_disputes, 1)
 
     # ── Step 4: outcome depends on reason code's base win rate + evidence quality ──
     evidence_score = sum([
@@ -133,13 +164,13 @@ def generate_dispute(dispute_id: int) -> dict:
         "currency": "INR",
         "transaction_date": str(txn_date),
         "days_to_dispute": days_to_dispute,
-        "product_category": str(np.random.choice(PRODUCT_CATEGORIES)),
-        "shipping_method": str(np.random.choice(SHIPPING_METHODS)),
+        "product_category": product_category,
+        "shipping_method": shipping_method,
         "delivery_confirmed": bool(delivery_confirmed),
         "has_delivery_proof": bool(has_delivery_proof),
         "ip_geolocation_match": bool(ip_match),
         "avs_cvv_match": avs_cvv,
-        "customer_account_age_days": int(np.random.exponential(90 if is_fraud_code else 220)),
+        "customer_account_age_days": customer_account_age_days,
         "customer_prior_disputes": prior_disputes,
         "customer_prior_orders": int(np.random.poisson(2 if is_fraud_code else 6)),
         "has_customer_correspondence": bool(has_customer_correspondence),

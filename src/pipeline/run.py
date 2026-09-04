@@ -47,21 +47,24 @@ class ChargebackResponder:
         evidence = retrieve_evidence(dispute, classification["predicted_reason_code"])
 
         # Step 3: Predict win probability
-        win_probability = 0.5  # default fallback
+        win_probability = None
         if self.win_predictor is not None:
             try:
                 win_probability = self.win_predictor.predict_win_probability(dispute)
             except Exception:
-                win_probability = 0.5
+                win_probability = None
 
         # Step 4: Compute expected value
         expected_value = (
             (win_probability * SAVINGS_TP)
             - ((1 - win_probability) * COST_FP)
-        )
+        ) if win_probability is not None else 0.0
 
         # Step 5: Generate response template
         response = generate_response(dispute, classification, evidence)
+        if win_probability is None:
+            response["action"] = "HUMAN_REVIEW"
+            response["decision_status"] = "degraded_missing_win_model"
 
         # Step 6: Build reasoning chain
         reasoning = self._build_reasoning(
@@ -75,7 +78,7 @@ class ChargebackResponder:
                 "top_k_predictions": top_k,
             },
             "evidence": evidence,
-            "win_probability": round(win_probability, 4),
+            "win_probability": round(win_probability, 4) if win_probability is not None else None,
             "expected_value_inr": round(expected_value, 2),
             "response": response,
             "reasoning": reasoning,

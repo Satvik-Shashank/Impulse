@@ -28,12 +28,13 @@ FEATURE_COLS = [
 CATEGORICAL_COLS = ["product_category", "shipping_method",
                     "avs_cvv_match", "card_network"]
 
-ALL_REASON_CODES = ["10.4", "13.1", "13.3", "13.6", "4837", "4853", "4855", "4860", "4863"]
+ALL_REASON_CODES = ["10.4", "10.5", "13.1", "13.3", "13.6", "4837", "4853", "4855", "4860", "4863"]
 
 
 class DisputeClassifier:
     def __init__(self):
         self.model = None
+        self.load_error = None
         self.label_encoder = LabelEncoder()
         self.cat_encoders = {}
         self.label_encoder.fit(ALL_REASON_CODES)
@@ -101,28 +102,25 @@ class DisputeClassifier:
                         for i, p in enumerate(probs)
                     },
                 }
-            except Exception:
-                pass  # Fall back to heuristic rule classifier below
+            except Exception as exc:
+                self.load_error = f"model inference failed: {exc}"
 
-        # Fallback heuristic prediction when LightGBM model fails or is unpickled without libgomp
+        # A failed model must never produce a confident automated decision.
         return self._fallback_predict(dispute)
 
     def _fallback_predict(self, dispute: dict) -> dict:
         """Deterministic heuristic classifier used when LightGBM dynamic C lib is missing."""
         days = dispute.get("days_to_dispute", 30)
         has_proof = dispute.get("has_delivery_proof", False) or dispute.get("delivery_confirmed", False)
-        has_3ds = dispute.get("has_3ds_authentication", False)
         net = str(dispute.get("card_network", "Visa")).lower()
 
-        if days <= 14 and not has_3ds:
+        if days <= 14:
             predicted = "10.4" if "visa" in net else "4837"
-            confidence = 0.942 if (dispute.get("dispute_amount", 0) > 10000) else 0.885
         elif not has_proof:
             predicted = "13.1" if "visa" in net else "4855"
-            confidence = 0.875
         else:
             predicted = "10.4" if "visa" in net else "4837"
-            confidence = 0.760
+        confidence = 0.0
 
         probs = {}
         for rc in ALL_REASON_CODES:
@@ -132,6 +130,7 @@ class DisputeClassifier:
             "predicted_reason_code": predicted,
             "confidence": confidence,
             "all_probabilities": probs,
+            "model_status": "fallback_unavailable_for_auto_submit",
         }
 
     def predict_top_k(self, dispute: dict, k: int = 3) -> list:
@@ -177,20 +176,7 @@ class DisputeClassifier:
             except Exception:
                 pass
         
-        # Fallback default feature importances
-        defaults = {
-            "customer_account_age_days": 142.5,
-            "days_to_dispute": 128.0,
-            "dispute_amount": 115.2,
-            "avs_cvv_match": 98.4,
-            "has_3ds_authentication": 87.6,
-            "has_delivery_proof": 79.1,
-            "product_category": 64.3,
-            "ip_geolocation_match": 52.0,
-            "customer_prior_orders": 44.8,
-            "customer_prior_disputes": 38.2,
-        }
-        return defaults
+        return {}
 
     def save(self, path: str = "models/classifier.pkl") -> None:
         import os
@@ -209,5 +195,6 @@ class DisputeClassifier:
         except Exception as e:
             # If model file cannot be loaded or unpickling fails (e.g. missing libgomp.so.1)
             obj.model = None
+            obj.load_error = str(e)
         return obj
 

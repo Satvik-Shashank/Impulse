@@ -68,3 +68,18 @@ def test_missing_optional_fields_do_not_crash():
     ev = retrieve_evidence(minimal_dispute, "13.1")
     assert isinstance(ev["evidence_strength"], float)
     assert ev["auto_respond_eligible"] is False
+
+
+def test_classifier_fallback_cannot_auto_submit():
+    from src.models.classifier import DisputeClassifier
+    from src.pipeline.response_generator import generate_response
+
+    result = DisputeClassifier().predict({"card_network": "Visa", "days_to_dispute": 1})
+    evidence = {
+        "auto_respond_eligible": True,
+        "evidence_strength": 1.0,
+        "evidence_package": {"missing": []},
+    }
+    response = generate_response({}, result, evidence)
+    assert result["confidence"] == 0.0
+    assert response["action"] == "HUMAN_REVIEW"

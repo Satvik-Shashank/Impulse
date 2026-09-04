@@ -26,6 +26,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score
 from sklearn.calibration import calibration_curve
+from sklearn.utils import resample
 
 from src.models.classifier import DisputeClassifier
 from src.models.win_predictor import WinPredictor
@@ -85,6 +86,27 @@ def build_results(test_df, model_path):
     results["confidence"] = preds["confidence"].values
     results["evidence_strength"] = strengths
     return results, clf
+
+
+def bootstrap_metric_ci(results, metric_fn, n_bootstrap=1000, random_state=42):
+    """Return a percentile bootstrap 95% CI for a row-wise metric."""
+    rng = np.random.RandomState(random_state)
+    scores = []
+    for _ in range(n_bootstrap):
+        sample = resample(results, replace=True, random_state=rng)
+        scores.append(float(metric_fn(sample)))
+    return [round(float(value), 4) for value in np.percentile(scores, [2.5, 97.5])]
+
+
+def grouped_accuracy(results, column):
+    """Report accuracy and sample size for each operational subgroup."""
+    return {
+        str(group): {
+            "n": int(len(frame)),
+            "accuracy": round(float((frame["actual"] == frame["predicted"]).mean()), 4),
+        }
+        for group, frame in results.groupby(column, dropna=False)
+    }
 
 
 def apply_light_plot_style():
@@ -312,13 +334,39 @@ def main(test_path="data/disputes_test.csv", model_path="models/classifier.pkl",
         },
         "illustrative_scale_extrapolation_inr": illustrative_scale_examples,
         "top_feature_importances": dict(list(clf.feature_importances().items())[:10]),
+        "bootstrap_confidence_intervals": {
+            "accuracy_95": bootstrap_metric_ci(
+                results, lambda frame: (frame["actual"] == frame["predicted"]).mean()
+            ),
+            "macro_f1_95": bootstrap_metric_ci(
+                results,
+                lambda frame: classification_report(
+                    frame["actual"], frame["predicted"], output_dict=True, zero_division=0
+                )["macro avg"]["f1-score"],
+            ),
+        },
+        "fairness_audit": {
+            "product_category": grouped_accuracy(results, "product_category"),
+            "amount_deciles": grouped_accuracy(
+                results.assign(amount_decile=pd.qcut(results["dispute_amount"], 10, duplicates="drop")),
+                "amount_decile",
+            ),
+        },
     }
 
     with open(os.path.join(out_dir, "metrics.json"), "w") as fh:
         json.dump(metrics, fh, indent=2)
 
-    # Generate mock monitoring log for demo
-    generate_mock_monitoring_log(results, out_dir)
+    # Store the training score distributions used by the runtime PSI monitor.
+    train_df = pd.read_csv(train_path, dtype={"reason_code": str})
+    train_predictions = clf.predict_batch(train_df)
+    train_strengths = [
+        retrieve_evidence(row.to_dict(), pred)["evidence_strength"]
+        for (_, row), pred in zip(train_df.iterrows(), train_predictions["predicted"])
+    ]
+    with open(os.path.join(out_dir, "monitoring_baseline.json"), "w", encoding="utf-8") as fh:
+        json.dump({"confidence": train_predictions["confidence"].tolist(),
+                   "evidence_strength": train_strengths}, fh)
 
     print("=" * 60)
     print("EVALUATION SUMMARY (held-out test set)")

@@ -8,9 +8,41 @@ import os
 import sys
 import json
 import pandas as pd
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, File, Form, HTTPException, Query, Request, UploadFile
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Optional
+from typing import Literal, Optional
+from collections import defaultdict
+import time
+import io
+from fastapi.responses import StreamingResponse
+
+
+class DisputePayload(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    dispute_id: str = Field(..., min_length=1, max_length=100)
+    card_network: Literal["Visa", "Mastercard"]
+    dispute_amount: float = Field(..., ge=0, le=10_000_000)
+    currency: Literal["INR"] = "INR"
+    transaction_date: str = Field(..., min_length=8, max_length=30)
+    days_to_dispute: int = Field(..., ge=0, le=3650)
+    product_category: str = Field(..., min_length=1, max_length=50)
+    shipping_method: str = Field(..., min_length=1, max_length=30)
+    delivery_confirmed: bool = False
+    has_delivery_proof: bool = False
+    ip_geolocation_match: bool = False
+    avs_cvv_match: Literal["both_match", "avs_only", "cvv_only", "neither"] = "neither"
+    customer_account_age_days: int = Field(0, ge=0, le=100000)
+    customer_prior_disputes: int = Field(0, ge=0, le=10000)
+    customer_prior_orders: int = Field(0, ge=0, le=100000)
+    has_customer_correspondence: bool = False
+    has_3ds_authentication: bool = False
+    reason_code_label: Optional[str] = Field(None, max_length=200)
+
+
+_rate_window = defaultdict(list)
+RATE_LIMIT = 60
 
 # Ensure parent root is in sys.path
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -42,7 +74,21 @@ if os.path.exists(public_dir):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "service": "Chargeback Intelligence Platform", "version": "2.0.0"}
+    model_path = os.path.join(PROJECT_ROOT, "models", "classifier.pkl")
+    has_managed_db = bool(os.getenv("DATABASE_URL"))
+    model_status = "missing"
+    if os.path.exists(model_path):
+        from src.models.classifier import DisputeClassifier
+        classifier = DisputeClassifier.load(model_path)
+        model_status = "ready" if classifier.model is not None else "unavailable"
+    return {
+        "status": "ok" if model_status == "ready" else "degraded",
+        "service": "Chargeback Intelligence Platform",
+        "version": "2.0.0",
+        "model_artifact": os.path.exists(model_path),
+        "model_status": model_status,
+        "persistence": "managed" if has_managed_db else "local_development_only",
+    }
 
 
 # ── Metrics (static evaluation results) ────────────────────────────────────
@@ -67,11 +113,134 @@ def get_predictions():
     return df.to_dict(orient="records")
 
 
+# ── Bring Your Own Data (memory-only) ──────────────────────────────────────
+
+@app.get("/api/upload/template")
+def upload_template():
+    """Download a schema template; uploaded data is never written here."""
+    from src.api.byod import REQUIRED_FIELDS, OPTIONAL_FIELDS
+    columns = sorted(REQUIRED_FIELDS | OPTIONAL_FIELDS)
+    template = pd.DataFrame([
+        {column: "" for column in columns},
+        {column: "" for column in columns},
+        {column: "" for column in columns},
+    ])
+    output = io.BytesIO()
+    template.to_excel(output, index=False, engine="openpyxl")
+    output.seek(0)
+    return StreamingResponse(
+        output,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": "attachment; filename=chargeback-upload-template.xlsx"},
+    )
+
+
+@app.post("/api/upload/parse")
+async def parse_upload(file: UploadFile = File(...)):
+    """Parse an upload in memory and return only columns and a small preview."""
+    from src.api.byod import parse_content, suggest_column_mapping
+    try:
+        content = await file.read()
+        frame = parse_content(file.filename or "", content)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    return {
+        "filename": file.filename,
+        "columns": [str(column) for column in frame.columns],
+        "row_count": int(len(frame)),
+        "preview": frame.head(5).where(pd.notna(frame.head(5)), None).to_dict(orient="records"),
+        "suggested_mapping": suggest_column_mapping([str(column) for column in frame.columns]),
+    }
+
+
+@app.post("/api/upload/apply-mapping")
+async def apply_upload_mapping(file: UploadFile = File(...), mapping: str = Form(...)):
+    """Map, validate, and stage only schema-approved rows in process memory."""
+    from src.api.byod import parse_content, validate_and_stage
+    try:
+        parsed_mapping = json.loads(mapping)
+        if not isinstance(parsed_mapping, dict):
+            raise ValueError("mapping must be a JSON object")
+        content = await file.read()
+        frame = parse_content(file.filename or "", content)
+        session_id, report = validate_and_stage(frame, parsed_mapping)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=f"Could not validate upload: {exc}")
+    return {"session_id": session_id, "filename": file.filename, "validation_report": report,
+            "usable_row_count": report["usable_rows"],
+            "retention": "memory-only; expires after 1 hour"}
+
+
+@app.delete("/api/upload/{session_id}")
+def delete_upload(session_id: str):
+    from src.api.byod import delete_session
+    if not delete_session(session_id):
+        raise HTTPException(status_code=404, detail="Upload session not found or already expired.")
+    return {"deleted": True}
+
+
+@app.post("/api/upload/{session_id}/analyze")
+def analyze_upload(session_id: str):
+    from src.api.byod import get_session
+    from src.pipeline.run import ChargebackResponder
+    try:
+        frame = get_session(session_id)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+    responder = ChargebackResponder(
+        model_path=os.path.join(PROJECT_ROOT, "models", "classifier.pkl"),
+        win_model_path=os.path.join(PROJECT_ROOT, "models", "win_predictor.pkl"),
+    )
+    predictions = []
+    for index, row in frame.iterrows():
+        payload = row.to_dict()
+        payload = {key: value for key, value in payload.items()
+                   if key in DisputePayload.model_fields}
+        try:
+            validated = DisputePayload.model_validate(payload)
+        except ValidationError as exc:
+            raise HTTPException(status_code=422, detail=f"Staged row {index} is invalid: {exc.errors()}")
+        predictions.append(responder.process(validated.model_dump()))
+    metrics = None
+    metrics_available = False
+    if "outcome" in frame.columns and "reason_code" in frame.columns:
+        from sklearn.metrics import classification_report, roc_auc_score
+        actual = frame["reason_code"].astype(str).tolist()
+        predicted = [item["classification"]["predicted_reason_code"] for item in predictions]
+        metrics = {
+            "reason_code_accuracy": sum(a == p for a, p in zip(actual, predicted)) / len(actual),
+            "reason_code_report": classification_report(actual, predicted, output_dict=True, zero_division=0),
+        } if actual else None
+        outcomes = frame["outcome"].astype(str).tolist()
+        win_probabilities = [item["win_probability"] for item in predictions]
+        if len(set(outcomes)) == 2 and all(value is not None for value in win_probabilities):
+            metrics["win_prediction_auc"] = roc_auc_score(
+                [outcome == "merchant_won" for outcome in outcomes], win_probabilities
+            )
+        metrics_available = metrics is not None
+    return {
+        "session_id": session_id, "predictions": predictions, "metrics": metrics,
+        "metrics_available": metrics_available,
+        "evaluation_note": "Metrics unavailable without both reason_code and outcome ground truth."
+        if not metrics_available else "Evaluation uses the uploaded ground-truth columns.",
+        "data_source": "uploaded_data",
+    }
+
+
 # ── Process / Submit dispute (live pipeline) ───────────────────────────────
 
 @app.post("/api/disputes")
-def create_dispute(dispute: dict):
+def create_dispute(dispute: DisputePayload, request: Request):
     """Ingest a dispute, run the full AI pipeline, persist result, and return."""
+    client = request.client.host if request.client else "unknown"
+    now = time.time()
+    _rate_window[client] = [timestamp for timestamp in _rate_window[client] if now - timestamp < 60]
+    if len(_rate_window[client]) >= RATE_LIMIT:
+        raise HTTPException(status_code=429, detail="Rate limit exceeded")
+    _rate_window[client].append(now)
+    dispute = dispute.model_dump()
     try:
         from src.pipeline.run import ChargebackResponder
         from src.api.storage import DisputeStore
@@ -87,15 +256,15 @@ def create_dispute(dispute: dict):
         try:
             store = DisputeStore()
             store.save_result(dispute, result)
-        except Exception:
-            pass  # DB write failure should not block API response
+        except Exception as exc:
+            result["persistence"] = {"status": "degraded", "error": str(exc)}
 
         # Log to monitoring
         try:
             monitor = MonitoringLog()
             monitor.log_prediction(result)
-        except Exception:
-            pass
+        except Exception as exc:
+            result["monitoring"] = {"status": "degraded", "error": str(exc)}
 
         return result
     except Exception as e:
@@ -104,9 +273,9 @@ def create_dispute(dispute: dict):
 
 # Legacy route — backward compatibility
 @app.post("/api/process")
-def process_dispute_legacy(dispute: dict):
+def process_dispute_legacy(dispute: DisputePayload, request: Request):
     """Legacy endpoint — redirects to /api/disputes."""
-    return create_dispute(dispute)
+    return create_dispute(dispute, request)
 
 
 # ── Get single dispute by ID ──────────────────────────────────────────────
