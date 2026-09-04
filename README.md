@@ -1,4 +1,4 @@
-# ⚡ Impulse
+#  Impulse
 ### Chargeback Intelligence & Auto-Resolution Platform
 
 **Classify. Verify. Decide. Recover.** — a defense-only, cost-aware chargeback response system built for the Razorpay AI Buildathon, Track 02: AI Risk Manager.
