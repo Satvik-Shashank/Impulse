@@ -86,3 +86,14 @@ def test_api_rejects_negative_amount():
         "product_category": "electronics", "shipping_method": "standard",
     })
     assert response.status_code == 422
+
+
+def test_api_rejects_blank_numeric_field_with_validation_error():
+    response = client.post("/api/disputes", json={
+        "dispute_id": "DSP-TEST-BLANK", "card_network": "Mastercard", "dispute_amount": 1994.18,
+        "transaction_date": "2026-08-01", "days_to_dispute": 10,
+        "product_category": "beauty", "shipping_method": "standard",
+        "customer_account_age_days": "",
+    })
+    assert response.status_code == 422
+    assert "customer_account_age_days" in response.text

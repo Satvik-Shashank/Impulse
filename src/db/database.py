@@ -14,6 +14,18 @@ DB_PATH = os.path.join(DB_DIR, "chargebacks.db")
 
 DATABASE_URL = f"sqlite:///{DB_PATH}"
 
+
+def _number(value, default=0.0):
+    if value is None or (isinstance(value, str) and not value.strip()):
+        return default
+    return float(value)
+
+
+def _integer(value, default=0):
+    if value is None or (isinstance(value, str) and not value.strip()):
+        return default
+    return int(value)
+
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -63,10 +75,10 @@ def save_dispute_and_process(dispute_dict: dict, db: Session, model_path: str = 
         reason_code=dispute_dict.get("reason_code", "10.4"),
         reason_code_label=dispute_dict.get("reason_code_label", ""),
         card_network=dispute_dict.get("card_network", "Visa"),
-        dispute_amount=float(dispute_dict.get("dispute_amount", 0.0)),
+        dispute_amount=_number(dispute_dict.get("dispute_amount")),
         currency=dispute_dict.get("currency", "INR"),
         transaction_date=str(dispute_dict.get("transaction_date", datetime.now().strftime("%Y-%m-%d"))),
-        days_to_dispute=int(dispute_dict.get("days_to_dispute", 10)),
+        days_to_dispute=_integer(dispute_dict.get("days_to_dispute"), 10),
         product_category=str(dispute_dict.get("product_category", "electronics")),
         shipping_method=str(dispute_dict.get("shipping_method", "standard")),
         delivery_confirmed=bool(dispute_dict.get("delivery_confirmed", False)),
@@ -75,9 +87,9 @@ def save_dispute_and_process(dispute_dict: dict, db: Session, model_path: str = 
         avs_cvv_match=str(dispute_dict.get("avs_cvv_match", "neither")),
         has_3ds_authentication=bool(dispute_dict.get("has_3ds_authentication", False)),
         has_customer_correspondence=bool(dispute_dict.get("has_customer_correspondence", False)),
-        customer_account_age_days=int(dispute_dict.get("customer_account_age_days", 30)),
-        customer_prior_disputes=int(dispute_dict.get("customer_prior_disputes", 0)),
-        customer_prior_orders=int(dispute_dict.get("customer_prior_orders", 1)),
+        customer_account_age_days=_integer(dispute_dict.get("customer_account_age_days"), 30),
+        customer_prior_disputes=_integer(dispute_dict.get("customer_prior_disputes")),
+        customer_prior_orders=_integer(dispute_dict.get("customer_prior_orders"), 1),
         status=status,
         predicted_reason_code=clf_out["predicted_reason_code"],
         confidence_score=clf_out["confidence"],
