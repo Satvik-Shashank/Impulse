@@ -160,12 +160,12 @@ function initPipelineDemo() {
     {
       label: 'Step 1 of 4 · Ingestion',
       render: () => `
-        <p class="pd-panel-title pd-fade-in">Dispute ingestion &amp; scheme webhook</p>
-        <p class="pd-panel-desc pd-fade-in">A chargeback webhook is received from the Visa payment network for ₹12,499.00 on an Electronics purchase. Transaction token and customer order logs are retrieved.</p>
-        <div class="pd-fade-in" style="display:flex; gap:24px; margin-top:8px;">
-          <div><div class="pd-counter-label">Amount</div><div class="pd-counter" style="font-size:20px;">₹12,499</div></div>
-          <div><div class="pd-counter-label">Network</div><div class="pd-counter" style="font-size:20px;">Visa</div></div>
-          <div><div class="pd-counter-label">Category</div><div class="pd-counter" style="font-size:20px;">Electronics</div></div>
+        <p class="pd-panel-title pd-fade-in">Dispute ingestion &amp; webhook</p>
+        <p class="pd-panel-desc pd-fade-in">Visa dispute webhook ₹12,499.00 (Electronics). Order logs retrieved.</p>
+        <div class="pd-fade-in" style="display:flex; gap:16px; margin-top:4px;">
+          <div><div class="pd-counter-label">Amount</div><div class="pd-counter" style="font-size:14px; font-weight:800;">₹12,499</div></div>
+          <div><div class="pd-counter-label">Network</div><div class="pd-counter" style="font-size:14px; font-weight:800;">Visa</div></div>
+          <div><div class="pd-counter-label">Category</div><div class="pd-counter" style="font-size:14px; font-weight:800;">Electronics</div></div>
         </div>`,
       after: () => {}
     },
@@ -173,10 +173,10 @@ function initPipelineDemo() {
       label: 'Step 2 of 4 · Classification',
       render: () => `
         <p class="pd-panel-title pd-fade-in">Reason code identified</p>
-        <p class="pd-panel-desc pd-fade-in">The classifier analyzed order timing, customer history, and payment signals to identify the claim category.</p>
-        <div class="pd-fade-in" style="display:flex; align-items:baseline; gap:10px; margin-top:6px;">
-          <span class="pd-counter" id="pd-conf-num">0.0%</span>
-          <span style="font-size:13px; color:var(--pd-text-secondary);">confidence — Code 13.1, Merchandise Not Received</span>
+        <p class="pd-panel-desc pd-fade-in">Analyzed order timing, customer history, and payment signals.</p>
+        <div class="pd-fade-in" style="display:flex; align-items:baseline; gap:8px; margin-top:4px;">
+          <span class="pd-counter" id="pd-conf-num" style="font-size:20px; font-weight:800;">0.0%</span>
+          <span style="font-size:10.5px; color:var(--pd-text-secondary); font-weight:600;">confidence · Code 13.1, Merchandise Not Received</span>
         </div>`,
       after: () => {
         const el = document.getElementById('pd-conf-num');
@@ -187,13 +187,12 @@ function initPipelineDemo() {
       label: 'Step 3 of 4 · Evidence',
       render: () => `
         <p class="pd-panel-title pd-fade-in">Merchant evidence verification</p>
-        <p class="pd-panel-desc pd-fade-in">Checking merchant fulfillment records against card-network requirements.</p>
-        <div style="margin-top:4px;">
+        <div class="pd-evidence-grid">
           ${[
             ['Delivery confirmed', true, 0],
-            ['Proof of delivery signature', true, 90],
+            ['Proof of delivery', true, 90],
             ['Carrier tracking match', true, 180],
-            ['Customer correspondence', false, 270],
+            ['Correspondence', false, 270],
           ].map(([label, ok, delay]) => `
             <div class="pd-evidence-row" style="animation-delay:${delay}ms;">
               <span class="pd-check" style="${ok ? '' : 'background:#fef2f2;color:#b91c1c;'}">${ok ? checkSvg : '&times;'}</span>
@@ -209,8 +208,10 @@ function initPipelineDemo() {
           <div class="pd-verdict-ring pd-approve">
             <span id="pd-verdict-num">0%</span>
           </div>
-          <div class="pd-verdict-label">Auto-respond recommended</div>
-          <div class="pd-verdict-sub">Expected value <span class="pd-value-highlight" id="pd-verdict-value">₹0</span> · evidence strength 83%</div>
+          <div>
+            <div class="pd-verdict-label">Auto-respond recommended</div>
+            <div class="pd-verdict-sub">Expected recovery <span class="pd-value-highlight" id="pd-verdict-value">₹0</span> · strength 83%</div>
+          </div>
         </div>`,
       after: () => {
         const num = document.getElementById('pd-verdict-num');
@@ -235,7 +236,7 @@ function initPipelineDemo() {
     current = index;
     if (trackFill) trackFill.style.width = trackPositions[index] + '%';
     if (packet) {
-      packet.style.left = 'calc(' + trackPositions[index] + '% - 10px)';
+      packet.style.left = 'calc(' + trackPositions[index] + '% - 7px)';
       packet.classList.remove('pd-pulse');
       void packet.offsetWidth;
       packet.classList.add('pd-pulse');
@@ -256,8 +257,8 @@ function initPipelineDemo() {
     if (nextBtn) nextBtn.disabled = index === 3;
   }
 
-  const STAGE_DELAY_MS = 2600;
-  const FINAL_DWELL_MS = 3600;
+  const STAGE_DELAY_MS = 2400;
+  const FINAL_DWELL_MS = 3400;
 
   function runAutoSequence() {
     clearTimeout(autoTimer);
@@ -265,6 +266,8 @@ function initPipelineDemo() {
       runBtn.disabled = true;
       runBtn.textContent = 'Simulating...';
     }
+    // Zoom in when simulation is running
+    root.classList.add('is-sim-zoomed');
     goTo(0);
 
     function advance(step) {
@@ -274,6 +277,8 @@ function initPipelineDemo() {
             runBtn.disabled = false;
             runBtn.textContent = 'Run Live Simulation';
           }
+          // Minimise back to normal small size
+          root.classList.remove('is-sim-zoomed');
         }, FINAL_DWELL_MS);
         return;
       }
