@@ -2166,12 +2166,30 @@ select.form-select:focus {
   opacity: 1; position: relative; pointer-events: auto;
 }
 
-.pitch-flow { display: flex; align-items: center; gap: 10px; margin-top: 28px; flex-wrap: wrap; }
-.pitch-node {
-  background: var(--pt-tint); color: #3730A3; border: 1px solid #C7D2FE;
-  padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 700;
+.pitch-flow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 28px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
-.pitch-arrow { color: var(--pt-secondary); font-size: 18px; }
+.pitch-node {
+  background: var(--pt-tint);
+  color: #3730A3;
+  border: 1px solid #C7D2FE;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.pitch-arrow {
+  color: var(--pt-secondary);
+  font-size: 18px;
+  flex-shrink: 0;
+}
 
 .pitch-question-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 24px; }
 .pitch-question-card {
