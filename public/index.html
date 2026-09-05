@@ -160,36 +160,32 @@
           </div>
         </div>
 
-        <!-- Right: Live Pipeline Inspector Panel with Step Slide Animation -->
-        <div class="showcase-inspector-panel">
-          <div>
-            <div class="inspector-header-row">
-              <span class="inspector-step-badge" id="insp-step-badge">Interactive Pipeline Demo</span>
-              <span style="font-size:11px; font-weight:700; color:var(--text-muted);"
-                id="insp-step-counter">Ready</span>
-            </div>
+        <!-- Right: Animated Pipeline Demo -->
+        <div class="pd-root" id="pd-root">
+          <div class="pd-header">
+            <span class="pd-badge">INTERACTIVE PIPELINE DEMO</span>
+            <span class="pd-status" id="pd-status">Ready</span>
+          </div>
 
-            <div id="insp-content-box" class="inspector-content-box">
-              <div class="inspector-title" id="insp-title">Live Transaction Simulation</div>
-              <div class="inspector-desc" id="insp-desc">Click "Run Live Simulation" to watch Impulse ingest dispute
-                webhooks, execute calibrated classification, and verify representment rules in real time.</div>
+          <div class="pd-track-wrap">
+            <div class="pd-track">
+              <div class="pd-track-fill" id="pd-track-fill"></div>
+              <div class="pd-packet" id="pd-packet"></div>
             </div>
-
-            <div class="inspector-progress-bar-track">
-              <div class="inspector-progress-bar-fill" id="insp-progress-fill" style="width: 0%;"></div>
+            <div class="pd-stops" id="pd-stops">
+              <div class="pd-stop" data-stop="0"><div class="pd-stop-dot"></div><div class="pd-stop-label">Ingestion</div></div>
+              <div class="pd-stop" data-stop="1"><div class="pd-stop-dot"></div><div class="pd-stop-label">Classify</div></div>
+              <div class="pd-stop" data-stop="2"><div class="pd-stop-dot"></div><div class="pd-stop-label">Evidence</div></div>
+              <div class="pd-stop" data-stop="3"><div class="pd-stop-dot"></div><div class="pd-stop-label">Verdict</div></div>
             </div>
           </div>
 
-          <div class="inspector-actions-row">
-            <button class="btn-inspector-action" id="btn-run-sim" onclick="startGuidedSimulation()">
-              Run Live Simulation
-            </button>
-            <div style="display:flex; gap:6px;">
-              <button class="btn-secondary" style="padding:5px 10px; font-size:11px;"
-                onclick="stepSimulation(-1)">Prev</button>
-              <button class="btn-secondary" style="padding:5px 10px; font-size:11px;"
-                onclick="stepSimulation(1)">Next</button>
-            </div>
+          <div class="pd-panel" id="pd-panel"></div>
+
+          <div class="pd-controls">
+            <button class="pd-btn" id="pd-prev">Prev</button>
+            <button class="pd-btn-primary" id="pd-run">Run Live Simulation</button>
+            <button class="pd-btn" id="pd-next">Next</button>
           </div>
         </div>
       </div>

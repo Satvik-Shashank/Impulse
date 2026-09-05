@@ -67,48 +67,13 @@ const PRESET_WEAK = {
   has_3ds_authentication: false
 };
 
-// ── Simulation Steps Definitions ──────────────────────────────────
-const SIM_STEPS = [
-  {
-    stepBadge: "Step 1 of 4: Ingestion",
-    stepCounter: "25%",
-    progressPct: 25,
-    title: "Dispute Ingestion & Scheme Webhook",
-    desc: "A chargeback webhook is received from the Visa payment network for ₹12,499.00 on an Electronics purchase. Transaction token & customer order logs are retrieved.",
-    preset: "strong"
-  },
-  {
-    stepBadge: "Step 2 of 4: Classification",
-    stepCounter: "50%",
-    progressPct: 50,
-    title: "LightGBM Reason Code Classification",
-    desc: "The multi-class ML model extracts 14 transaction features (AVS/CVV signals, 3DS authentication, account age) and predicts Reason Code 10.4 with 94.2% Platt-calibrated confidence.",
-    preset: "strong"
-  },
-  {
-    stepBadge: "Step 3 of 4: Evidence",
-    stepCounter: "75%",
-    progressPct: 75,
-    title: "Deterministic Rule Table Verification",
-    desc: "Evaluating merchant evidence against Visa Scheme representment specs: Proof of Delivery signature, IP match, and 3DS authentication are confirmed on file (5/6 items present).",
-    preset: "strong"
-  },
-  {
-    stepBadge: "Step 4 of 4: Decision",
-    stepCounter: "100%",
-    progressPct: 100,
-    title: "Cost Optimization & AUTO_SUBMIT Verdict",
-    desc: "Calibrated probability exceeds the 70% threshold. System generates formal representment response document with ₹11,624 net expected recovery.",
-    preset: "strong"
-  }
-];
-
 // ── Initialization ───────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   resetFormToBlank();
   fetchMetrics();
   fetchPredictions();
   updateCardPreview();
+  initPipelineDemo();
   checkApiHealth();
   setInterval(checkApiHealth, 30000);
 });
@@ -160,65 +125,177 @@ function updateCardPreview() {
   if (elNet) elNet.textContent = (net && net !== '') ? `${net} Network` : 'Card Network';
 }
 
-// ── Paced Live Tour Simulation with Zoom & Slide Transitions ─────
-function renderSimStep(idx) {
-  simCurrentStep = Math.max(0, Math.min(idx, SIM_STEPS.length - 1));
-  const step = SIM_STEPS[simCurrentStep];
+// ── Animated Pipeline Demo Controller ────────────────────────────
+function initPipelineDemo() {
+  const root = document.getElementById('pd-root');
+  if (!root) return;
+  const panel = document.getElementById('pd-panel');
+  const status = document.getElementById('pd-status');
+  const trackFill = document.getElementById('pd-track-fill');
+  const packet = document.getElementById('pd-packet');
+  const stops = root.querySelectorAll('.pd-stop');
+  const runBtn = document.getElementById('pd-run');
+  const prevBtn = document.getElementById('pd-prev');
+  const nextBtn = document.getElementById('pd-next');
 
-  setText('insp-step-badge', step.stepBadge);
-  setText('insp-step-counter', step.stepCounter);
-  
-  const contentBox = document.getElementById('insp-content-box');
-  if (contentBox) {
-    contentBox.style.animation = 'none';
-    contentBox.offsetHeight; // trigger reflow
-    contentBox.style.animation = 'stepSlideFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+  const trackPositions = [0, 33.3, 66.6, 100];
+  let current = -1;
+  let autoTimer = null;
+
+  function animateCount(el, from, to, decimals, suffix, duration) {
+    const start = performance.now();
+    function tick(now) {
+      const t = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const val = from + (to - from) * eased;
+      el.textContent = val.toFixed(decimals) + (suffix || '');
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
   }
 
-  setText('insp-title', step.title);
-  setText('insp-desc', step.desc);
+  const checkSvg = '<svg viewBox="0 0 24 24" fill="none"><path class="pd-check-path" d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-  const fill = document.getElementById('insp-progress-fill');
-  if (fill) fill.style.width = step.progressPct + '%';
-}
+  const stages = [
+    {
+      label: 'Step 1 of 4 · Ingestion',
+      render: () => `
+        <p class="pd-panel-title pd-fade-in">Dispute ingestion &amp; scheme webhook</p>
+        <p class="pd-panel-desc pd-fade-in">A chargeback webhook is received from the Visa payment network for ₹12,499.00 on an Electronics purchase. Transaction token and customer order logs are retrieved.</p>
+        <div class="pd-fade-in" style="display:flex; gap:24px; margin-top:8px;">
+          <div><div class="pd-counter-label">Amount</div><div class="pd-counter" style="font-size:20px;">₹12,499</div></div>
+          <div><div class="pd-counter-label">Network</div><div class="pd-counter" style="font-size:20px;">Visa</div></div>
+          <div><div class="pd-counter-label">Category</div><div class="pd-counter" style="font-size:20px;">Electronics</div></div>
+        </div>`,
+      after: () => {}
+    },
+    {
+      label: 'Step 2 of 4 · Classification',
+      render: () => `
+        <p class="pd-panel-title pd-fade-in">Reason code identified</p>
+        <p class="pd-panel-desc pd-fade-in">The classifier analyzed order timing, customer history, and payment signals to identify the claim category.</p>
+        <div class="pd-fade-in" style="display:flex; align-items:baseline; gap:10px; margin-top:6px;">
+          <span class="pd-counter" id="pd-conf-num">0.0%</span>
+          <span style="font-size:13px; color:var(--pd-text-secondary);">confidence — Code 13.1, Merchandise Not Received</span>
+        </div>`,
+      after: () => {
+        const el = document.getElementById('pd-conf-num');
+        if (el) animateCount(el, 0, 94.2, 1, '%', 1400);
+      }
+    },
+    {
+      label: 'Step 3 of 4 · Evidence',
+      render: () => `
+        <p class="pd-panel-title pd-fade-in">Merchant evidence verification</p>
+        <p class="pd-panel-desc pd-fade-in">Checking merchant fulfillment records against card-network requirements.</p>
+        <div style="margin-top:4px;">
+          ${[
+            ['Delivery confirmed', true, 0],
+            ['Proof of delivery signature', true, 90],
+            ['Carrier tracking match', true, 180],
+            ['Customer correspondence', false, 270],
+          ].map(([label, ok, delay]) => `
+            <div class="pd-evidence-row" style="animation-delay:${delay}ms;">
+              <span class="pd-check" style="${ok ? '' : 'background:#fef2f2;color:#b91c1c;'}">${ok ? checkSvg : '&times;'}</span>
+              <span class="pd-evidence-text">${label}</span>
+            </div>`).join('')}
+        </div>`,
+      after: () => {}
+    },
+    {
+      label: 'Step 4 of 4 · Verdict',
+      render: () => `
+        <div class="pd-verdict">
+          <div class="pd-verdict-ring pd-approve">
+            <span id="pd-verdict-num">0%</span>
+          </div>
+          <div class="pd-verdict-label">Auto-respond recommended</div>
+          <div class="pd-verdict-sub">Expected value <span class="pd-value-highlight" id="pd-verdict-value">₹0</span> · evidence strength 83%</div>
+        </div>`,
+      after: () => {
+        const num = document.getElementById('pd-verdict-num');
+        const val = document.getElementById('pd-verdict-value');
+        if (num) animateCount(num, 0, 91, 0, '%', 1200);
+        if (val) {
+          const start = performance.now();
+          function tick(now) {
+            const t = Math.min((now - start) / 1200, 1);
+            const eased = 1 - Math.pow(1 - t, 3);
+            val.textContent = '₹' + Math.round(1875 * eased).toLocaleString('en-IN');
+            if (t < 1) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+        }
+      }
+    }
+  ];
 
-async function startGuidedSimulation() {
-  if (simTimer) clearTimeout(simTimer);
-  const btn = document.getElementById('btn-run-sim');
-  const showcase = document.getElementById('hero-showcase-box');
+  function goTo(index) {
+    if (index < 0 || index > 3) return;
+    current = index;
+    if (trackFill) trackFill.style.width = trackPositions[index] + '%';
+    if (packet) {
+      packet.style.left = 'calc(' + trackPositions[index] + '% - 10px)';
+      packet.classList.remove('pd-pulse');
+      void packet.offsetWidth;
+      packet.classList.add('pd-pulse');
+    }
 
-  if (btn) btn.textContent = 'Simulating...';
-  if (showcase) {
-    showcase.classList.add('is-zoomed');
-    showcase.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    stops.forEach((s, i) => {
+      s.classList.toggle('pd-done', i <= index);
+      s.classList.toggle('pd-active', i === index);
+    });
+
+    if (status) status.textContent = stages[index].label;
+    if (panel) {
+      panel.innerHTML = stages[index].render();
+      stages[index].after();
+    }
+
+    if (prevBtn) prevBtn.disabled = index === 0;
+    if (nextBtn) nextBtn.disabled = index === 3;
   }
 
-  // Step 1: Ingestion
-  renderSimStep(0);
-  await sleep(2600);
+  const STAGE_DELAY_MS = 2600;
+  const FINAL_DWELL_MS = 3600;
 
-  // Step 2: Classification
-  renderSimStep(1);
-  await sleep(2600);
+  function runAutoSequence() {
+    clearTimeout(autoTimer);
+    if (runBtn) {
+      runBtn.disabled = true;
+      runBtn.textContent = 'Simulating...';
+    }
+    goTo(0);
 
-  // Step 3: Evidence
-  renderSimStep(2);
-  await sleep(2600);
-
-  // Step 4: Decision
-  renderSimStep(3);
-  analyzeFromForm();
-  await sleep(2000);
-
-  if (showcase) {
-    showcase.classList.remove('is-zoomed');
+    function advance(step) {
+      if (step > 3) {
+        autoTimer = setTimeout(() => {
+          if (runBtn) {
+            runBtn.disabled = false;
+            runBtn.textContent = 'Run Live Simulation';
+          }
+        }, FINAL_DWELL_MS);
+        return;
+      }
+      autoTimer = setTimeout(() => {
+        goTo(step);
+        advance(step + 1);
+      }, STAGE_DELAY_MS);
+    }
+    advance(1);
   }
-  if (btn) btn.textContent = 'Replay Simulation';
-}
 
-function stepSimulation(delta) {
-  if (simTimer) clearTimeout(simTimer);
-  renderSimStep(simCurrentStep + delta);
+  window.startGuidedSimulation = runAutoSequence;
+  window.stepSimulation = function(dir) {
+    goTo(Math.max(0, Math.min(3, current + dir)));
+  };
+
+  if (runBtn) runBtn.addEventListener('click', runAutoSequence);
+  if (prevBtn) prevBtn.addEventListener('click', () => goTo(Math.max(0, current - 1)));
+  if (nextBtn) nextBtn.addEventListener('click', () => goTo(Math.min(3, current + 1)));
+
+  goTo(0);
+  if (prevBtn) prevBtn.disabled = true;
 }
 
 function sleep(ms) {
