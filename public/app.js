@@ -67,83 +67,47 @@ const PRESET_WEAK = {
   has_3ds_authentication: false
 };
 
-// ── Simulation Steps & Scenarios ──────────────────────────────────
-let simScenario = 'strong';
-let simIsPlaying = false;
-
-const SIM_DATA = {
-  strong: {
-    steps: [
-      {
-        stepBadge: "Step 1 of 4: Ingestion",
-        progressPct: 25,
-        title: "Dispute Ingestion & Scheme Webhook",
-        desc: "A chargeback webhook is received from the Visa payment network for ₹12,499.00 on an Electronics purchase. Transaction token & customer order logs are retrieved.",
-        telemetry: ["Scheme: Visa", "Status: 200 OK", "Amount: ₹12,499"]
-      },
-      {
-        stepBadge: "Step 2 of 4: Classification",
-        progressPct: 50,
-        title: "LightGBM Reason Code Classification",
-        desc: "The multi-class ML model extracts 14 transaction features (AVS/CVV signals, 3DS authentication, account age) and predicts Reason Code 10.4 with 94.2% Platt-calibrated confidence.",
-        telemetry: ["Inference: 1.2ms", "Model: LightGBM", "Confidence: 94.2%"]
-      },
-      {
-        stepBadge: "Step 3 of 4: Evidence",
-        progressPct: 75,
-        title: "Deterministic Rule Table Verification",
-        desc: "Evaluating merchant evidence against Visa Scheme representment specs: Proof of Delivery signature, IP match, and 3DS authentication are confirmed on file (5/5 items present).",
-        telemetry: ["Evidence: 100%", "Rules: 5/5 Pass", "Docs: Verified"]
-      },
-      {
-        stepBadge: "Step 4 of 4: Decision",
-        progressPct: 100,
-        title: "Cost Optimization & AUTO_SUBMIT Verdict",
-        desc: "Calibrated probability exceeds the 70% threshold. System generates formal representment response document with ₹11,624 net expected recovery.",
-        telemetry: ["Action: AUTO_SUBMIT", "Win Prob: 91.8%", "Net Recovery: +₹11,624"]
-      }
-    ]
+// ── Simulation Steps Definitions ──────────────────────────────────
+const SIM_STEPS = [
+  {
+    stepBadge: "Step 1 of 4: Ingestion",
+    stepCounter: "25%",
+    progressPct: 25,
+    title: "Dispute Ingestion & Scheme Webhook",
+    desc: "A chargeback webhook is received from the Visa payment network for ₹12,499.00 on an Electronics purchase. Transaction token & customer order logs are retrieved.",
+    preset: "strong"
   },
-  weak: {
-    steps: [
-      {
-        stepBadge: "Step 1 of 4: Ingestion",
-        progressPct: 25,
-        title: "Dispute Ingestion & Scheme Webhook",
-        desc: "A chargeback notice of ₹8,999.00 arrived from Mastercard for an expedited order filed just 8 days post-purchase.",
-        telemetry: ["Scheme: Mastercard", "Status: 200 OK", "Amount: ₹8,999"]
-      },
-      {
-        stepBadge: "Step 2 of 4: Classification",
-        progressPct: 50,
-        title: "LightGBM Reason Code Classification",
-        desc: "Signals indicate missing 3DS OTP verification and new account age (3 days). ML model predicts Code 4837 with borderline 58.0% confidence.",
-        telemetry: ["Inference: 1.1ms", "Model: LightGBM", "Confidence: 58.0%"]
-      },
-      {
-        stepBadge: "Step 3 of 4: Evidence",
-        progressPct: 75,
-        title: "Deterministic Rule Table Verification",
-        desc: "Carrier POD signature and IP geolocation match are missing. Only 1 of 5 mandatory defense documents is available.",
-        telemetry: ["Evidence: 20%", "Rules: 1/5 Pass", "Docs: Deficient"]
-      },
-      {
-        stepBadge: "Step 4 of 4: Decision",
-        progressPct: 100,
-        title: "Risk Protection & ROUTE_TO_REVIEW",
-        desc: "Confidence and evidence fall below safe threshold. System halts auto-filing to protect the merchant from losing ₹1,000 arbitration fees.",
-        telemetry: ["Action: HUMAN_REVIEW", "Win Prob: 32.5%", "Risk: Fee Protected"]
-      }
-    ]
+  {
+    stepBadge: "Step 2 of 4: Classification",
+    stepCounter: "50%",
+    progressPct: 50,
+    title: "LightGBM Reason Code Classification",
+    desc: "The multi-class ML model extracts 14 transaction features (AVS/CVV signals, 3DS authentication, account age) and predicts Reason Code 10.4 with 94.2% Platt-calibrated confidence.",
+    preset: "strong"
+  },
+  {
+    stepBadge: "Step 3 of 4: Evidence",
+    stepCounter: "75%",
+    progressPct: 75,
+    title: "Deterministic Rule Table Verification",
+    desc: "Evaluating merchant evidence against Visa Scheme representment specs: Proof of Delivery signature, IP match, and 3DS authentication are confirmed on file (5/6 items present).",
+    preset: "strong"
+  },
+  {
+    stepBadge: "Step 4 of 4: Decision",
+    stepCounter: "100%",
+    progressPct: 100,
+    title: "Cost Optimization & AUTO_SUBMIT Verdict",
+    desc: "Calibrated probability exceeds the 70% threshold. System generates formal representment response document with ₹11,624 net expected recovery.",
+    preset: "strong"
   }
-};
+];
 
 // ── Initialization ───────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   fetchMetrics();
   fetchPredictions();
   updateCardPreview();
-  renderSimStep(0);
   checkApiHealth();
   setInterval(checkApiHealth, 30000);
 });
@@ -164,99 +128,13 @@ function updateCardPreview() {
   if (elNet) elNet.textContent = (net && net !== '') ? `${net} Network` : 'Card Network';
 }
 
-// ── Visual Deck Renderer for Cyber Simulation Screen ──────────────
-function renderSimVisualDeck(idx, scenarioKey) {
-  const deck = document.getElementById('sim-visual-canvas');
-  if (!deck) return;
-  const isStrong = scenarioKey === 'strong';
-  const scenario = isStrong ? PRESET_STRONG : PRESET_WEAK;
-
-  if (idx === 0) {
-    deck.innerHTML = `
-      <div class="sim-deck-header">
-        <span class="sim-deck-tag"><span class="sim-deck-dot"></span> WEBHOOK INGESTION STREAM</span>
-        <span style="font-size:10px; color:#94A3B8; font-family:var(--font-mono); font-weight:700;">${scenario.card_network.toUpperCase()} SCHEME</span>
-      </div>
-      <div class="sim-deck-json">
-        <span class="jk">"event":</span> <span class="js">"chargeback.created"</span>,<br>
-        <span class="jk">"dispute_id":</span> <span class="jv">"${scenario.dispute_id}"</span>,<br>
-        <span class="jk">"dispute_amount":</span> <span class="jn">₹${scenario.dispute_amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>,<br>
-        <span class="jk">"currency":</span> <span class="js">"INR"</span>,<br>
-        <span class="jk">"product_category":</span> <span class="js">"${scenario.product_category}"</span>,<br>
-        <span class="jk">"days_elapsed":</span> <span class="jn">${scenario.days_to_dispute} days</span>
-      </div>
-    `;
-  } else if (idx === 1) {
-    deck.innerHTML = `
-      <div class="sim-deck-header">
-        <span class="sim-deck-tag"><span class="sim-deck-dot" style="background:#818CF8; box-shadow:0 0 8px #818CF8;"></span> 14-FEATURE VECTOR EXTRACTION</span>
-        <span style="font-size:10px; color:#94A3B8; font-family:var(--font-mono); font-weight:700;">LIGHTGBM INFERENCE</span>
-      </div>
-      <div class="sim-signal-grid">
-        <div class="sim-signal-pill"><span>3DS Auth</span><span>${scenario.has_3ds_authentication ? 'VERIFIED' : 'NONE'}</span></div>
-        <div class="sim-signal-pill"><span>AVS/CVV</span><span>${scenario.avs_cvv_match === 'both_match' ? 'MATCH' : 'MISMATCH'}</span></div>
-        <div class="sim-signal-pill"><span>Account Age</span><span>${scenario.customer_account_age_days} Days</span></div>
-        <div class="sim-signal-pill"><span>Prior Disputes</span><span>${scenario.customer_prior_disputes}</span></div>
-      </div>
-      <div class="sim-pred-badge-box">
-        <div>
-          <div style="font-size:9px; color:#A5B4FC; text-transform:uppercase; font-weight:700;">Predicted Reason Code</div>
-          <div style="font-size:12px; font-weight:800; color:#FFFFFF;">${scenario.reason_code_label}</div>
-        </div>
-        <div style="text-align:right;">
-          <span class="chip ${isStrong ? 'chip-success' : 'chip-warning'}" style="font-size:11px;">${isStrong ? '94.2% Conf' : '58.0% Conf'}</span>
-        </div>
-      </div>
-    `;
-  } else if (idx === 2) {
-    deck.innerHTML = `
-      <div class="sim-deck-header">
-        <span class="sim-deck-tag"><span class="sim-deck-dot" style="background:#34D399; box-shadow:0 0 8px #34D399;"></span> SCHEME EVIDENCE SPEC SCANNER</span>
-        <span style="font-size:10px; color:#94A3B8; font-family:var(--font-mono); font-weight:700;">${isStrong ? '5/5 VERIFIED' : '1/5 PRESENT'}</span>
-      </div>
-      <div class="sim-evidence-checklist">
-        <div class="sim-ev-item ${scenario.has_delivery_proof ? 'pass' : 'fail'}"><span class="icon">${scenario.has_delivery_proof ? '✓' : '✗'}</span> Proof of Delivery Signature (POD)</div>
-        <div class="sim-ev-item ${scenario.ip_geolocation_match ? 'pass' : 'fail'}"><span class="icon">${scenario.ip_geolocation_match ? '✓' : '✗'}</span> IP Matches Billing Geolocation</div>
-        <div class="sim-ev-item ${scenario.has_3ds_authentication ? 'pass' : 'fail'}"><span class="icon">${scenario.has_3ds_authentication ? '✓' : '✗'}</span> 3D-Secure Authenticated (OTP)</div>
-        <div class="sim-ev-item ${scenario.delivery_confirmed ? 'pass' : 'fail'}"><span class="icon">${scenario.delivery_confirmed ? '✓' : '✗'}</span> Carrier Delivery Webhook Confirmed</div>
-      </div>
-    `;
-  } else if (idx === 3) {
-    deck.innerHTML = `
-      <div class="sim-deck-header">
-        <span class="sim-deck-tag"><span class="sim-deck-dot" style="background:#10B981; box-shadow:0 0 8px #10B981;"></span> CALIBRATED DECISION ENGINE</span>
-        <span style="font-size:10px; color:#94A3B8; font-family:var(--font-mono); font-weight:700;">COST GATE: 0.50</span>
-      </div>
-      <div class="sim-verdict-banner ${isStrong ? 'auto' : 'manual'}">
-        <div style="font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:${isStrong ? '#34D399' : '#FBBF24'};">
-          ${isStrong ? '⚡ VERDICT: AUTO_SUBMIT REPRESENTMENT' : '⚠️ VERDICT: ROUTE TO HUMAN REVIEW'}
-        </div>
-        <div style="font-size:12px; font-weight:700; color:#FFFFFF; margin-top:3px;">
-          ${isStrong ? 'High Win Probability · Official Defense Letter Dispatched' : 'Low Evidence Score · Saved ₹1,000 Filing Fee'}
-        </div>
-      </div>
-      <div class="sim-verdict-stats">
-        <div class="sim-verdict-stat-tile">
-          <div style="font-size:9px; color:#94A3B8; text-transform:uppercase; font-weight:700;">Win Likelihood</div>
-          <div style="font-size:14px; font-weight:900; color:#FFFFFF;">${isStrong ? '91.8%' : '32.5%'}</div>
-        </div>
-        <div class="sim-verdict-stat-tile">
-          <div style="font-size:9px; color:#94A3B8; text-transform:uppercase; font-weight:700;">Expected Recovery</div>
-          <div style="font-size:14px; font-weight:900; color:${isStrong ? '#34D399' : '#F87171'};">${isStrong ? '+₹11,624' : '₹0 (Fee Saved)'}</div>
-        </div>
-      </div>
-    `;
-  }
-}
-
-// ── Paced Live Tour Simulation Controller ────────────────────────
+// ── Paced Live Tour Simulation with Zoom & Slide Transitions ─────
 function renderSimStep(idx) {
-  simCurrentStep = Math.max(0, Math.min(idx, 3));
-  const scenarioData = SIM_DATA[simScenario] || SIM_DATA.strong;
-  const step = scenarioData.steps[simCurrentStep];
+  simCurrentStep = Math.max(0, Math.min(idx, SIM_STEPS.length - 1));
+  const step = SIM_STEPS[simCurrentStep];
 
   setText('insp-step-badge', step.stepBadge);
-  setText('insp-step-counter', `Step ${simCurrentStep + 1} of 4`);
+  setText('insp-step-counter', step.stepCounter);
   
   const contentBox = document.getElementById('insp-content-box');
   if (contentBox) {
@@ -268,110 +146,50 @@ function renderSimStep(idx) {
   setText('insp-title', step.title);
   setText('insp-desc', step.desc);
 
-  if (step.telemetry) {
-    setText('sim-tele-1', step.telemetry[0] || '');
-    setText('sim-tele-2', step.telemetry[1] || '');
-    setText('sim-tele-3', step.telemetry[2] || '');
-  }
-
   const fill = document.getElementById('insp-progress-fill');
   if (fill) fill.style.width = step.progressPct + '%';
 
-  // Update Stepper Tabs and Lines
-  for (let i = 0; i < 4; i++) {
-    const tab = document.getElementById(`sim-step-tab-${i}`);
-    if (tab) {
-      if (i === simCurrentStep) {
-        tab.classList.add('active');
-      } else {
-        tab.classList.remove('active');
-      }
-    }
-    if (i > 0) {
-      const line = document.getElementById(`sim-step-line-${i}`);
-      if (line) {
-        if (i <= simCurrentStep) {
-          line.classList.add('passed');
-        } else {
-          line.classList.remove('passed');
-        }
-      }
-    }
-  }
-
-  renderSimVisualDeck(simCurrentStep, simScenario);
+  loadPreset(step.preset);
+  updateCardPreview();
 }
 
-async function toggleSimulationPlayback() {
-  if (simIsPlaying) {
-    simIsPlaying = false;
-    if (simTimer) clearTimeout(simTimer);
-    updateSimPlayButton(false);
-    return;
-  }
-
-  simIsPlaying = true;
-  updateSimPlayButton(true);
-
+async function startGuidedSimulation() {
+  if (simTimer) clearTimeout(simTimer);
+  const btn = document.getElementById('btn-run-sim');
   const showcase = document.getElementById('hero-showcase-box');
+
+  if (btn) btn.textContent = 'Simulating...';
   if (showcase) {
     showcase.classList.add('is-zoomed');
+    showcase.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
-  let startIdx = simCurrentStep >= 3 ? 0 : simCurrentStep;
-  for (let i = startIdx; i < 4; i++) {
-    if (!simIsPlaying) break;
-    renderSimStep(i);
-    await sleep(2400);
-  }
+  // Step 1: Ingestion
+  renderSimStep(0);
+  await sleep(2600);
 
-  simIsPlaying = false;
-  updateSimPlayButton(false);
+  // Step 2: Classification
+  renderSimStep(1);
+  await sleep(2600);
+
+  // Step 3: Evidence
+  renderSimStep(2);
+  await sleep(2600);
+
+  // Step 4: Decision
+  renderSimStep(3);
+  analyzeFromForm();
+  await sleep(2000);
+
   if (showcase) {
     showcase.classList.remove('is-zoomed');
   }
-}
-
-function updateSimPlayButton(isPlaying) {
-  const icon = document.getElementById('btn-sim-icon');
-  const text = document.getElementById('btn-sim-text');
-  if (icon) icon.innerHTML = isPlaying ? '&#10074;&#10074;' : '&#9654;';
-  if (text) text.textContent = isPlaying ? 'Pause Simulation' : (simCurrentStep >= 3 ? 'Replay Simulation' : 'Play Simulation');
-}
-
-function jumpSimStep(idx) {
-  if (simIsPlaying) {
-    simIsPlaying = false;
-    if (simTimer) clearTimeout(simTimer);
-    updateSimPlayButton(false);
-  }
-  renderSimStep(idx);
-}
-
-function changeSimScenario(val) {
-  simScenario = val;
-  renderSimStep(simCurrentStep);
+  if (btn) btn.textContent = 'Replay Simulation';
 }
 
 function stepSimulation(delta) {
-  if (simIsPlaying) {
-    simIsPlaying = false;
-    if (simTimer) clearTimeout(simTimer);
-    updateSimPlayButton(false);
-  }
-  let next = simCurrentStep + delta;
-  if (next < 0) next = 0;
-  if (next > 3) next = 3;
-  renderSimStep(next);
-}
-
-function startGuidedSimulation() {
-  const showcase = document.getElementById('hero-showcase-box');
-  if (showcase) {
-    showcase.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
-  simCurrentStep = 0;
-  toggleSimulationPlayback();
+  if (simTimer) clearTimeout(simTimer);
+  renderSimStep(simCurrentStep + delta);
 }
 
 function sleep(ms) {
