@@ -107,7 +107,6 @@ const SIM_STEPS = [
 document.addEventListener('DOMContentLoaded', () => {
   fetchMetrics();
   fetchPredictions();
-  loadPreset('strong');
   updateCardPreview();
   checkApiHealth();
   setInterval(checkApiHealth, 30000);
@@ -115,17 +114,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ── Interactive Payment Carousel Preview Sync ──────────────────────
 function updateCardPreview() {
-  const amt = parseFloat(document.getElementById('f-amount').value) || 0;
-  const net = document.getElementById('f-network').value;
-  const cat = document.getElementById('f-category').value;
+  const amtVal = document.getElementById('f-amount')?.value;
+  const amt = (amtVal !== '' && amtVal !== undefined && !isNaN(parseFloat(amtVal))) ? parseFloat(amtVal) : 0;
+  const net = document.getElementById('f-network')?.value;
+  const cat = document.getElementById('f-category')?.value;
   
   const elAmt = document.getElementById('sim-card-amount');
   const elId = document.getElementById('sim-card-id');
   const elNet = document.getElementById('sim-card-network');
 
-  if (elAmt) elAmt.textContent = '₹' + amt.toLocaleString('en-IN', { minimumFractionDigits: 2 });
-  if (elId) elId.textContent = `DSP-LIVE · ${cat.toUpperCase()}`;
-  if (elNet) elNet.textContent = `${net} Network`;
+  if (elAmt) elAmt.textContent = amt > 0 ? '₹' + amt.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '₹0.00';
+  if (elId) elId.textContent = (cat && cat !== '') ? `DSP-LIVE · ${cat.toUpperCase()}` : 'DSP-LIVE · DISPUTE';
+  if (elNet) elNet.textContent = (net && net !== '') ? `${net} Network` : 'Card Network';
 }
 
 // ── Paced Live Tour Simulation with Zoom & Slide Transitions ─────
@@ -374,13 +374,6 @@ function renderHeroMetrics() {
   const el = document.getElementById('val-delta');
   if (el && Number.isFinite(delta)) {
     el.textContent = `+₹${delta.toLocaleString('en-IN')} higher net recovery vs naive fighting`;
-  }
-
-  const scale = globalMetrics.illustrative_scale_extrapolation_inr || {};
-  const banner = document.getElementById('scale-banner-text');
-  if (banner && scale.note) {
-    const val100k = scale.at_100k_disputes_per_year;
-    banner.innerHTML = `<span class="banner-chip">Scale Projection</span><span>${scale.note}${Number.isFinite(val100k) ? ` At 100k disputes/year: <strong>₹${val100k.toLocaleString('en-IN')}</strong> net value.` : ''}</span>`;
   }
 }
 
@@ -986,25 +979,31 @@ function loadPreset(type) {
 function buildPayloadFromForm() {
   const avs = document.querySelector('input[name="avs"]:checked');
   const disputeId = window.currentLoadedDisputeId || ("DSP-LIVE-" + Date.now().toString(36).toUpperCase());
+  const amtVal = document.getElementById('f-amount')?.value;
+  const daysVal = document.getElementById('f-days')?.value;
+  const acctAgeVal = document.getElementById('f-acct-age')?.value;
+  const priorDispVal = document.getElementById('f-prior-disputes')?.value;
+  const priorOrdVal = document.getElementById('f-prior-orders')?.value;
+
   return {
     dispute_id: disputeId,
     reason_code_label: window.currentLoadedReasonCode || "Dispute Claim",
-    card_network: document.getElementById('f-network').value,
-    dispute_amount: parseFloat(document.getElementById('f-amount').value) || 0,
+    card_network: document.getElementById('f-network')?.value || "Visa",
+    dispute_amount: (amtVal !== '' && amtVal !== undefined && !isNaN(parseFloat(amtVal))) ? parseFloat(amtVal) : 12499,
     currency: "INR",
     transaction_date: new Date().toISOString().slice(0, 10),
-    days_to_dispute: parseInt(document.getElementById('f-days').value) || 0,
-    product_category: document.getElementById('f-category').value,
-    shipping_method: document.getElementById('f-shipping').value,
-    delivery_confirmed: document.getElementById('f-delivery').checked,
-    has_delivery_proof: document.getElementById('f-proof').checked,
-    ip_geolocation_match: document.getElementById('f-ip').checked,
+    days_to_dispute: (daysVal !== '' && daysVal !== undefined && !isNaN(parseInt(daysVal))) ? parseInt(daysVal) : 30,
+    product_category: document.getElementById('f-category')?.value || "electronics",
+    shipping_method: document.getElementById('f-shipping')?.value || "express",
+    delivery_confirmed: !!document.getElementById('f-delivery')?.checked,
+    has_delivery_proof: !!document.getElementById('f-proof')?.checked,
+    ip_geolocation_match: !!document.getElementById('f-ip')?.checked,
     avs_cvv_match: avs ? avs.value : "neither",
-    customer_account_age_days: parseInt(document.getElementById('f-acct-age').value) || 0,
-    customer_prior_disputes: parseInt(document.getElementById('f-prior-disputes').value) || 0,
-    customer_prior_orders: parseInt(document.getElementById('f-prior-orders').value) || 0,
-    has_customer_correspondence: document.getElementById('f-correspondence').checked,
-    has_3ds_authentication: document.getElementById('f-3ds').checked,
+    customer_account_age_days: (acctAgeVal !== '' && acctAgeVal !== undefined && !isNaN(parseInt(acctAgeVal))) ? parseInt(acctAgeVal) : 30,
+    customer_prior_disputes: (priorDispVal !== '' && priorDispVal !== undefined && !isNaN(parseInt(priorDispVal))) ? parseInt(priorDispVal) : 0,
+    customer_prior_orders: (priorOrdVal !== '' && priorOrdVal !== undefined && !isNaN(parseInt(priorOrdVal))) ? parseInt(priorOrdVal) : 0,
+    has_customer_correspondence: !!document.getElementById('f-correspondence')?.checked,
+    has_3ds_authentication: !!document.getElementById('f-3ds')?.checked,
   };
 }
 

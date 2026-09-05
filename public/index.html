@@ -288,42 +288,6 @@
         </div>
       </div>
 
-      <!-- Key Classifier KPIs -->
-      <div class="kpi-grid">
-        <div class="kpi-tile">
-          <div class="kpi-label">Reason-Code Accuracy</div>
-          <div class="kpi-value" id="stat-acc">47.2%</div>
-          <div class="kpi-sub">Top-1 classification accuracy</div>
-        </div>
-        <div class="kpi-tile">
-          <div class="kpi-label">Macro Precision</div>
-          <div class="kpi-value" id="stat-prec">45.4%</div>
-          <div class="kpi-sub">Balanced across all 10 codes</div>
-        </div>
-        <div class="kpi-tile">
-          <div class="kpi-label">Macro Recall</div>
-          <div class="kpi-value" id="stat-rec">37.3%</div>
-          <div class="kpi-sub">Coverage across dispute types</div>
-        </div>
-        <div class="kpi-tile">
-          <div class="kpi-label">Win-Prediction AUC</div>
-          <div class="kpi-value" id="stat-auc">0.732</div>
-          <div class="kpi-sub">Evidence strength rank quality</div>
-        </div>
-        <div class="kpi-tile">
-          <div class="kpi-label">Win Predictor Model AUC</div>
-          <div class="kpi-value" id="stat-win-auc">0.783</div>
-          <div class="kpi-sub">Dedicated binary LightGBM</div>
-        </div>
-      </div>
-
-      <!-- Scale Banner -->
-      <div class="scale-banner" id="scale-banner-text">
-        <span class="banner-chip">Scale Projection</span>
-        <span>Extrapolates measured net value per dispute across annual dispute volumes. Calculated from experimental
-          evaluation data.</span>
-      </div>
-
       <!-- Part 2: Interactive Live Dispute Analyzer Form -->
       <div id="live-analyzer-section" style="margin-top:36px; padding-top:10px;">
         <div class="section-title-wrap">
@@ -357,24 +321,26 @@
               <div class="form-grid">
                 <div class="form-group">
                   <label for="f-amount">Dispute Amount (INR)</label>
-                  <input type="number" id="f-amount" value="12499" step="0.01" min="0" oninput="updateCardPreview()">
+                  <input type="number" id="f-amount" placeholder="Enter amount (e.g. 12499)" step="0.01" min="0" oninput="updateCardPreview()">
                 </div>
                 <div class="form-group">
                   <label for="f-network">Card Network</label>
                   <select id="f-network" onchange="updateCardPreview()">
-                    <option value="Visa" selected>Visa</option>
+                    <option value="" disabled selected>Select Card Network</option>
+                    <option value="Visa">Visa</option>
                     <option value="Mastercard">Mastercard</option>
                   </select>
                 </div>
                 <div class="form-group">
                   <label for="f-days">Days to Dispute</label>
                   <div class="form-hint">Elapsed time between purchase &amp; chargeback</div>
-                  <input type="number" id="f-days" value="35" min="0">
+                  <input type="number" id="f-days" placeholder="Enter elapsed days (e.g. 35)" min="0">
                 </div>
                 <div class="form-group">
                   <label for="f-category">Product Category</label>
                   <select id="f-category" onchange="updateCardPreview()">
-                    <option value="electronics" selected>Electronics</option>
+                    <option value="" disabled selected>Select Product Category</option>
+                    <option value="electronics">Electronics</option>
                     <option value="fashion">Fashion</option>
                     <option value="grocery">Grocery</option>
                     <option value="home">Home</option>
@@ -387,7 +353,8 @@
                 <div class="form-group">
                   <label for="f-shipping">Shipping Method</label>
                   <select id="f-shipping">
-                    <option value="express" selected>Express</option>
+                    <option value="" disabled selected>Select Shipping Method</option>
+                    <option value="express">Express</option>
                     <option value="standard">Standard</option>
                     <option value="same_day">Same Day</option>
                     <option value="pickup">Store Pickup</option>
@@ -395,7 +362,7 @@
                 </div>
                 <div class="form-group">
                   <label for="f-acct-age">Account Age (Days)</label>
-                  <input type="number" id="f-acct-age" value="45" min="0">
+                  <input type="number" id="f-acct-age" placeholder="Enter account age in days (e.g. 45)" min="0">
                 </div>
               </div>
 
@@ -404,19 +371,19 @@
                 documentation available for representment:</p>
 
               <div class="toggle-grid">
-                <label class="toggle-card"><input type="checkbox" id="f-delivery" checked> Delivery confirmed</label>
-                <label class="toggle-card"><input type="checkbox" id="f-proof" checked> Proof of delivery
+                <label class="toggle-card"><input type="checkbox" id="f-delivery"> Delivery confirmed</label>
+                <label class="toggle-card"><input type="checkbox" id="f-proof"> Proof of delivery
                   signature</label>
-                <label class="toggle-card"><input type="checkbox" id="f-ip" checked> IP matches billing region</label>
+                <label class="toggle-card"><input type="checkbox" id="f-ip"> IP matches billing region</label>
                 <label class="toggle-card"><input type="checkbox" id="f-correspondence"> Customer correspondence</label>
-                <label class="toggle-card"><input type="checkbox" id="f-3ds" checked> 3D-Secure authenticated</label>
+                <label class="toggle-card"><input type="checkbox" id="f-3ds"> 3D-Secure authenticated</label>
               </div>
 
               <div style="margin-top:14px;">
                 <label style="font-size:12px; font-weight:700; color:var(--brand-navy-dark);">AVS / CVV Match
                   Verification</label>
                 <div class="radio-pill-group">
-                  <label class="radio-pill-item"><input type="radio" name="avs" value="both_match" checked> Both
+                  <label class="radio-pill-item"><input type="radio" name="avs" value="both_match"> Both
                     match</label>
                   <label class="radio-pill-item"><input type="radio" name="avs" value="avs_only"> AVS only</label>
                   <label class="radio-pill-item"><input type="radio" name="avs" value="cvv_only"> CVV only</label>
@@ -428,11 +395,11 @@
               <div class="form-grid">
                 <div class="form-group">
                   <label for="f-prior-disputes">Prior Disputes Filed</label>
-                  <input type="number" id="f-prior-disputes" value="0" min="0">
+                  <input type="number" id="f-prior-disputes" placeholder="Enter prior disputes (e.g. 0)" min="0">
                 </div>
                 <div class="form-group">
                   <label for="f-prior-orders">Prior Completed Orders</label>
-                  <input type="number" id="f-prior-orders" value="3" min="0">
+                  <input type="number" id="f-prior-orders" placeholder="Enter prior completed orders (e.g. 3)" min="0">
                 </div>
               </div>
 
@@ -526,6 +493,35 @@
           <div class="section-label-tag">Model Evaluation</div>
           <h2 class="section-title">Model Performance &amp; Cost-Sensitive Decision Curves</h2>
           <p class="section-desc">Evaluated on the held-out test split (750 disputes) never seen during training.</p>
+        </div>
+
+        <!-- Key Classifier KPIs -->
+        <div class="kpi-grid" style="margin-bottom:24px;">
+          <div class="kpi-tile">
+            <div class="kpi-label">Reason-Code Accuracy</div>
+            <div class="kpi-value" id="stat-acc">47.2%</div>
+            <div class="kpi-sub">Top-1 classification accuracy</div>
+          </div>
+          <div class="kpi-tile">
+            <div class="kpi-label">Macro Precision</div>
+            <div class="kpi-value" id="stat-prec">45.4%</div>
+            <div class="kpi-sub">Balanced across all 10 codes</div>
+          </div>
+          <div class="kpi-tile">
+            <div class="kpi-label">Macro Recall</div>
+            <div class="kpi-value" id="stat-rec">37.3%</div>
+            <div class="kpi-sub">Coverage across dispute types</div>
+          </div>
+          <div class="kpi-tile">
+            <div class="kpi-label">Win-Prediction AUC</div>
+            <div class="kpi-value" id="stat-auc">0.732</div>
+            <div class="kpi-sub">Evidence strength rank quality</div>
+          </div>
+          <div class="kpi-tile">
+            <div class="kpi-label">Win Predictor Model AUC</div>
+            <div class="kpi-value" id="stat-win-auc">0.783</div>
+            <div class="kpi-sub">Dedicated binary LightGBM</div>
+          </div>
         </div>
 
         <!-- Core Visual Charts Placed Higher Up with Rich Highlight Cards & Detailed Explainers -->
