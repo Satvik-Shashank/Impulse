@@ -105,12 +105,44 @@ const SIM_STEPS = [
 
 // ── Initialization ───────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  resetFormToBlank();
   fetchMetrics();
   fetchPredictions();
   updateCardPreview();
   checkApiHealth();
   setInterval(checkApiHealth, 30000);
 });
+
+function resetFormToBlank() {
+  const fAmt = document.getElementById('f-amount');
+  const fNet = document.getElementById('f-network');
+  const fDays = document.getElementById('f-days');
+  const fCat = document.getElementById('f-category');
+  const fShip = document.getElementById('f-shipping');
+  const fAge = document.getElementById('f-acct-age');
+  const fPriorDisp = document.getElementById('f-prior-disputes');
+  const fPriorOrd = document.getElementById('f-prior-orders');
+  const fJson = document.getElementById('dispute-json-input');
+
+  if (fAmt) fAmt.value = '';
+  if (fNet) fNet.selectedIndex = 0;
+  if (fDays) fDays.value = '';
+  if (fCat) fCat.selectedIndex = 0;
+  if (fShip) fShip.selectedIndex = 0;
+  if (fAge) fAge.value = '';
+  if (fPriorDisp) fPriorDisp.value = '';
+  if (fPriorOrd) fPriorOrd.value = '';
+  if (fJson) fJson.value = '';
+
+  ['f-delivery', 'f-proof', 'f-ip', 'f-correspondence', 'f-3ds'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.checked = false;
+  });
+
+  document.querySelectorAll('input[name="avs"]').forEach(r => {
+    r.checked = false;
+  });
+}
 
 // ── Interactive Payment Carousel Preview Sync ──────────────────────
 function updateCardPreview() {
@@ -148,9 +180,6 @@ function renderSimStep(idx) {
 
   const fill = document.getElementById('insp-progress-fill');
   if (fill) fill.style.width = step.progressPct + '%';
-
-  loadPreset(step.preset);
-  updateCardPreview();
 }
 
 async function startGuidedSimulation() {

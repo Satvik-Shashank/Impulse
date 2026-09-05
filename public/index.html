@@ -321,7 +321,7 @@
               <div class="form-grid">
                 <div class="form-group">
                   <label for="f-amount">Dispute Amount (INR)</label>
-                  <input type="number" id="f-amount" placeholder="Enter dispute amount" step="0.01" min="0" oninput="updateCardPreview()">
+                  <input type="number" id="f-amount" placeholder="Enter amount" step="0.01" min="0" autocomplete="off" oninput="updateCardPreview()">
                 </div>
                 <div class="form-group">
                   <label for="f-network">Card Network</label>
@@ -334,7 +334,7 @@
                 <div class="form-group">
                   <label for="f-days">Days to Dispute</label>
                   <div class="form-hint">Elapsed time between purchase &amp; chargeback</div>
-                  <input type="number" id="f-days" placeholder="Enter elapsed days" min="0">
+                  <input type="number" id="f-days" placeholder="Enter days" min="0" autocomplete="off">
                 </div>
                 <div class="form-group">
                   <label for="f-category">Product Category</label>
@@ -362,7 +362,7 @@
                 </div>
                 <div class="form-group">
                   <label for="f-acct-age">Account Age (Days)</label>
-                  <input type="number" id="f-acct-age" placeholder="Enter account age in days" min="0">
+                  <input type="number" id="f-acct-age" placeholder="Enter account age (days)" min="0" autocomplete="off">
                 </div>
               </div>
 
@@ -395,11 +395,11 @@
               <div class="form-grid">
                 <div class="form-group">
                   <label for="f-prior-disputes">Prior Disputes Filed</label>
-                  <input type="number" id="f-prior-disputes" placeholder="Enter prior disputes" min="0">
+                  <input type="number" id="f-prior-disputes" placeholder="Enter prior disputes" min="0" autocomplete="off">
                 </div>
                 <div class="form-group">
                   <label for="f-prior-orders">Prior Completed Orders</label>
-                  <input type="number" id="f-prior-orders" placeholder="Enter prior completed orders" min="0">
+                  <input type="number" id="f-prior-orders" placeholder="Enter prior orders" min="0" autocomplete="off">
                 </div>
               </div>
 
