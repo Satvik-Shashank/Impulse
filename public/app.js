@@ -157,7 +157,7 @@ function initPipelineDemo() {
   const prevBtn = document.getElementById('pd-prev');
   const nextBtn = document.getElementById('pd-next');
 
-  const trackPositions = [0, 33.3, 66.6, 100];
+  const trackPositions = [0, 33.333, 66.666, 100];
   let current = -1;
   let autoTimer = null;
 
@@ -260,7 +260,7 @@ function initPipelineDemo() {
     current = index;
     if (trackFill) trackFill.style.width = trackPositions[index] + '%';
     if (packet) {
-      packet.style.left = 'calc(' + trackPositions[index] + '% - 7px)';
+      packet.style.left = trackPositions[index] + '%';
       packet.classList.remove('pd-pulse');
       void packet.offsetWidth;
       packet.classList.add('pd-pulse');
@@ -285,7 +285,7 @@ function initPipelineDemo() {
     current = -1;
     if (trackFill) trackFill.style.width = '0%';
     if (packet) {
-      packet.style.left = 'calc(0% - 7px)';
+      packet.style.left = '0%';
       packet.classList.remove('pd-pulse');
     }
     stops.forEach(s => {
@@ -351,6 +351,11 @@ function initPipelineDemo() {
   if (nextBtn) nextBtn.addEventListener('click', () => {
     if (current === -1) goTo(0);
     else if (current < 3) goTo(current + 1);
+  });
+  stops.forEach((s, i) => {
+    s.addEventListener('click', () => {
+      goTo(i);
+    });
   });
 
   setReadyState();

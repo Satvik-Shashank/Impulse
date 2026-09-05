@@ -697,9 +697,9 @@ body {
 }
 .pd-status { font-size: 11px; color: var(--pd-text-secondary); font-weight: 600; }
 
-.pd-track-wrap { position: relative; margin: 4px 0 6px; height: 32px; }
+.pd-track-wrap { position: relative; margin: 6px 0 8px; height: 36px; }
 .pd-track {
-  position: absolute; top: 12px; left: 14px; right: 14px; height: 3px;
+  position: absolute; top: 12px; left: 28px; right: 28px; height: 3px;
   background: var(--pd-track-bg); border-radius: 2px; overflow: visible;
 }
 .pd-track-fill {
@@ -708,11 +708,13 @@ body {
   transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .pd-packet {
-  position: absolute; top: -5px; left: 0%;
+  position: absolute; top: 50%; left: 0%;
+  transform: translate(-50%, -50%);
   width: 14px; height: 14px; border-radius: 50%;
   background: var(--pd-accent);
   box-shadow: 0 0 0 2.5px #ffffff, 0 0 0 3.5px var(--pd-border);
   transition: left 0.9s cubic-bezier(0.34, 1.2, 0.4, 1);
+  z-index: 5;
 }
 .pd-packet::after {
   content: ''; position: absolute; inset: 0; border-radius: 50%;
@@ -724,16 +726,26 @@ body {
   100% { opacity: 0; transform: scale(2.4); }
 }
 
-.pd-stops { position: absolute; top: 0; left: 14px; right: 14px; display: flex; justify-content: space-between; }
-.pd-stop { display: flex; flex-direction: column; align-items: center; width: 60px; cursor: pointer; }
+.pd-stops { position: absolute; top: 0; left: 28px; right: 28px; height: 100%; }
+.pd-stop {
+  position: absolute; top: 0;
+  display: flex; flex-direction: column; align-items: center;
+  transform: translateX(-50%); width: 68px; cursor: pointer;
+}
+.pd-stop[data-stop="0"] { left: 0%; }
+.pd-stop[data-stop="1"] { left: 33.333%; }
+.pd-stop[data-stop="2"] { left: 66.666%; }
+.pd-stop[data-stop="3"] { left: 100%; }
+
 .pd-stop-dot {
   width: 9px; height: 9px; border-radius: 50%; background: var(--pd-track-bg);
-  border: 1.5px solid var(--pd-border); margin-top: 8px;
+  border: 1.5px solid var(--pd-border); margin-top: 9px;
   transition: all 0.3s ease;
+  z-index: 2;
 }
 .pd-stop.pd-done .pd-stop-dot { background: var(--pd-accent); border-color: var(--pd-accent); }
-.pd-stop-label { font-size: 9.5px; color: var(--pd-text-secondary); margin-top: 3px; text-align: center; font-weight: 600; }
-.pd-stop.pd-done .pd-stop-label, .pd-stop.pd-active .pd-stop-label { color: var(--pd-text); }
+.pd-stop-label { font-size: 9.5px; color: var(--pd-text-secondary); margin-top: 4px; text-align: center; font-weight: 600; white-space: nowrap; }
+.pd-stop.pd-done .pd-stop-label, .pd-stop.pd-active .pd-stop-label { color: var(--pd-text); font-weight: 700; }
 
 .pd-panel {
   background: #f8fafc;
