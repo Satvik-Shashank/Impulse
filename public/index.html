@@ -109,86 +109,78 @@
         </div>
       </div>
 
-      <!-- Stripe-Inspired Centered Hero Showcase (Realistic Card + Live Inspector) -->
+      <!-- Stripe-Inspired Centered Hero Showcase (Interactive Cyber-Pipeline Stage) -->
       <div class="hero-showcase-container" id="hero-showcase-box">
-        <!-- Left: 2-Layered Payment Apps Card (3 on top, 3 below, clean white background) -->
-        <div>
-          <div class="payment-carousel-card" id="sim-credit-card">
-            <!-- Top Layer: 3 Payment Apps -->
-            <div class="payment-row-slider-viewport">
-              <div class="payment-row-track track-top">
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-visa">VISA</span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-mc"><span class="mc-c1"></span><span
-                      class="mc-c2"></span>mastercard</span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-paypal"><i>Pay</i><i>Pal</i></span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-apple"> Pay</span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-gpay"><span style="color:#4285F4">G</span>
-                    <span style="color:#5F6368">Pay</span></span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-stripe">stripe</span></div>
-                <!-- Duplicate for seamless continuous loop -->
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-visa">VISA</span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-mc"><span class="mc-c1"></span><span
-                      class="mc-c2"></span>mastercard</span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-paypal"><i>Pay</i><i>Pal</i></span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-apple"> Pay</span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-gpay"><span style="color:#4285F4">G</span>
-                    <span style="color:#5F6368">Pay</span></span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-stripe">stripe</span></div>
-              </div>
-            </div>
-
-            <!-- Bottom Layer: 3 Payment Apps -->
-            <div class="payment-row-slider-viewport">
-              <div class="payment-row-track track-bottom">
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-amex">AMEX</span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-discover">DISCOVER</span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-amazon">amazon<span
-                      style="color:#FF9900">pay</span></span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-alipay">Alipay</span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-payoneer">Payoneer</span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-bitcoin">₿ bitcoin</span></div>
-                <!-- Duplicate for seamless continuous loop -->
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-amex">AMEX</span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-discover">DISCOVER</span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-amazon">amazon<span
-                      style="color:#FF9900">pay</span></span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-alipay">Alipay</span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-payoneer">Payoneer</span></div>
-                <div class="pay-badge-tile"><span class="pay-badge-icon badge-bitcoin">₿ bitcoin</span></div>
-              </div>
-            </div>
-          </div>
+        <!-- Interactive Stepper Bar at Top -->
+        <div class="sim-stepper-bar">
+          <button class="sim-stepper-step active" id="sim-step-tab-0" onclick="jumpSimStep(0)">
+            <span class="sim-step-num">1</span>
+            <span class="sim-step-label">Webhook Ingest</span>
+          </button>
+          <div class="sim-stepper-line" id="sim-step-line-1"></div>
+          <button class="sim-stepper-step" id="sim-step-tab-1" onclick="jumpSimStep(1)">
+            <span class="sim-step-num">2</span>
+            <span class="sim-step-label">AI Classification</span>
+          </button>
+          <div class="sim-stepper-line" id="sim-step-line-2"></div>
+          <button class="sim-stepper-step" id="sim-step-tab-2" onclick="jumpSimStep(2)">
+            <span class="sim-step-num">3</span>
+            <span class="sim-step-label">Evidence Rules</span>
+          </button>
+          <div class="sim-stepper-line" id="sim-step-line-3"></div>
+          <button class="sim-stepper-step" id="sim-step-tab-3" onclick="jumpSimStep(3)">
+            <span class="sim-step-num">4</span>
+            <span class="sim-step-label">Calibrated Decision</span>
+          </button>
         </div>
 
-        <!-- Right: Live Pipeline Inspector Panel with Step Slide Animation -->
-        <div class="showcase-inspector-panel">
-          <div>
-            <div class="inspector-header-row">
-              <span class="inspector-step-badge" id="insp-step-badge">Interactive Pipeline Demo</span>
-              <span style="font-size:11px; font-weight:700; color:var(--text-muted);"
-                id="insp-step-counter">Ready</span>
-            </div>
-
-            <div id="insp-content-box" class="inspector-content-box">
-              <div class="inspector-title" id="insp-title">Live Transaction Simulation</div>
-              <div class="inspector-desc" id="insp-desc">Click "Run Live Simulation" to watch Impulse ingest dispute
-                webhooks, execute calibrated classification, and verify representment rules in real time.</div>
-            </div>
-
-            <div class="inspector-progress-bar-track">
-              <div class="inspector-progress-bar-fill" id="insp-progress-fill" style="width: 0%;"></div>
+        <div class="sim-interactive-stage">
+          <!-- Left: Dynamic Visual Pipeline Canvas -->
+          <div class="sim-screen-deck">
+            <div id="sim-visual-canvas" class="sim-visual-canvas">
+              <!-- Dynamically populated per simulation step -->
             </div>
           </div>
 
-          <div class="inspector-actions-row">
-            <button class="btn-inspector-action" id="btn-run-sim" onclick="startGuidedSimulation()">
-              Run Live Simulation
-            </button>
-            <div style="display:flex; gap:6px;">
-              <button class="btn-secondary" style="padding:5px 10px; font-size:11px;"
-                onclick="stepSimulation(-1)">Prev</button>
-              <button class="btn-secondary" style="padding:5px 10px; font-size:11px;"
-                onclick="stepSimulation(1)">Next</button>
+          <!-- Right: Live Pipeline Inspector Panel -->
+          <div class="showcase-inspector-panel">
+            <div>
+              <div class="inspector-header-row">
+                <span class="inspector-step-badge" id="insp-step-badge">Step 1 of 4: Ingestion</span>
+                <span style="font-size:11px; font-weight:700; color:var(--brand-indigo);" id="insp-step-counter">Live Simulation</span>
+              </div>
+
+              <div id="insp-content-box" class="inspector-content-box">
+                <div class="inspector-title" id="insp-title">Dispute Ingestion &amp; Scheme Webhook</div>
+                <div class="inspector-desc" id="insp-desc">A chargeback webhook is received from the Visa payment network for ₹12,499.00 on an Electronics purchase. Transaction token &amp; customer order logs are retrieved.</div>
+              </div>
+
+              <!-- Telemetry Metrics Bar -->
+              <div class="sim-telemetry-row">
+                <div class="sim-tele-chip"><span class="sim-tele-dot"></span> <span id="sim-tele-1">Scheme: Visa</span></div>
+                <div class="sim-tele-chip"><span class="sim-tele-dot green"></span> <span id="sim-tele-2">Status: 200 OK</span></div>
+                <div class="sim-tele-chip"><span class="sim-tele-dot purple"></span> <span id="sim-tele-3">Amount: ₹12,499</span></div>
+              </div>
+
+              <div class="inspector-progress-bar-track">
+                <div class="inspector-progress-bar-fill" id="insp-progress-fill" style="width: 25%;"></div>
+              </div>
+            </div>
+
+            <div class="inspector-actions-row">
+              <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <button class="btn-inspector-action" id="btn-run-sim" onclick="toggleSimulationPlayback()">
+                  <span id="btn-sim-icon">&#9654;</span> <span id="btn-sim-text">Play Simulation</span>
+                </button>
+                <select id="sim-scenario-select" class="sim-scenario-dropdown" onchange="changeSimScenario(this.value)">
+                  <option value="strong">Scenario: Strong Evidence (Auto-Submit)</option>
+                  <option value="weak">Scenario: Weak Evidence (Human Review)</option>
+                </select>
+              </div>
+              <div style="display:flex; gap:6px;">
+                <button class="btn-secondary" style="padding:6px 12px; font-size:11px;" onclick="stepSimulation(-1)">Prev</button>
+                <button class="btn-secondary" style="padding:6px 12px; font-size:11px;" onclick="stepSimulation(1)">Next</button>
+              </div>
             </div>
           </div>
         </div>
@@ -321,7 +313,7 @@
               <div class="form-grid">
                 <div class="form-group">
                   <label for="f-amount">Dispute Amount (INR)</label>
-                  <input type="number" id="f-amount" placeholder="Enter amount (e.g. 12499)" step="0.01" min="0" oninput="updateCardPreview()">
+                  <input type="number" id="f-amount" placeholder="Enter dispute amount" step="0.01" min="0" oninput="updateCardPreview()">
                 </div>
                 <div class="form-group">
                   <label for="f-network">Card Network</label>
@@ -334,7 +326,7 @@
                 <div class="form-group">
                   <label for="f-days">Days to Dispute</label>
                   <div class="form-hint">Elapsed time between purchase &amp; chargeback</div>
-                  <input type="number" id="f-days" placeholder="Enter elapsed days (e.g. 35)" min="0">
+                  <input type="number" id="f-days" placeholder="Enter elapsed days" min="0">
                 </div>
                 <div class="form-group">
                   <label for="f-category">Product Category</label>
@@ -362,7 +354,7 @@
                 </div>
                 <div class="form-group">
                   <label for="f-acct-age">Account Age (Days)</label>
-                  <input type="number" id="f-acct-age" placeholder="Enter account age in days (e.g. 45)" min="0">
+                  <input type="number" id="f-acct-age" placeholder="Enter account age in days" min="0">
                 </div>
               </div>
 
@@ -395,11 +387,11 @@
               <div class="form-grid">
                 <div class="form-group">
                   <label for="f-prior-disputes">Prior Disputes Filed</label>
-                  <input type="number" id="f-prior-disputes" placeholder="Enter prior disputes (e.g. 0)" min="0">
+                  <input type="number" id="f-prior-disputes" placeholder="Enter prior disputes" min="0">
                 </div>
                 <div class="form-group">
                   <label for="f-prior-orders">Prior Completed Orders</label>
-                  <input type="number" id="f-prior-orders" placeholder="Enter prior completed orders (e.g. 3)" min="0">
+                  <input type="number" id="f-prior-orders" placeholder="Enter prior completed orders" min="0">
                 </div>
               </div>
 

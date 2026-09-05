@@ -404,79 +404,303 @@ body {
   box-shadow: 0 14px 36px rgba(255, 84, 54, 0.2);
 }
 
-/* ── Hero Showcase Container with Smooth Zoom Focus ─────────────── */
+/* ── Hero Showcase Container with Stepper ────────────────────────── */
 .hero-showcase-container {
-  display: grid;
-  grid-template-columns: 360px 1fr;
-  gap: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
   background: #FFFFFF;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-xl);
-  padding: 26px;
+  padding: 24px;
   box-shadow: var(--shadow-showcase);
   margin: 0 auto 40px;
   max-width: 980px;
-  align-items: center;
   position: relative;
   z-index: 2;
   transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-showcase-container.is-zoomed {
-  transform: scale(1.035);
+  transform: scale(1.02);
   box-shadow: var(--shadow-showcase-zoom);
 }
 
-@media (max-width: 860px) {
-  .hero-showcase-container { grid-template-columns: 1fr; }
+.sim-stepper-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-surface-sunken);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-pill);
+  padding: 5px 8px;
+  gap: 4px;
+  width: 100%;
 }
 
-/* ── 2-Layered Payment Apps Card (Clean White Background, 3 Top / 3 Bottom) ── */
-.payment-carousel-card {
-  width: 100%;
-  height: 215px;
-  border-radius: 16px;
+.sim-stepper-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.sim-stepper-step:hover {
+  color: var(--brand-navy-dark);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.sim-stepper-step.active {
   background: #FFFFFF;
-  padding: 16px 14px;
+  color: var(--brand-indigo);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+
+.sim-stepper-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #E2E8F0;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 800;
+  transition: all 0.2s ease;
+}
+
+.sim-stepper-step.active .sim-stepper-num {
+  background: var(--brand-indigo);
+  color: #FFFFFF;
+}
+
+.sim-stepper-line {
+  flex: 1;
+  height: 2px;
+  background: #E2E8F0;
+  transition: background 0.3s ease;
+  min-width: 10px;
+}
+
+.sim-stepper-line.passed {
+  background: var(--brand-indigo);
+}
+
+.sim-interactive-stage {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 20px;
+  width: 100%;
+  align-items: stretch;
+}
+
+@media (max-width: 860px) {
+  .sim-interactive-stage { grid-template-columns: 1fr; }
+  .sim-stepper-label { display: none; }
+}
+
+/* ── Left Side: Cyber-Simulation Deck ────────────────────────────── */
+.sim-screen-deck {
+  background: linear-gradient(145deg, #0B1528 0%, #111E38 100%);
+  border: 1px solid #1E293B;
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  color: #F8FAFC;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 24px rgba(15, 23, 42, 0.16);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 12px;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
-  border: 1px solid #E2E8F0;
+  min-height: 240px;
   position: relative;
   overflow: hidden;
 }
 
-.payment-row-slider-viewport {
+.sim-visual-canvas {
+  animation: stepSlideFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   width: 100%;
-  overflow: hidden;
-  mask-image: linear-gradient(90deg, transparent 0%, #000000 8%, #000000 92%, transparent 100%);
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000000 8%, #000000 92%, transparent 100%);
 }
 
-.payment-row-track {
+.sim-deck-header {
   display: flex;
-  gap: 10px;
-  width: max-content;
-  will-change: transform;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.payment-row-track.track-top {
-  animation: rowScrollLeft 16s linear infinite;
+.sim-deck-tag {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #38BDF8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.payment-row-track.track-bottom {
-  animation: rowScrollRight 18s linear infinite;
+.sim-deck-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #38BDF8;
+  box-shadow: 0 0 8px #38BDF8;
+  animation: pulseBeacon 1.5s infinite;
 }
 
-.payment-row-track:hover {
-  animation-play-state: paused;
+@keyframes pulseBeacon {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.6; }
 }
 
-@keyframes rowScrollLeft {
-  0% { transform: translate3d(0, 0, 0); }
-  100% { transform: translate3d(-50%, 0, 0); }
+.sim-deck-json {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.6;
+  color: #CBD5E1;
+}
+
+.sim-deck-json .jk { color: #94A3B8; }
+.sim-deck-json .jv { color: #38BDF8; font-weight: 600; }
+.sim-deck-json .js { color: #34D399; font-weight: 600; }
+.sim-deck-json .jn { color: #FBBF24; font-weight: 600; }
+
+.sim-signal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.sim-signal-pill {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sim-signal-pill span:first-child { color: #94A3B8; }
+.sim-signal-pill span:last-child { color: #34D399; font-weight: 700; font-family: var(--font-mono); }
+
+.sim-pred-badge-box {
+  background: rgba(99, 102, 241, 0.2);
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sim-evidence-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sim-ev-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.sim-ev-item.pass { color: #34D399; }
+.sim-ev-item.pass span.icon { color: #34D399; font-weight: 900; }
+.sim-ev-item.fail { color: #F87171; }
+.sim-ev-item.fail span.icon { color: #F87171; font-weight: 900; }
+
+.sim-verdict-banner {
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  margin-bottom: 8px;
+}
+.sim-verdict-banner.auto {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.35) 100%);
+  border: 1px solid rgba(52, 211, 153, 0.4);
+}
+.sim-verdict-banner.manual {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.35) 100%);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+}
+
+.sim-verdict-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.sim-verdict-stat-tile {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 6px 10px;
+  text-align: center;
+}
+
+.sim-telemetry-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 10px 0 6px;
+}
+
+.sim-tele-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.sim-tele-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #3B82F6;
+}
+.sim-tele-dot.green { background: #10B981; }
+.sim-tele-dot.purple { background: #8B5CF6; }
+
+.sim-scenario-dropdown {
+  padding: 5px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--brand-navy-dark);
+  background: #FFFFFF;
+  cursor: pointer;
 }
 
 @keyframes rowScrollRight {
