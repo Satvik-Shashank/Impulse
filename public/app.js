@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchPredictions();
   updateCardPreview();
   initPipelineDemo();
+  initPitchDeck();
   checkApiHealth();
   setInterval(checkApiHealth, 30000);
 });
@@ -348,7 +349,7 @@ function switchTab(tabId, btn) {
 
   // Find and activate the correct navbar button
   // Map tabId to navbar button index for reliable sync
-  const tabIndexMap = { 'home': 0, 'performance': 1, 'cases': 2, 'monitoring': 3, 'guardrails': 4 };
+  const tabIndexMap = { 'home': 0, 'performance': 1, 'cases': 2, 'monitoring': 3, 'guardrails': 4, 'overview': 5 };
   const navButtons = document.querySelectorAll('.tabs-nav .tab-btn');
   if (btn && btn.classList.contains('tab-btn')) {
     btn.classList.add('active');
@@ -371,6 +372,62 @@ function switchTab(tabId, btn) {
   } else if (tabId === 'cases') {
     setTimeout(renderCaseExplorer, 50);
   }
+}
+
+// ── Pitch / Overview Presenter Controller ────────────────────────
+function initPitchDeck() {
+  const stage = document.getElementById('pitch-stage');
+  if (!stage) return;
+  const slides = stage.querySelectorAll('.pitch-slide');
+  const dotsWrap = document.getElementById('pitch-dots');
+  const counter = document.getElementById('pitch-counter');
+  const prevBtn = document.getElementById('pitch-prev');
+  const nextBtn = document.getElementById('pitch-next');
+  const gotoBtn = document.getElementById('pitch-goto-demo');
+  const total = slides.length;
+  let idx = 0;
+
+  if (dotsWrap) {
+    dotsWrap.innerHTML = '';
+    slides.forEach((_, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'pitch-dot' + (i === 0 ? ' pitch-dot-active' : '');
+      dot.addEventListener('click', (e) => { e.stopPropagation(); show(i); });
+      dotsWrap.appendChild(dot);
+    });
+  }
+  const dots = dotsWrap ? dotsWrap.querySelectorAll('.pitch-dot') : [];
+
+  function show(i) {
+    idx = Math.max(0, Math.min(total - 1, i));
+    slides.forEach((s, n) => s.classList.toggle('pitch-active', n === idx));
+    dots.forEach((d, n) => d.classList.toggle('pitch-dot-active', n === idx));
+    if (counter) counter.textContent = (idx + 1) + ' / ' + total;
+    if (prevBtn) prevBtn.disabled = idx === 0;
+    if (nextBtn) nextBtn.disabled = idx === total - 1;
+  }
+
+  if (prevBtn) prevBtn.addEventListener('click', (e) => { e.stopPropagation(); show(idx - 1); });
+  if (nextBtn) nextBtn.addEventListener('click', (e) => { e.stopPropagation(); show(idx + 1); });
+  stage.addEventListener('click', (e) => {
+    if (e.target.closest('#pitch-goto-demo') || e.target.closest('.pitch-cta')) return;
+    show(idx + 1 >= total ? idx : idx + 1);
+  });
+  document.addEventListener('keydown', (e) => {
+    const overviewTab = document.getElementById('tab-overview');
+    if (!overviewTab || !overviewTab.classList.contains('active')) return;
+    if (e.key === 'ArrowRight') show(idx + 1);
+    if (e.key === 'ArrowLeft') show(idx - 1);
+  });
+
+  if (gotoBtn) {
+    gotoBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      switchTab('home', document.querySelector('.tabs-nav .tab-btn:nth-child(1)'));
+    });
+  }
+
+  show(0);
 }
 
 // ── Financial & Architecture Explainer Toggle ────────────────────

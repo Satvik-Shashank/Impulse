@@ -2119,3 +2119,94 @@ select.form-select:focus {
   }
 }
 
+/* ── Pitch / Overview Tab Presenter Styles ────────────────────────── */
+.pitch-root {
+  --pt-accent: #4F46E5;
+  --pt-ink: #0F172A;
+  --pt-secondary: #475569;
+  --pt-border: #E2E8F0;
+  --pt-surface: #ffffff;
+  --pt-tint: #EEF2FF;
+  font-family: var(--font-sans);
+  max-width: 820px;
+  margin: 0 auto;
+}
+.pitch-stage {
+  background: var(--pt-surface);
+  border: 1px solid var(--pt-border);
+  border-radius: 16px;
+  min-height: 420px;
+  padding: 56px 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+}
+.pitch-eyebrow {
+  font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--pt-accent); margin-bottom: 14px;
+}
+.pitch-title {
+  font-size: 30px; font-weight: 800; color: var(--pt-ink); line-height: 1.25;
+  margin: 0 0 16px;
+}
+.pitch-body {
+  font-size: 16px; color: var(--pt-secondary); line-height: 1.65; max-width: 620px;
+}
+.pitch-body strong { color: var(--pt-ink); }
+.pitch-slide {
+  opacity: 0; position: absolute; inset: 0; padding: 56px 60px;
+  display: flex; flex-direction: column; justify-content: center;
+  transition: opacity 0.4s ease; pointer-events: none;
+}
+.pitch-slide.pitch-active {
+  opacity: 1; position: relative; pointer-events: auto;
+}
+
+.pitch-flow { display: flex; align-items: center; gap: 10px; margin-top: 28px; flex-wrap: wrap; }
+.pitch-node {
+  background: var(--pt-tint); color: #3730A3; border: 1px solid #C7D2FE;
+  padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 700;
+}
+.pitch-arrow { color: var(--pt-secondary); font-size: 18px; }
+
+.pitch-question-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 24px; }
+.pitch-question-card {
+  background: var(--pt-tint); border: 1px solid #C7D2FE; border-radius: 10px;
+  padding: 16px 18px;
+}
+.pitch-question-num { font-size: 11px; font-weight: 800; color: var(--pt-accent); margin-bottom: 6px; }
+.pitch-question-text { font-size: 14px; font-weight: 700; color: var(--pt-ink); }
+
+.pitch-thesis {
+  background: #FFFBEB; border: 1px solid #FDE68A; border-left: 4px solid #B45309;
+  border-radius: 0 10px 10px 0; padding: 18px 22px; margin-top: 22px;
+}
+.pitch-thesis-label { font-size: 11px; font-weight: 800; color: #92400E; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+.pitch-thesis-text { font-size: 17px; font-weight: 700; color: #78350F; line-height: 1.5; }
+
+.pitch-progress { display: flex; justify-content: center; gap: 8px; margin-top: 18px; }
+.pitch-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--pt-border); cursor: pointer; transition: all 0.2s; }
+.pitch-dot.pitch-dot-active { background: var(--pt-accent); width: 22px; border-radius: 4px; }
+
+.pitch-nav { display: flex; justify-content: space-between; margin-top: 16px; align-items: center; }
+.pitch-nav-btn {
+  border: 1px solid var(--pt-border); background: var(--pt-surface); color: var(--pt-ink);
+  padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: all 0.15s ease;
+}
+.pitch-nav-btn:hover { background: #F8FAFC; border-color: #CBD5E1; }
+.pitch-nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.pitch-counter { font-size: 12px; color: var(--pt-secondary); font-weight: 600; }
+.pitch-cta {
+  background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+  color: white; border: none;
+  padding: 11px 22px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  transition: all 0.15s ease;
+}
+.pitch-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4); }
+

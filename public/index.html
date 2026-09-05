@@ -28,6 +28,7 @@
         <button class="tab-btn" onclick="switchTab('cases', this)">Case Explorer</button>
         <button class="tab-btn" onclick="switchTab('monitoring', this)">Monitoring</button>
         <button class="tab-btn" onclick="switchTab('guardrails', this)">Guardrails</button>
+        <button class="tab-btn" onclick="switchTab('overview', this)">Overview</button>
       </nav>
     </header>
     <div id="byod-global-banner" class="card" style="display:none; margin:12px auto; max-width:1200px; background:var(--bg-surface-subtle);">
@@ -997,6 +998,82 @@
       </div>
     </section>
 
+    <!-- ═══════════════════════════════════════════════════════════════
+         TAB 6: OVERVIEW (PRESENTER PITCH DECK SLIDES)
+         ═══════════════════════════════════════════════════════════════ -->
+    <section id="tab-overview" class="tab-panel">
+      <div class="tab-inner-shell" style="padding-top:24px; padding-bottom:48px;">
+        <div class="pitch-root">
+          <div class="pitch-stage" id="pitch-stage">
+
+            <div class="pitch-slide pitch-active" data-slide="0">
+              <div class="pitch-eyebrow">Razorpay AI Buildathon &middot; Track 02: AI Risk Manager</div>
+              <div class="pitch-title">Impulse</div>
+              <div class="pitch-body">A chargeback intelligence &amp; auto-resolution platform.<br>Built by Satvik Shashank, third-year CSE.</div>
+            </div>
+
+            <div class="pitch-slide" data-slide="1">
+              <div class="pitch-eyebrow">The problem, part one</div>
+              <div class="pitch-title">What is a chargeback?</div>
+              <div class="pitch-body">A customer disputes a card transaction with their bank, claiming they didn't authorize it, never received the product, or it wasn't as described.</div>
+              <div class="pitch-flow">
+                <div class="pitch-node">Customer disputes</div>
+                <span class="pitch-arrow">&rarr;</span>
+                <div class="pitch-node">Bank reverses payment</div>
+                <span class="pitch-arrow">&rarr;</span>
+                <div class="pitch-node">Merchant loses funds</div>
+              </div>
+            </div>
+
+            <div class="pitch-slide" data-slide="2">
+              <div class="pitch-eyebrow">The problem, part two</div>
+              <div class="pitch-title">The dispute</div>
+              <div class="pitch-body">If the transaction was legitimate, the merchant can contest it: delivery confirmation, transaction details, verification records, whatever proof fits the specific reason for that dispute.</div>
+              <div class="pitch-body" style="margin-top:14px;"><strong>Different disputes require different evidence.</strong> And merchants have a very limited window to respond.</div>
+            </div>
+
+            <div class="pitch-slide" data-slide="3">
+              <div class="pitch-eyebrow">The real question</div>
+              <div class="pitch-title">Not "can I fight this," <span style="color:var(--pt-accent);">should I?</span></div>
+              <div class="pitch-thesis">
+                <div class="pitch-thesis-label">The core insight</div>
+                <div class="pitch-thesis-text">Fighting every dispute isn't optimal. Weak evidence often isn't worth pursuing. Accepting every dispute means giving up recoverable revenue. The decision has to be made intelligently, case by case.</div>
+              </div>
+            </div>
+
+            <div class="pitch-slide" data-slide="4">
+              <div class="pitch-eyebrow">How Impulse decides</div>
+              <div class="pitch-title">Four questions, answered automatically</div>
+              <div class="pitch-question-grid">
+                <div class="pitch-question-card"><div class="pitch-question-num">01</div><div class="pitch-question-text">What is the dispute?</div></div>
+                <div class="pitch-question-card"><div class="pitch-question-num">02</div><div class="pitch-question-text">What evidence do I have?</div></div>
+                <div class="pitch-question-card"><div class="pitch-question-num">03</div><div class="pitch-question-text">How likely am I to win?</div></div>
+                <div class="pitch-question-card"><div class="pitch-question-num">04</div><div class="pitch-question-text">Is it financially worth it?</div></div>
+              </div>
+            </div>
+
+            <div class="pitch-slide" data-slide="5">
+              <div class="pitch-eyebrow">That's Impulse</div>
+              <div class="pitch-title">Let's see it decide, live.</div>
+              <div class="pitch-body">The same four questions, running end-to-end on a real dispute: classification, evidence retrieval, win prediction, and a cost-aware recommendation.</div>
+              <div style="margin-top:26px;">
+                <button class="pitch-cta" id="pitch-goto-demo">Back to home &rarr;</button>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="pitch-progress" id="pitch-dots"></div>
+
+          <div class="pitch-nav">
+            <button class="pitch-nav-btn" id="pitch-prev">&larr; Prev</button>
+            <span class="pitch-counter" id="pitch-counter">1 / 6</span>
+            <button class="pitch-nav-btn" id="pitch-next">Next &rarr;</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Professional Industry Footer -->
     <style>
       .site-footer {
@@ -1195,6 +1272,12 @@
               <li>
                 <a href="#" onclick="switchTab('guardrails', document.querySelector('.tab-btn:nth-child(5)')); return false;">
                   Guardrails & Compliance
+                </a>
+              </li>
+
+              <li>
+                <a href="#" onclick="switchTab('overview', document.querySelector('.tab-btn:nth-child(6)')); return false;">
+                  Overview & Pitch
                 </a>
               </li>
             </ul>
