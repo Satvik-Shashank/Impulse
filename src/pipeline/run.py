@@ -62,7 +62,7 @@ class ChargebackResponder:
         ) if win_probability is not None else 0.0
 
         # Step 5: Generate response template
-        response = generate_response(dispute, classification, evidence)
+        response = generate_response(dispute, classification, evidence, win_probability=win_probability)
         if win_probability is None:
             response["action"] = "HUMAN_REVIEW"
             response["decision_status"] = "degraded_missing_win_model"
@@ -107,7 +107,8 @@ class ChargebackResponder:
             missing = ", ".join(evidence["evidence_package"]["missing"])
             steps.append(f"Missing evidence fields: {missing}.")
 
-        steps.append(f"Calibrated win probability: {win_prob:.1%}.")
+        if win_prob is not None:
+            steps.append(f"Calibrated win probability: {win_prob:.1%}.")
         steps.append(
             f"Expected value of auto-response: ₹{ev:,.0f} "
             f"(using COST_FP=₹{COST_FP:,}, SAVINGS_TP=₹{SAVINGS_TP:,})."
@@ -116,12 +117,12 @@ class ChargebackResponder:
         action = response["action"]
         if action == "AUTO_SUBMIT":
             steps.append(
-                "DECISION: AUTO_SUBMIT — confidence and evidence strength "
-                "both exceed threshold gates."
+                "DECISION: AUTO_SUBMIT — win likelihood is >= 50% threshold; "
+                "automated representment defense approved."
             )
         else:
             steps.append(
-                "DECISION: HUMAN_REVIEW — one or more threshold gates not met; "
+                "DECISION: HUMAN_REVIEW — win likelihood is < 50% threshold; "
                 "routing to analyst for manual review."
             )
 

@@ -19,7 +19,7 @@ env = Environment(
 from src.config import AUTO_RESPOND_CONFIDENCE
 
 
-def generate_response(dispute: dict, classification: dict, evidence: dict) -> dict:
+def generate_response(dispute: dict, classification: dict, evidence: dict, win_probability: float = None) -> dict:
     """Fill the representment template with evidence and decide the action."""
     template_name = evidence.get("template_name", "generic.j2")
     try:
@@ -40,11 +40,15 @@ def generate_response(dispute: dict, classification: dict, evidence: dict) -> di
         generated_at=datetime.now().isoformat(timespec="seconds"),
     )
 
-    should_auto_respond = (
-        evidence["auto_respond_eligible"]
-        and classification["confidence"] >= AUTO_RESPOND_CONFIDENCE
-        and classification.get("model_status") != "fallback_unavailable_for_auto_submit"
-    )
+    if classification.get("model_status") == "fallback_unavailable_for_auto_submit":
+        should_auto_respond = False
+    elif win_probability is not None:
+        should_auto_respond = (win_probability >= 0.50)
+    else:
+        should_auto_respond = (
+            evidence["auto_respond_eligible"]
+            and classification["confidence"] >= AUTO_RESPOND_CONFIDENCE
+        )
 
     return {
         "response_text": response_text,

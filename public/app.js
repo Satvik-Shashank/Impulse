@@ -904,8 +904,9 @@ function selectCaseRecord(disputeId) {
   setText('audit-evidence', `${((record.evidence_strength||0)*100).toFixed(0)}% Completeness`);
   setText('audit-winprob', `${((record.confidence||0)*85).toFixed(1)}% Likelihood`);
   
-  const isAuto = (record.confidence || 0) >= 0.70 && (record.evidence_strength || 0) >= 0.60;
-  setText('audit-action', isAuto ? 'AUTO_SUBMIT (High Confidence)' : 'HUMAN_REVIEW (Borderline)');
+  const wpVal = record.win_probability !== undefined && record.win_probability !== null ? record.win_probability : ((record.confidence || 0) * 0.85);
+  const isAuto = wpVal >= 0.50;
+  setText('audit-action', isAuto ? 'AUTO_SUBMIT (High Win Probability)' : 'HUMAN_REVIEW (Borderline)');
   setText('audit-match-flag', isMatch ? 'Accurate Code Identified' : 'Fallback Routine Engaged');
 
   const rawPre = document.getElementById('audit-raw-json');
@@ -1048,7 +1049,8 @@ function renderMonitoring(d) {
 
   if (tbody && streamData.length > 0) {
     tbody.innerHTML = streamData.slice(0, 8).map((p, i) => {
-      const isAuto = p.action === 'AUTO_SUBMIT' || ((p.confidence || 0) >= 0.70 && (p.evidence_strength || 0) >= 0.60);
+      const pWp = p.win_probability !== undefined && p.win_probability !== null ? p.win_probability : ((p.confidence || 0) * 0.85);
+      const isAuto = p.action === 'AUTO_SUBMIT' || pWp >= 0.50;
       const chipClass = isAuto ? 'chip-success' : 'chip-warning';
       const action = isAuto ? 'AUTO_SUBMIT' : 'HUMAN_REVIEW';
       const now = new Date(Date.now() - i * 120000);
@@ -1425,11 +1427,11 @@ async function runPipeline(payload, btn) {
     );
 
     // Step 4: Decision & Document Generation
-    const wp = data.win_probability || 0;
+    const wp = data.win_probability !== undefined && data.win_probability !== null ? data.win_probability : 0;
     const ev_inr = data.expected_value_inr || 0;
-    const action = data.response ? data.response.action : 'UNKNOWN';
+    const isAuto = (data.response && data.response.action === 'AUTO_SUBMIT') || wp >= 0.50;
+    const action = isAuto ? 'AUTO_SUBMIT' : 'HUMAN_REVIEW';
     const responseText = data.response ? data.response.response_text : '';
-    const isAuto = action === 'AUTO_SUBMIT';
     const chipClass = isAuto ? 'chip-success' : 'chip-warning';
     
     let docBtnHtml = '';
@@ -1474,7 +1476,7 @@ async function runPipeline(payload, btn) {
         </div>
       </div>
       <div class="plain-explainer-card" style="background:${isAuto ? '#F0FDF4' : '#FFFBEB'}; border-color:${isAuto ? '#A7F3D0' : '#FDE68A'};">
-        <strong>${isAuto ? 'Automated Submission Approved:' : 'Manual Review Recommended:'}</strong> ${isAuto ? 'This dispute has high confidence and complete evidence. Impulse has drafted your defense letter and approved it for automated submission, saving you manual labor.' : 'Confidence or evidence fell below automated safety gates. Case is safely queued for merchant review to ensure no bank dispute fees are wasted.'}
+        <strong>${isAuto ? 'Automated Submission Approved:' : 'Manual Review Recommended:'}</strong> ${isAuto ? `Win likelihood is ${(wp*100).toFixed(1)}% (>= 50%). Impulse has approved this case for automated defense submission.` : `Win likelihood is ${(wp*100).toFixed(1)}% (< 50%). Case is safely queued for merchant review to ensure no bank dispute fees are wasted.`}
       </div>
       ${docBtnHtml}`,
       isAuto ? 'step-card-success' : 'step-card-warning',
