@@ -271,7 +271,8 @@ function initPipelineDemo() {
       runBtn.disabled = true;
       runBtn.textContent = 'Simulating...';
     }
-    // Zoom in when simulation is running
+    // Reveal top track and zoom in during live simulation
+    root.classList.add('pd-active-sim');
     root.classList.add('is-sim-zoomed');
     goTo(0);
 
@@ -280,9 +281,9 @@ function initPipelineDemo() {
         autoTimer = setTimeout(() => {
           if (runBtn) {
             runBtn.disabled = false;
-            runBtn.textContent = 'Run Live Simulation';
+            runBtn.textContent = 'Replay Simulation';
           }
-          // Minimise back to normal small size
+          // Minimise back to normal small size while staying on the last slide (Verdict)
           root.classList.remove('is-sim-zoomed');
         }, FINAL_DWELL_MS);
         return;
@@ -297,12 +298,19 @@ function initPipelineDemo() {
 
   window.startGuidedSimulation = runAutoSequence;
   window.stepSimulation = function(dir) {
+    root.classList.add('pd-active-sim');
     goTo(Math.max(0, Math.min(3, current + dir)));
   };
 
   if (runBtn) runBtn.addEventListener('click', runAutoSequence);
-  if (prevBtn) prevBtn.addEventListener('click', () => goTo(Math.max(0, current - 1)));
-  if (nextBtn) nextBtn.addEventListener('click', () => goTo(Math.min(3, current + 1)));
+  if (prevBtn) prevBtn.addEventListener('click', () => {
+    root.classList.add('pd-active-sim');
+    goTo(Math.max(0, current - 1));
+  });
+  if (nextBtn) nextBtn.addEventListener('click', () => {
+    root.classList.add('pd-active-sim');
+    goTo(Math.min(3, current + 1));
+  });
 
   goTo(0);
   if (prevBtn) prevBtn.disabled = true;

@@ -679,11 +679,21 @@ body {
   border-color: rgba(79, 70, 229, 0.3);
 }
 
+.pd-root:not(.pd-active-sim) .pd-header,
+.pd-root:not(.pd-active-sim) .pd-track-wrap {
+  display: none;
+}
+
+.pd-root:not(.pd-active-sim) .pd-panel {
+  min-height: 124px;
+}
+
 .pd-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2px;
+  animation: pd-fadeIn 0.3s ease;
 }
 .pd-badge {
   display: inline-block;
