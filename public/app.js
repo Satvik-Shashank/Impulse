@@ -373,7 +373,8 @@ function renderHeroMetrics() {
   const delta = sb - fe;
   const el = document.getElementById('val-delta');
   if (el && Number.isFinite(delta)) {
-    el.textContent = `+₹${delta.toLocaleString('en-IN')} higher net recovery vs naive fighting`;
+    const sign = delta >= 0 ? '+' : '-';
+    el.textContent = `${sign}₹${Math.abs(delta).toLocaleString('en-IN')} higher net recovery vs naive fighting`;
   }
 }
 
@@ -384,7 +385,12 @@ function animateValue(id, target, prefix = '', dur = 700) {
   (function tick(now) {
     const p = Math.min((now - t0) / dur, 1);
     const eased = 1 - Math.pow(1 - p, 3);
-    el.textContent = prefix + Math.round(target * eased).toLocaleString('en-IN');
+    const val = Math.round(target * eased);
+    if (val < 0) {
+      el.textContent = `-${prefix}${Math.abs(val).toLocaleString('en-IN')}`;
+    } else {
+      el.textContent = `${prefix}${val.toLocaleString('en-IN')}`;
+    }
     if (p < 1) requestAnimationFrame(tick);
   })(t0);
 }
@@ -583,7 +589,9 @@ function updateCostPoint(val) {
   const interpolate = key => lower[key] + (upper[key] - lower[key]) * ratio;
   setText('cost-auto-pct', pct(interpolate('auto_respond_pct')));
   setText('cost-win-rate', pct(interpolate('win_rate_at_threshold')));
-  setText('cost-net-dispute', '₹' + interpolate('net_value_per_dispute').toFixed(0));
+  const netVal = interpolate('net_value_per_dispute');
+  const formattedNet = netVal < 0 ? `-₹${Math.abs(netVal).toFixed(0)}` : `₹${netVal.toFixed(0)}`;
+  setText('cost-net-dispute', formattedNet);
 }
 
 // ── Rich Case Explorer & Audit Workspace ─────────────────────────
@@ -1186,6 +1194,11 @@ async function runPipeline(payload, btn) {
       `;
     }
 
+    const evFormatted = ev_inr >= 0
+      ? `+₹${ev_inr.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`
+      : `-₹${Math.abs(ev_inr).toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+    const evColor = ev_inr >= 0 ? 'var(--brand-emerald-text)' : 'var(--brand-rose)';
+
     await revealStep(
       stepsC,
       'Step 4 of 4',
@@ -1197,7 +1210,7 @@ async function runPipeline(payload, btn) {
         </div>
         <div>
           <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Expected Value</div>
-          <div style="font-size:22px; font-weight:900; color:var(--brand-emerald-text);">+₹${ev_inr.toLocaleString('en-IN')}</div>
+          <div style="font-size:22px; font-weight:900; color:${evColor};">${evFormatted}</div>
         </div>
         <div>
           <span class="chip ${chipClass}" style="font-size:12px; padding:4px 12px;">${isAuto ? 'AUTO-SUBMIT DEFENSE' : 'ROUTE TO HUMAN REVIEW'}</span>
