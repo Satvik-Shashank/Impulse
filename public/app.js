@@ -160,23 +160,28 @@ function initPipelineDemo() {
     {
       label: 'Step 1 of 4 · Ingestion',
       render: () => `
-        <p class="pd-panel-title pd-fade-in">Dispute ingestion &amp; webhook</p>
-        <p class="pd-panel-desc pd-fade-in">Visa dispute webhook ₹12,499.00 (Electronics). Order logs retrieved.</p>
-        <div class="pd-fade-in" style="display:flex; gap:16px; margin-top:4px;">
-          <div><div class="pd-counter-label">Amount</div><div class="pd-counter" style="font-size:14px; font-weight:800;">₹12,499</div></div>
-          <div><div class="pd-counter-label">Network</div><div class="pd-counter" style="font-size:14px; font-weight:800;">Visa</div></div>
-          <div><div class="pd-counter-label">Category</div><div class="pd-counter" style="font-size:14px; font-weight:800;">Electronics</div></div>
+        <div class="pd-fade-in">
+          <p class="pd-panel-title">Visa Webhook Ingested</p>
+          <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:6px; background:#ffffff; padding:6px 10px; border-radius:6px; border:1px solid #e2e8f0;">
+            <div><div class="pd-counter-label" style="font-size:8.5px; margin-bottom:1px;">Amount</div><div class="pd-counter" style="font-size:14px; font-weight:800; color:#0f172a;">₹12,499</div></div>
+            <div><div class="pd-counter-label" style="font-size:8.5px; margin-bottom:1px;">Network</div><div style="font-size:12px; font-weight:700; color:#0f172a;">Visa</div></div>
+            <div><div class="pd-counter-label" style="font-size:8.5px; margin-bottom:1px;">Category</div><div style="font-size:12px; font-weight:700; color:#0f172a;">Electronics</div></div>
+          </div>
         </div>`,
       after: () => {}
     },
     {
       label: 'Step 2 of 4 · Classification',
       render: () => `
-        <p class="pd-panel-title pd-fade-in">Reason code identified</p>
-        <p class="pd-panel-desc pd-fade-in">Analyzed order timing, customer history, and payment signals.</p>
-        <div class="pd-fade-in" style="display:flex; align-items:baseline; gap:8px; margin-top:4px;">
-          <span class="pd-counter" id="pd-conf-num" style="font-size:20px; font-weight:800;">0.0%</span>
-          <span style="font-size:10.5px; color:var(--pd-text-secondary); font-weight:600;">confidence · Code 13.1, Merchandise Not Received</span>
+        <div class="pd-fade-in">
+          <p class="pd-panel-title">Reason Code Identified</p>
+          <div style="display:flex; align-items:center; gap:10px; margin-top:6px; background:#ffffff; padding:6px 10px; border-radius:6px; border:1px solid #e2e8f0;">
+            <span class="pd-counter" id="pd-conf-num" style="font-size:20px; font-weight:800; color:#4F46E5; line-height:1;">0.0%</span>
+            <div style="font-size:11px; color:#475569; font-weight:600; line-height:1.25;">
+              Confidence · <strong style="color:#0f172a;">Code 13.1</strong><br>
+              <span style="font-size:9.5px; color:#64748b;">Merchandise Not Received</span>
+            </div>
+          </div>
         </div>`,
       after: () => {
         const el = document.getElementById('pd-conf-num');
