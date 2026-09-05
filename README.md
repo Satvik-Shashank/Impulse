@@ -22,10 +22,9 @@
 
 ## Live Demo
 
-**[https://impulse-orcin.vercel.app/](https://impulse-orcin.vercel.app/)**
+[https://impulse-orcin.vercel.app/](https://impulse-orcin.vercel.app/)
 
 The platform is deployed and fully functional, run a live dispute through the Analyze a Dispute tab to see the full four stage pipeline execute in real time, classification, evidence verification, win prediction, and the cost based recommendation. Model Performance, Monitoring, and Guardrails are all live on the same deployment, no local setup required.
----
 
 ## Table of contents
 
