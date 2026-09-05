@@ -77,9 +77,26 @@ document.addEventListener('DOMContentLoaded', () => {
   initPitchDeck();
   checkApiHealth();
   setInterval(checkApiHealth, 30000);
+
+  // Form input listeners to reset loaded dispute ID and sync previews
+  const formEl = document.getElementById('form-mode');
+  if (formEl) {
+    formEl.addEventListener('input', () => {
+      window.currentLoadedDisputeId = null;
+      window.currentLoadedReasonCode = null;
+      updateCardPreview();
+    });
+    formEl.addEventListener('change', () => {
+      window.currentLoadedDisputeId = null;
+      window.currentLoadedReasonCode = null;
+      updateCardPreview();
+    });
+  }
 });
 
 function resetFormToBlank() {
+  window.currentLoadedDisputeId = null;
+  window.currentLoadedReasonCode = null;
   const fAmt = document.getElementById('f-amount');
   const fNet = document.getElementById('f-network');
   const fDays = document.getElementById('f-days');
@@ -113,7 +130,8 @@ function resetFormToBlank() {
 // ── Interactive Payment Carousel Preview Sync ──────────────────────
 function updateCardPreview() {
   const amtVal = document.getElementById('f-amount')?.value;
-  const amt = (amtVal !== '' && amtVal !== undefined && !isNaN(parseFloat(amtVal))) ? parseFloat(amtVal) : 0;
+  const cleanAmt = typeof amtVal === 'string' ? amtVal.trim().replace(/,/g, '') : amtVal;
+  const amt = (cleanAmt !== '' && cleanAmt !== null && cleanAmt !== undefined && !isNaN(Number(cleanAmt))) ? Number(cleanAmt) : 0;
   const net = document.getElementById('f-network')?.value;
   const cat = document.getElementById('f-category')?.value;
   
@@ -121,7 +139,7 @@ function updateCardPreview() {
   const elId = document.getElementById('sim-card-id');
   const elNet = document.getElementById('sim-card-network');
 
-  if (elAmt) elAmt.textContent = amt > 0 ? '₹' + amt.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '₹0.00';
+  if (elAmt) elAmt.textContent = amt > 0 ? '₹' + amt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '₹0.00';
   if (elId) elId.textContent = (cat && cat !== '') ? `DSP-LIVE · ${cat.toUpperCase()}` : 'DSP-LIVE · DISPUTE';
   if (elNet) elNet.textContent = (net && net !== '') ? `${net} Network` : 'Card Network';
 }
@@ -1188,30 +1206,60 @@ function loadPreset(type) {
 // ── Build Payload From Form ─────────────────────────────────────
 function buildPayloadFromForm() {
   const avs = document.querySelector('input[name="avs"]:checked');
-  const disputeId = window.currentLoadedDisputeId || ("DSP-LIVE-" + Date.now().toString(36).toUpperCase());
-  const amtVal = document.getElementById('f-amount')?.value;
-  const daysVal = document.getElementById('f-days')?.value;
-  const acctAgeVal = document.getElementById('f-acct-age')?.value;
-  const priorDispVal = document.getElementById('f-prior-disputes')?.value;
-  const priorOrdVal = document.getElementById('f-prior-orders')?.value;
+  const disputeId = window.currentLoadedDisputeId || ("DSP-LIVE-" + Math.floor(100000 + Math.random() * 900000));
+  
+  const amtInput = document.getElementById('f-amount');
+  const rawAmt = amtInput ? amtInput.value : '';
+  const cleanAmt = typeof rawAmt === 'string' ? rawAmt.trim().replace(/,/g, '') : rawAmt;
+  const disputeAmount = (cleanAmt !== '' && cleanAmt !== null && cleanAmt !== undefined && !isNaN(Number(cleanAmt)))
+    ? Number(cleanAmt)
+    : 0;
+
+  const daysInput = document.getElementById('f-days');
+  const rawDays = daysInput ? daysInput.value : '';
+  const daysToDispute = (rawDays !== '' && rawDays !== null && rawDays !== undefined && !isNaN(parseInt(rawDays, 10)))
+    ? parseInt(rawDays, 10)
+    : 30;
+
+  const acctAgeInput = document.getElementById('f-acct-age');
+  const rawAge = acctAgeInput ? acctAgeInput.value : '';
+  const acctAge = (rawAge !== '' && rawAge !== null && rawAge !== undefined && !isNaN(parseInt(rawAge, 10)))
+    ? parseInt(rawAge, 10)
+    : 30;
+
+  const priorDispInput = document.getElementById('f-prior-disputes');
+  const rawPriorDisp = priorDispInput ? priorDispInput.value : '';
+  const priorDisputes = (rawPriorDisp !== '' && rawPriorDisp !== null && rawPriorDisp !== undefined && !isNaN(parseInt(rawPriorDisp, 10)))
+    ? parseInt(rawPriorDisp, 10)
+    : 0;
+
+  const priorOrdInput = document.getElementById('f-prior-orders');
+  const rawPriorOrd = priorOrdInput ? priorOrdInput.value : '';
+  const priorOrders = (rawPriorOrd !== '' && rawPriorOrd !== null && rawPriorOrd !== undefined && !isNaN(parseInt(rawPriorOrd, 10)))
+    ? parseInt(rawPriorOrd, 10)
+    : 0;
+
+  const netVal = document.getElementById('f-network')?.value;
+  const catVal = document.getElementById('f-category')?.value;
+  const shipVal = document.getElementById('f-shipping')?.value;
 
   return {
     dispute_id: disputeId,
     reason_code_label: window.currentLoadedReasonCode || "Dispute Claim",
-    card_network: document.getElementById('f-network')?.value || "Visa",
-    dispute_amount: (amtVal !== '' && amtVal !== undefined && !isNaN(parseFloat(amtVal))) ? parseFloat(amtVal) : 12499,
+    card_network: (netVal && netVal.trim() !== '') ? netVal : "Visa",
+    dispute_amount: disputeAmount,
     currency: "INR",
     transaction_date: new Date().toISOString().slice(0, 10),
-    days_to_dispute: (daysVal !== '' && daysVal !== undefined && !isNaN(parseInt(daysVal))) ? parseInt(daysVal) : 30,
-    product_category: document.getElementById('f-category')?.value || "electronics",
-    shipping_method: document.getElementById('f-shipping')?.value || "express",
+    days_to_dispute: daysToDispute,
+    product_category: (catVal && catVal.trim() !== '') ? catVal : "electronics",
+    shipping_method: (shipVal && shipVal.trim() !== '') ? shipVal : "express",
     delivery_confirmed: !!document.getElementById('f-delivery')?.checked,
     has_delivery_proof: !!document.getElementById('f-proof')?.checked,
     ip_geolocation_match: !!document.getElementById('f-ip')?.checked,
     avs_cvv_match: avs ? avs.value : "neither",
-    customer_account_age_days: (acctAgeVal !== '' && acctAgeVal !== undefined && !isNaN(parseInt(acctAgeVal))) ? parseInt(acctAgeVal) : 30,
-    customer_prior_disputes: (priorDispVal !== '' && priorDispVal !== undefined && !isNaN(parseInt(priorDispVal))) ? parseInt(priorDispVal) : 0,
-    customer_prior_orders: (priorOrdVal !== '' && priorOrdVal !== undefined && !isNaN(parseInt(priorOrdVal))) ? parseInt(priorOrdVal) : 0,
+    customer_account_age_days: acctAge,
+    customer_prior_disputes: priorDisputes,
+    customer_prior_orders: priorOrders,
     has_customer_correspondence: !!document.getElementById('f-correspondence')?.checked,
     has_3ds_authentication: !!document.getElementById('f-3ds')?.checked,
   };
@@ -1278,18 +1326,25 @@ async function runPipeline(payload, btn) {
   if (btn) btn.textContent = 'Processing Pipeline...';
 
   try {
+    const amt = Number(payload.dispute_amount) || 0;
+    const net = payload.card_network || 'Visa';
+    const cat = payload.product_category || 'Electronics';
+    const dId = payload.dispute_id || 'N/A';
+    const age = payload.customer_account_age_days !== undefined ? payload.customer_account_age_days : 0;
+    const orders = payload.customer_prior_orders !== undefined ? payload.customer_prior_orders : 0;
+
     // Step 1: Input Received
     await revealStep(
       stepsC,
       'Step 1 of 4',
       'Dispute Claim Ingested',
       `<div class="plain-text-desc">
-        A chargeback notice of <strong>₹${(payload.dispute_amount || 0).toLocaleString('en-IN')}</strong> was received on the <strong>${payload.card_network || 'Visa'}</strong> network for an <strong>${(payload.product_category || 'Electronics').toUpperCase()}</strong> order.
+        A chargeback notice of <strong>₹${amt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> was received on the <strong>${net}</strong> network for an <strong>${cat.toUpperCase()}</strong> order.
       </div>
       <div style="display:flex; gap:16px; font-size:12px; color:var(--text-muted); flex-wrap:wrap;">
-        <span>Dispute ID: <strong>${payload.dispute_id || 'N/A'}</strong></span>
-        <span>Account Age: <strong>${payload.customer_account_age_days || 0} days</strong></span>
-        <span>Prior Orders: <strong>${payload.customer_prior_orders || 0}</strong></span>
+        <span>Dispute ID: <strong>${dId}</strong></span>
+        <span>Account Age: <strong>${age} days</strong></span>
+        <span>Prior Orders: <strong>${orders}</strong></span>
       </div>`,
       'step-card-info',
       220
