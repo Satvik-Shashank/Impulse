@@ -262,6 +262,28 @@ function initPipelineDemo() {
     if (nextBtn) nextBtn.disabled = index === 3;
   }
 
+  function setReadyState() {
+    current = -1;
+    if (trackFill) trackFill.style.width = '0%';
+    if (packet) {
+      packet.style.left = 'calc(0% - 7px)';
+      packet.classList.remove('pd-pulse');
+    }
+    stops.forEach(s => {
+      s.classList.remove('pd-done', 'pd-active');
+    });
+    if (status) status.textContent = 'Ready';
+    if (panel) {
+      panel.innerHTML = `
+        <div class="pd-fade-in">
+          <p class="pd-panel-title">Live Transaction Simulation</p>
+          <p class="pd-panel-desc">Click "Run Live Simulation" to watch Impulse ingest dispute webhooks, execute calibrated classification, and verify representment rules in real time.</p>
+        </div>`;
+    }
+    if (prevBtn) prevBtn.disabled = true;
+    if (nextBtn) nextBtn.disabled = false;
+  }
+
   const STAGE_DELAY_MS = 2400;
   const FINAL_DWELL_MS = 3400;
 
@@ -271,8 +293,6 @@ function initPipelineDemo() {
       runBtn.disabled = true;
       runBtn.textContent = 'Simulating...';
     }
-    // Reveal top track and zoom in during live simulation
-    root.classList.add('pd-active-sim');
     root.classList.add('is-sim-zoomed');
     goTo(0);
 
@@ -283,7 +303,7 @@ function initPipelineDemo() {
             runBtn.disabled = false;
             runBtn.textContent = 'Replay Simulation';
           }
-          // Minimise back to normal small size while staying on the last slide (Verdict)
+          // Minimise back to normal scale while staying on the last slide (Verdict)
           root.classList.remove('is-sim-zoomed');
         }, FINAL_DWELL_MS);
         return;
@@ -298,22 +318,23 @@ function initPipelineDemo() {
 
   window.startGuidedSimulation = runAutoSequence;
   window.stepSimulation = function(dir) {
-    root.classList.add('pd-active-sim');
-    goTo(Math.max(0, Math.min(3, current + dir)));
+    if (current === -1) {
+      goTo(dir > 0 ? 0 : 0);
+    } else {
+      goTo(Math.max(0, Math.min(3, current + dir)));
+    }
   };
 
   if (runBtn) runBtn.addEventListener('click', runAutoSequence);
   if (prevBtn) prevBtn.addEventListener('click', () => {
-    root.classList.add('pd-active-sim');
-    goTo(Math.max(0, current - 1));
+    if (current > 0) goTo(current - 1);
   });
   if (nextBtn) nextBtn.addEventListener('click', () => {
-    root.classList.add('pd-active-sim');
-    goTo(Math.min(3, current + 1));
+    if (current === -1) goTo(0);
+    else if (current < 3) goTo(current + 1);
   });
 
-  goTo(0);
-  if (prevBtn) prevBtn.disabled = true;
+  setReadyState();
 }
 
 function sleep(ms) {
